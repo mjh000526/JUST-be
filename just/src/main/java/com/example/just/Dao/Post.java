@@ -1,11 +1,11 @@
 package com.example.just.Dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "post")
 @NoArgsConstructor
 @Getter
+@Data
 @Setter
 public class Post {
     @Id
@@ -29,7 +30,7 @@ public class Post {
     private Long post_like;
 
     @Column(name = "post_create_time")  //글 생성 시간
-    private Date post_create_time;
+    private LocalDateTime post_create_time;
 
     @Column(name = "secret")    //글 공개 여부
     private boolean secret;
@@ -42,12 +43,14 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "member_id") //글을쓴 Member_id
+    @JsonIgnore
     private Member member;
 
     @OneToMany(mappedBy = "post")   //글에 대한 알림
+
     private List<Notification> notifications;
 
-    public Post(String post_content, String post_tag, Long post_like, Date post_create_time,
+    public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
                 boolean secret, String emoticon, Long post_category, Member member) {
         this.post_content = post_content;
         this.post_tag = post_tag;
@@ -60,7 +63,7 @@ public class Post {
         this.member.updateMember(this);
     }
 
-    public void updatePost(String post_content, String post_tag, Long post_like, Date post_create_time,
+    public void updatePost(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
                 boolean secret, String emoticon, Long post_category, Member member) {
         this.post_content = post_content;
         this.post_tag = post_tag;

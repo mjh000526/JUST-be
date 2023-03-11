@@ -36,7 +36,9 @@ public class Member {
     private String role;
 
     @OneToMany(mappedBy = "member")
+
     private List<Post> posts = new ArrayList<>();
+
 
     public void updateMember(final Post post) {
         posts.add(post);

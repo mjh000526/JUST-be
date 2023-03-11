@@ -3,30 +3,30 @@ spring:
     default-property-inclusion: non-null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/oauthtest?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://127.0.0.1:3306/tomorrow?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: 21474836
-    
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: 55ec14b78e17e978a4a3b64971060784
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
-            client-authentication-method: POST
-            client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
-            authorization-grant-type: authorization_code
-            scope:
-              - account_email
-              - profile_nickname
-            client_name: Kakao
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
+
+  #security:
+    #oauth2:
+      #client:
+        #registration:
+         # kakao:
+           # client-id: 55ec14b78e17e978a4a3b64971060784
+          #  redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+           # client-authentication-method: POST
+           # client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+          #  authorization-grant-type: authorization_code
+           # scope:
+           #   - account_email
+           #   - profile_nickname
+          #  client_name: Kakao
+       # provider:
+         # kakao:
+          #  authorization-uri: https://kauth.kakao.com/oauth/authorize
+          #  token-uri: https://kauth.kakao.com/oauth/token
+          #  user-info-uri: https://kapi.kakao.com/v2/user/me
+           # user-name-attribute: id
 
   jpa:
     database: mysql

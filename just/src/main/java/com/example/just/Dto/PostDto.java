@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class PostDto {
 
     private Long post_like; //공감 회수
 
-    private Date post_create_time;  //글 생성 시간
+    private LocalDateTime post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
 
@@ -37,6 +38,10 @@ public class PostDto {
     private Member member;  //글을쓴 Member_id
 
     private List<Notification> notifications;     //글에 대한 알림
+
+    public PostDto(String test_content, String test_tag, long l, LocalDateTime now, boolean b, Object o, String test_category) {
+    }
+
 
     public boolean isSecret() {
         return secret;
