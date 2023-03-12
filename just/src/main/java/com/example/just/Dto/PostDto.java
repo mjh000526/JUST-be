@@ -2,6 +2,7 @@ package com.example.just.Dto;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Notification;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,9 +35,9 @@ public class PostDto {
 
     private Long Post_category; //글 카테고리
 
-
+    @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id
-
+    @JsonIgnore // Swagger에 postDto만 넘기려고
     private List<Notification> notifications;     //글에 대한 알림
 
     public PostDto(String test_content, String test_tag, long l, LocalDateTime now, boolean b, Object o, String test_category) {

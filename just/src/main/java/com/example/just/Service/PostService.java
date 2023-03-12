@@ -14,7 +14,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 
-
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -43,6 +43,7 @@ public class PostService {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
+
 
 
     public Post write(Long member_id, PostDto postDto) {
