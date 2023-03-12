@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함
   jackson:
     default-property-inclusion: non-null
   datasource:
@@ -6,7 +9,6 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/tomorrow?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: 21474836
-
   #security:
     #oauth2:
       #client:
