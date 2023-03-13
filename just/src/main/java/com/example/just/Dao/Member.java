@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -27,5 +29,14 @@ public class Member {
     private Timestamp createTime;
 
     private String provider;
+
+    @OneToMany(mappedBy = "member")
+
+    private List<Post> posts = new ArrayList<>();
+
+
+    public void updateMember(final Post post) {
+        posts.add(post);
+    }
 }
 
