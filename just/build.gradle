@@ -32,9 +32,7 @@ dependencies {
 	implementation 'com.h2database:h2'
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 
-	//oAuth
-	//implementation 'org.springframework.security:spring-security-config:5.5.0'
-	//implementation 'org.springframework.security:spring-security-oauth2-client'
+
 
 
 	//JSON
@@ -55,6 +53,7 @@ dependencies {
   //security
 	implementation 'org.springframework.security:spring-security-core:5.6.0'
 	implementation 'org.springframework.security:spring-security-config:5.5.0'
+	implementation 'org.springframework.security:spring-security-oauth2-client'
   
   //json
 	dependencies { implementation 'com.google.code.gson:gson:2.8.7' }

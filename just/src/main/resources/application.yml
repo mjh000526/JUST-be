@@ -8,8 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/oauthtest?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: 21474836
-    <<<<<<< feat-oauth
+    #password: 21474836
     password: admin
   security:
     oauth2:
@@ -37,7 +36,7 @@ spring:
     generate-ddl: true # DDL ?? ??
     open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         use-new-id-generator-mappings: true
