@@ -1,10 +1,15 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함
   jackson:
     default-property-inclusion: non-null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/oauthtest?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
+    password: 21474836
+    <<<<<<< feat-oauth
     password: admin
   security:
     oauth2:
@@ -32,7 +37,7 @@ spring:
     generate-ddl: true # DDL ?? ??
     open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         use-new-id-generator-mappings: true
@@ -42,4 +47,5 @@ spring:
         format_sql: true
         enable_lazy_load_no_trans: true # LAZY ??? default? ??
 jwt:
-  secret: VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+  #VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk

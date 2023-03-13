@@ -1,44 +1,120 @@
 plugins {
-	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id 'java'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
 }
 
+ext {
+	queryDslVersion = "5.0.0"
+}
+
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.security:spring-security-oauth2-client'
-	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	//Database
+	implementation 'mysql:mysql-connector-java:8.0.27'
+	runtimeOnly  'mysql:mysql-connector-java:8.0.27'
+	implementation 'com.h2database:h2'
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+
+	//oAuth
+	//implementation 'org.springframework.security:spring-security-config:5.5.0'
+	//implementation 'org.springframework.security:spring-security-oauth2-client'
+
+
+	//JSON
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+	//Lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  //jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'com.auth0:java-jwt:4.2.1'
+  
+  //security
 	implementation 'org.springframework.security:spring-security-core:5.6.0'
 	implementation 'org.springframework.security:spring-security-config:5.5.0'
+  
+  //json
 	dependencies { implementation 'com.google.code.gson:gson:2.8.7' }
+	testImplementation 'com.querydsl:querydsl-jpa'
+
+	//Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	//Mapper
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+	// querydsl 디펜던시 추가
+	implementation 'com.querydsl:querydsl-core:5.0.0'
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'
+	implementation 'com.querydsl:querydsl-apt:5.0.0'
+	implementation 'com.querydsl:querydsl-sql:5.0.0'
+
+
+
+	//jooq
+	implementation 'org.jooq:jooq:3.15.3'
+	implementation 'org.jooq:jooq-meta:3.15.3'
+	implementation 'org.jooq:jooq-codegen:3.15.3'
+
+	//Swagger
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+
 }
 
-tasks.named('test') {
+
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+test {
 	useJUnitPlatform()
+}
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+// build시 사용할 sourceSet 추가 설정
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+// querydsl 컴파일 시 사용할 옵션 설정
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+// querydsl이 compileClassPath를 상속하도록 설정
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
 }

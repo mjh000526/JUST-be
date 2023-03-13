@@ -27,6 +27,5 @@ public class Member {
     private Timestamp createTime;
 
     private String provider;
-
-
 }
+
