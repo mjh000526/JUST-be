@@ -10,6 +10,7 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 
 
+import com.example.just.ResourceNotFoundException;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -18,11 +19,15 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,9 +62,6 @@ public class PostService {
                 member);
 
         postRepository.save(post);
-
-
-
 
        return post;
     }
@@ -106,6 +108,20 @@ public class PostService {
         // Slice 객체를 생성해서 반환합니다.
         return new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor);
 
+    }
+    @Transactional
+    public void toggleLike(Long postId, Long member_id) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        Member member = memberRepository.findById(member_id).orElseGet(Member::new);// 현재 인증된 사용자 정보를 가져오는 메소드
+
+        if (post.getLikedMembers().contains(member)) {
+            System.out.println("1번실행");
+            post.removeLike(member);
+        } else {
+            System.out.println("2번실행");
+            post.addLike(member);
+        }
+        postRepository.save(post);
     }
 
 

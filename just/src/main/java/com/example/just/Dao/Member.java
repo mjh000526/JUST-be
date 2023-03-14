@@ -31,8 +31,29 @@ public class Member {
     private String provider;
 
     @OneToMany(mappedBy = "member")
-
     private List<Post> posts = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "post_like",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private List<Post> likedPosts = new ArrayList<>();
+
+    public void addLikedPost(Post post) {
+        if (!likedPosts.contains(post)) {
+            likedPosts.add(post);
+            post.addLike(this);
+        }
+    }
+
+    public void removeLikedPost(Post post) {
+        if (likedPosts.contains(post)) {
+            likedPosts.remove(post);
+            post.removeLike(this);
+        }
+    }
+
 
 
     public void updateMember(final Post post) {
