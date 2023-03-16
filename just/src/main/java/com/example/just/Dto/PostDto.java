@@ -1,5 +1,6 @@
 package com.example.just.Dto;
 
+import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Notification;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,8 +41,7 @@ public class PostDto {
 
     @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id
-    @JsonIgnore // Swagger에 postDto만 넘기려고
-    private List<Notification> notifications;     //글에 대한 알림
+//글에 대한 알림
 
     public PostDto(String content, String tag, int i, LocalDateTime now, boolean b, Object o, Object o1) {
     }

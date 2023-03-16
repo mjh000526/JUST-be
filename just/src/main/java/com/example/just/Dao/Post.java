@@ -1,6 +1,7 @@
 package com.example.just.Dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -49,8 +50,11 @@ public class Post {
     @JsonIgnore
     private Member member;
 
-    @OneToMany(mappedBy = "post")   //글에 대한 알림
-    private List<Notification> notifications;
+
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    private List<Comment> comments;
 
     public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
                 boolean secret, String emoticon, Long post_category, Member member) {

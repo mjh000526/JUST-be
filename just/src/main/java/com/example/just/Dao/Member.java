@@ -1,5 +1,6 @@
 package com.example.just.Dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class Member {
     private String provider;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(

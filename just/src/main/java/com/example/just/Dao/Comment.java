@@ -1,10 +1,21 @@
 package com.example.just.Dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "comment")
+@Getter
+@Setter
 public class Comment {
 
     @Id
@@ -15,10 +26,7 @@ public class Comment {
     private String comment_content; //댓글 내용
 
     @Column(name = "comment_create_time")
-    private Date comment_create_time;   //댓글 작성 시간
-
-    @Column(name = "comment_reply")
-    private String comment_reply;   //응답여부
+    private LocalDateTime comment_create_time;   //댓글 작성 시간
 
     @Column(name = "comment_like")
     private Long comment_like;  //추천수
@@ -26,10 +34,23 @@ public class Comment {
     @Column(name = "comment_dislike")
     private Long comment_dislike;   //비추천수
 
-    @Column(name = "member_id")
-    private Long member_id;
+    @ManyToOne
+    @JoinColumn(name = "member_id") //댓글을 쓴 Member_id
+    @JsonIgnore
+    private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "post_id") //글을쓴 Member_id
-    private Member member;
+    @JoinColumn(name = "post_id", nullable = false) //해당 댓글이 달린 게시물
+    @JsonIgnore
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id") //해당 댓글의 부모 댓글
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> children = new ArrayList<>(); //해당 댓글의 자식 댓글들
+
+
 }
