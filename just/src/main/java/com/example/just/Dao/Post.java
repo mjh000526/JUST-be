@@ -46,11 +46,6 @@ public class Post {
     @JsonIgnore
     private Member member;
 
-    @OneToMany(mappedBy = "post")   //글에 대한 알림
-
-
-    private List<Notification> notifications;
-
     public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
                 boolean secret, String emoticon, Long post_category, Member member) {
         this.post_content = post_content;

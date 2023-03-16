@@ -31,10 +31,10 @@ public class Member {
     private String provider;
 
     @OneToMany(mappedBy = "member")
-
     private List<Post> posts = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "member")   //알림
+    private List<Notification> notifications;
     public void updateMember(final Post post) {
         posts.add(post);
     }

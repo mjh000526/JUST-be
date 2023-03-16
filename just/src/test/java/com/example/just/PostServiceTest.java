@@ -51,7 +51,7 @@ public class PostServiceTest {
     public void writeTest() {
         // given
         Member member = new Member();
-        member.setMember_email("test@test.com");
+        member.setEmail("test@test.com");
         member.setId(1L);
 
         memberRepository.save(member);
@@ -78,10 +78,10 @@ public class PostServiceTest {
     public void searchByCursorTest() {
         // given
         Member member1 = new Member();
-        member1.setMember_email("test1@test.com");
+        member1.setEmail("test1@test.com");
         member1.setId(1L);
         Member member2 = new Member();
-        member2.setMember_email("test2@test.com");
+        member2.setEmail("test2@test.com");
         member2.setId(2L);
 
         memberRepository.saveAll(Arrays.asList(member1, member2));
