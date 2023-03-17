@@ -40,7 +40,7 @@ public class NotificationService {
     private JwtProvider jwtProvider;
 
     public SseEmitter subscribe(HttpServletRequest request, String lastEventId){
-        String token = (String) request.getAttribute("access_token");
+        String token = (String) request.getHeader("access_token");
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출;
         String emitterId = makeTimeIncludeId(id);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(timeout));
