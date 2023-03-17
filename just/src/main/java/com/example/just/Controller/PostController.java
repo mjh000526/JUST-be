@@ -1,13 +1,17 @@
 package com.example.just.Controller;
 
+import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
+import com.example.just.Dto.MemberDto;
 import com.example.just.Dto.PostDto;
+import com.example.just.ResourceNotFoundException;
 import com.example.just.Service.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +41,14 @@ public class PostController {
         String cursor = req.getHeader("viewed");
         return postService.searchByCursor(cursor, request_page);
     }
+
+    @ApiOperation(value = "공감(좋아요) 누르기", notes = "<big>좋아요 누르기</big>")
+    @PostMapping("/post/like")
+    public ResponseEntity<Void> toggleLike(@RequestParam Long post_id, @RequestParam Long member_id) {
+        postService.toggleLike(post_id, member_id);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 }

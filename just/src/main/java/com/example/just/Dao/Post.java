@@ -1,12 +1,12 @@
 package com.example.just.Dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,11 +26,11 @@ public class Post {
     @Column(name = "post_tag")  //글 태그
     private String post_tag;
 
-    @Column(name = "post_like") //공감 회수
-    private Long post_like;
-
     @Column(name = "post_create_time")  //글 생성 시간
     private LocalDateTime post_create_time;
+
+    @Column(name = "post_like") // 좋아요 개수
+    private Long post_like;
 
     @Column(name = "secret")    //글 공개 여부
     private boolean secret;
@@ -41,10 +41,17 @@ public class Post {
     @Column(name = "post_category", nullable = true) //글 카테고리
     private Long post_category;
 
+    @ManyToMany(mappedBy = "likedPosts")
+    @JsonIgnore
+    private List<Member> likedMembers = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "member_id") //글을쓴 Member_id
     @JsonIgnore
     private Member member;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
                 boolean secret, String emoticon, Long post_category, Member member) {
@@ -72,4 +79,18 @@ public class Post {
         this.member.updateMember(this);
     }
 
+    public void addLike(Member member) {
+        if (!likedMembers.contains(member)) {
+            System.out.println("멤버가 존재함");
+            member.getLikedPosts().add(this);
+            post_like++;
+        }
+    }
+
+    public void removeLike(Member member) {
+        if (likedMembers.contains(member)) {
+            member.getLikedPosts().remove(this);
+            post_like--;
+        }
+    }
 }

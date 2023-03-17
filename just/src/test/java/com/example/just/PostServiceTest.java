@@ -6,6 +6,7 @@ import com.example.just.Dao.Post;
 import com.example.just.Dao.QPost;
 import com.example.just.Dto.PostDto;
 import com.example.just.Impl.MySliceImpl;
+import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.Service.PostService;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Slice;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -46,6 +48,9 @@ public class PostServiceTest {
     private MemberRepository memberRepository;
     @Mock
     private PostRepository postRepository;
+
+    @Autowired
+    PostMapper postMapper;
 
     @Test
     public void writeTest() {
@@ -115,5 +120,37 @@ public class PostServiceTest {
 
     }
 
+    /*
+    @Test
+    public void PostLikeTest() {
+        //given
+        Member member = new Member();
+        member.setId(1L);
+        memberRepository.save(member);  //가입
 
+        PostDto postDto = new PostDto();
+        postDto.setPost_id(1L);
+        postDto.setPost_content("ㅎㅎ");
+        postDto.setPost_like(0L);
+        Post post1 = postService.write(member.getId(), postDto);    //글쓰기
+        System.out.println(postDto.getPost_content());
+        //when
+        postService.toggleLike(postDto.getPost_id(), member.getId());
+        // post1글의 member가 좋아요를 함
+        Post post = postRepository.findById(post1.getPost_id()).orElseGet(Post::new);//좋아요 달린글 가져오기
+        PostDto p = postMapper.toDto(post); //직렬화
+
+        postService.toggleLike(post1.getPost_id(), member.getId()); //다시 좋아요 누름 (없어져야함 -1)
+        Post post2 = postRepository.findById(post1.getPost_id()).orElseGet(Post::new);//좋아요 없어진글
+        PostDto p2 = postMapper.toDto(post2);//직렬화
+
+        //then
+        assertEquals(1, p.getPost_like());
+        assertEquals(0, p2.getPost_like());
+        //통과
+
+
+    }
+
+     */
 }
