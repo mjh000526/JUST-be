@@ -1,6 +1,6 @@
 package com.example.just.Dto;
 
-import javax.persistence.Column;
+
 import java.util.Date;
 
 public class BlameDto {

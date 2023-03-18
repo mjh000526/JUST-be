@@ -2,9 +2,7 @@ package com.example.just.Dto;
 
 import com.example.just.Dao.Post;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
 import java.util.Date;
 
 public class NotificationDto {

@@ -1,9 +1,17 @@
 package com.example.just.Dao;
 
+/*
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name ="category")
+@Getter
+@Data
+@Setter
 public class Category {
 
     @Id
@@ -20,3 +28,5 @@ public class Category {
     private String school;
 
 }
+
+ */

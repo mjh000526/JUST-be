@@ -1,6 +1,7 @@
 package com.example.just;
 
 
+/*
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dao.QPost;
@@ -152,5 +153,6 @@ public class PostServiceTest {
 
     }
 
-     */
+
 }
+*/

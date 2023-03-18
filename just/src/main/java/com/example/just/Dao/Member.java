@@ -31,9 +31,11 @@ public class Member {
 
     private String provider;
 
+    @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
     @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();
+    @Builder.Default
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_like",
@@ -62,4 +64,3 @@ public class Member {
         posts.add(post);
     }
 }
-
