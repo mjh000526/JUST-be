@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.just.Dao.QComment.comment;
+
 
 @Getter
 @Setter

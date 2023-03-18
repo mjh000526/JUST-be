@@ -3,6 +3,7 @@ package com.example.just.Dto;
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Notification;
+import com.example.just.Dao.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,9 +41,12 @@ public class PostDto {
 
     private Long post_category; //글 카테고리
 
+    private List<Post> likedPosts = new ArrayList<>();
+
     @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id
-//글에 대한 알림
+
+    private List<Comment> comments;
 
     public PostDto(String content, String tag, int i, LocalDateTime now, boolean b, Object o, Object o1) {
     }
