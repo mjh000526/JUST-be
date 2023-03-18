@@ -50,10 +50,7 @@ public class Post {
     @JsonIgnore
     private Member member;
 
-
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-
     private List<Comment> comments;
 
     public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
