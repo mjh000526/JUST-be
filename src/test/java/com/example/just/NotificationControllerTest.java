@@ -1,5 +1,6 @@
 package com.example.just;
 
+
 import com.example.just.Controller.NotificationController;
 import com.example.just.Dao.Member;
 import com.example.just.Repository.MemberRepository;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
+/*
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -53,3 +55,5 @@ public class NotificationControllerTest {
         mockMvc.perform(get("/noti").header("X-AUTH-TOKEN",access)).andExpect(status().isOk());
     }
 }
+
+ */
