@@ -1,5 +1,6 @@
 package com.example.just;
 
+/*
 
 import com.example.just.Controller.NotificationController;
 import com.example.just.Dao.Member;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-/*
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
