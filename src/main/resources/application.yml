@@ -1,0 +1,50 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함
+  jackson:
+    default-property-inclusion: non-null
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3306/just?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: gktkaehd
+    #password: admin
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 55ec14b78e17e978a4a3b64971060784
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            client-authentication-method: POST
+            client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+            authorization-grant-type: authorization_code
+            scope:
+              - account_email
+              - profile_nickname
+            client_name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true # DDL ?? ??
+    open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        use-new-id-generator-mappings: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        enable_lazy_load_no_trans: true # LAZY ??? default? ??
+jwt:
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+  #VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk
