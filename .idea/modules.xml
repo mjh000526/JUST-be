@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/JUST-be.iml" filepath="$PROJECT_DIR$/.idea/JUST-be.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/just.iml" filepath="$PROJECT_DIR$/.idea/modules/just.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/just.main.iml" filepath="$PROJECT_DIR$/.idea/modules/just.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/just.test.iml" filepath="$PROJECT_DIR$/.idea/modules/just.test.iml" />
     </modules>
   </component>
 </project>
