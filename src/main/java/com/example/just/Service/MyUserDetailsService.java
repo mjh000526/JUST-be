@@ -18,7 +18,6 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String Id) throws UsernameNotFoundException {
         Long member_Id = Long.parseLong(Id);
         Member member = memberRepository.findById(member_Id).get();
-
         if(member==null){
             return null;
         }
