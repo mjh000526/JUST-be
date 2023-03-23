@@ -26,6 +26,4 @@ public class KaKaoController {
         return "kakaoCI/login";
     }
 
-
-
 }
