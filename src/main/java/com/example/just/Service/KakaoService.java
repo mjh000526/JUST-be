@@ -45,7 +45,7 @@ public class KakaoService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
-            sb.append("&redirect_uri=http://localhost:8080/member/kakao");
+            sb.append("&redirect_uri=http://localhost:8080/api/kakao");
             sb.append("&code="+code);
             bw.write(sb.toString());
             bw.flush();
@@ -77,7 +77,8 @@ public class KakaoService {
                 userRepository.save(userbyEmail);
             }
             token = access_token;
-            m.put("id",userbyEmail.getId().toString());
+            m.put("user_id",userbyEmail.getId().toString());
+            m.put("email",userbyEmail.getEmail());
             br.close();
             bw.close();
         }catch (IOException e){

@@ -33,7 +33,6 @@ public class JwtProvider implements AuthenticationProvider {
     @Value("${spring:jwt:secret}")
     private String SECRET_KEY;
 
-    @Value("${group:name}")
     private String ISSUER;
 
     private Algorithm getSignKey(String secretKey){
@@ -43,13 +42,24 @@ public class JwtProvider implements AuthenticationProvider {
     //액세스로부터 id
     public String getIdFromToken(String token){
         DecodedJWT verifiedToken = validateToken(token);
-        return verifiedToken.getClaim("id").asString();
+        return verifiedToken.getClaim("user_id").asString();
+    }
+
+    //액세스로부터 email
+    public String getEmailFromToken(String token){
+        DecodedJWT verifiedToken = validateToken(token);
+        return verifiedToken.getClaim("email").asString();
     }
 
     //리프레시로부터 id
     public String getIdFromRefreshToken (String token){
         DecodedJWT verifiedToken = validateRefreshToken(token);
         return verifiedToken.getClaim("id").asString();
+    }
+    //리프레시로부터 email
+    public String getEmailFromRefreshToken(String token){
+        DecodedJWT verifiedToken = validateToken(token);
+        return verifiedToken.getClaim("email").asString();
     }
 
     private JWTVerifier getTokenValidator(){
@@ -79,7 +89,6 @@ public class JwtProvider implements AuthenticationProvider {
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + expireTime))
                 .withPayload(payload)
-                .withIssuer(ISSUER)
                 .sign(getSignKey(SECRET_KEY));
     }
 

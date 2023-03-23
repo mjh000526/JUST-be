@@ -20,9 +20,7 @@ public class MemberService {
 
     public ResponseEntity<BasicResponse> join(MemberDto memberDto) {
         Member member = memberMapper.toEntity(memberDto);
-
         memberRepository.save(member);
-
         BasicResponse basicResponse = BasicResponse.builder()
                 .code(HttpStatus.OK.value())
                 .httpStatus(HttpStatus.OK)
