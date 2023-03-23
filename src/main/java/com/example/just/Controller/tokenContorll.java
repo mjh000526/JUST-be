@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api")
 public class tokenContorll {
     @Autowired
     KakaoService ks;
