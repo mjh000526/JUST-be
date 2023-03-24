@@ -19,17 +19,17 @@ public class QBlame extends EntityPathBase<Blame> {
 
     public static final QBlame blame = new QBlame("blame");
 
-    public final DateTimePath<java.util.Date> blame_datetime = createDateTime("blame_datetime", java.util.Date.class);
+    public final DateTimePath<java.util.Date> blameDatetime = createDateTime("blameDatetime", java.util.Date.class);
 
-    public final NumberPath<Long> blame_id = createNumber("blame_id", Long.class);
+    public final NumberPath<Long> blameId = createNumber("blameId", Long.class);
 
-    public final NumberPath<Long> blame_member_id = createNumber("blame_member_id", Long.class);
+    public final NumberPath<Long> blameMemberId = createNumber("blameMemberId", Long.class);
 
-    public final NumberPath<Long> target_id = createNumber("target_id", Long.class);
+    public final NumberPath<Long> targetId = createNumber("targetId", Long.class);
 
-    public final NumberPath<Long> target_member_id = createNumber("target_member_id", Long.class);
+    public final NumberPath<Long> targetMemberId = createNumber("targetMemberId", Long.class);
 
-    public final NumberPath<Integer> target_type = createNumber("target_type", Integer.class);
+    public final StringPath targetType = createString("targetType");
 
     public QBlame(String variable) {
         super(Blame.class, forVariable(variable));

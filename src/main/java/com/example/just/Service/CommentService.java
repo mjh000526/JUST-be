@@ -46,6 +46,7 @@ public class CommentService {
         comment.setMember(member);
         comment.setParent(parentComment);
         comment.setComment_create_time(LocalDateTime.now());
+        comment.setBlamedCount(0);
 
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
