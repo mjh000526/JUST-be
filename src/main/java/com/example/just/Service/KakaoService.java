@@ -73,6 +73,8 @@ public class KakaoService {
                         .email(user.getEmail())
                         .provider(user.getProvider())
                         .role(Role.ROLE_USER)
+                        .blameCount(0)
+                        .blamedCount(0)
                         .build();
                 userRepository.save(userbyEmail);
             }

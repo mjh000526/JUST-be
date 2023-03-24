@@ -60,7 +60,7 @@ public class PostService {
                 postDto.getPost_tag(), postDto.getPost_like(),
                 postDto.getPost_create_time(), postDto.isSecret(),
                 postDto.getEmoticon(), postDto.getPost_category(),
-                member);
+                member,0);
 
         postRepository.save(post);
 
