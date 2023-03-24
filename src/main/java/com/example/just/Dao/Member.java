@@ -31,8 +31,16 @@
 
       private String provider;
 
+      //신고받은횟수
+      @Column(name = "blamed_count")
+      private int blamedCount;
+      //신고한 횟수
+      @Column(name = "blame_count")
+      private int blameCount;
 
-    @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
+
+
+      @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
     @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();
@@ -61,6 +69,12 @@
       }
 
 
+      public void addBlamed(){
+          blamedCount++;
+      }
+      public void addBlame(){
+          blameCount++;
+      }
 
       @OneToMany(mappedBy = "member")   //알림
       private List<Notification> notifications;

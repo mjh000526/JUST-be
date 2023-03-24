@@ -20,6 +20,10 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final NumberPath<Integer> blameCount = createNumber("blameCount", Integer.class);
+
+    public final NumberPath<Integer> blamedCount = createNumber("blamedCount", Integer.class);
+
     public final DateTimePath<java.sql.Timestamp> createTime = createDateTime("createTime", java.sql.Timestamp.class);
 
     public final StringPath email = createString("email");
