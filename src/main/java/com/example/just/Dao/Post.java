@@ -53,8 +53,11 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @Column(name = "blamed_count")
+    private int blamedCount;
+
     public Post(String post_content, String post_tag, Long post_like, LocalDateTime post_create_time,
-                boolean secret, String emoticon, Long post_category, Member member) {
+                boolean secret, String emoticon, Long post_category, Member member,int blamedCount) {
         this.post_content = post_content;
         this.post_tag = post_tag;
         this.post_like = post_like;
@@ -63,6 +66,7 @@ public class Post {
         this.emoticon = emoticon;
         this.post_category = post_category;
         this.member = member;
+        this.blamedCount = blamedCount;
         this.member.updateMember(this);
     }
 
@@ -92,5 +96,8 @@ public class Post {
             member.getLikedPosts().remove(this);
             post_like--;
         }
+    }
+    public void addBlamed(){
+        blamedCount++;
     }
 }

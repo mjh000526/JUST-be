@@ -52,5 +52,11 @@ public class Comment {
     @JsonIgnore
     private List<Comment> children = new ArrayList<>(); //해당 댓글의 자식 댓글들
 
+    @Column(name = "blamed_count")
+    private int blamedCount;
+
+    public void addBlamed(){
+        blamedCount++;
+    }
 
 }
