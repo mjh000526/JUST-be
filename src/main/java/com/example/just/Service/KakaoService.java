@@ -79,7 +79,8 @@ public class KakaoService {
                 userRepository.save(userbyEmail);
             }
             token = access_token;
-            m.put("id",userbyEmail.getId().toString());
+            m.put("user_id",userbyEmail.getId().toString());
+            m.put("email",userbyEmail.getEmail());
             br.close();
             bw.close();
         }catch (IOException e){

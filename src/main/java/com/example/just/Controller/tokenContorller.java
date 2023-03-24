@@ -13,7 +13,11 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
+<<<<<<< HEAD:src/main/java/com/example/just/Controller/tokenContorller.java
 public class tokenContorller {
+=======
+public class tokenContorll {
+>>>>>>> develop:src/main/java/com/example/just/Controller/tokenContorll.java
     @Autowired
     KakaoService ks;
 
