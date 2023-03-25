@@ -26,6 +26,9 @@ public class Post {
     @Column(name = "post_tag")  //글 태그
     private String post_tag;
 
+    @Column(name = "post_picture")
+    private String post_picture;
+
     @Column(name = "post_create_time")  //글 생성 시간
     private LocalDateTime post_create_time;
 
