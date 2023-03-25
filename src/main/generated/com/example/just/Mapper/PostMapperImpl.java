@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-21T16:28:32+0900",
+    date = "2023-03-25T21:16:04+0900",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
@@ -27,6 +27,7 @@ public class PostMapperImpl implements PostMapper {
         post.setPost_id( dto.getPost_id() );
         post.setPost_content( dto.getPost_content() );
         post.setPost_tag( dto.getPost_tag() );
+        post.setPost_picture( dto.getPost_picture() );
         post.setPost_create_time( dto.getPost_create_time() );
         post.setPost_like( dto.getPost_like() );
         post.setSecret( dto.isSecret() );
@@ -53,6 +54,7 @@ public class PostMapperImpl implements PostMapper {
         postDto.setPost_content( entity.getPost_content() );
         postDto.setPost_tag( entity.getPost_tag() );
         postDto.setPost_like( entity.getPost_like() );
+        postDto.setPost_picture( entity.getPost_picture() );
         postDto.setPost_create_time( entity.getPost_create_time() );
         postDto.setSecret( entity.isSecret() );
         postDto.setEmoticon( entity.getEmoticon() );
