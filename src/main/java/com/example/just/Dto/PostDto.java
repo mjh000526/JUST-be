@@ -31,6 +31,8 @@ public class PostDto {
 
     private Long post_like; //공감 회수
 
+    private String post_picture;
+
     private LocalDateTime post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
