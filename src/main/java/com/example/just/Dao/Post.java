@@ -31,10 +31,7 @@ public class Post {
 
     @Column(name = "post_create_time")  //글 생성 시간
     private LocalDateTime post_create_time;
-
-    @Column(name = "postpostpost")
-    private String test;
-
+    
     @Column(name = "post_like") // 좋아요 개수
     private Long post_like;
 
