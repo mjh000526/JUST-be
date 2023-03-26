@@ -32,6 +32,11 @@ public class MemberDto {
 
     private Role role;
 
+    private int blamedCount;
+    //신고한 횟수
+
+    private int blameCount;
+
     private List<Post> likedPosts = new ArrayList<>();
 
     private List<Post> posts = new ArrayList<>();
