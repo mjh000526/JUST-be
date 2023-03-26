@@ -6,7 +6,7 @@ spring:
     default-property-inclusion: non-null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3307/just?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3307/just?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
     password: gktkaehd
     #url: jdbc:mysql://localhost:3306/tomorrow?serverTimezone=UTC&characterEncoding=UTF-8
