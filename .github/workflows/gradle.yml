@@ -30,13 +30,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Setup MySQL
-        uses: samin/mysql-action@v1
+      - uses: samin/mysql-action@v1
         with:
+          host: 'megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com'
+          port: 3307
           character set server: 'utf8'
-          mysql database: 'megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com'
-          mysql user: 'samin'
-          mysql password: 'gktkaehd' # github Secret 탭에서 설정하세요!
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0.31'
+          mysql database: 'just'
+          mysql root password: 'gktkaehd'
+          mysql user: 'admin'
+          mysql password: 'gktkaehd'
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
