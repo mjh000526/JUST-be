@@ -37,11 +37,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      # application.yml 파일 복사
-      - name: Copy application.yml
-        env:
-          APPLICATION_YML_FILE: ${{ secrets.APPLICATION_YML }}
-        run: echo $APPLICATION_YML_FILE | base64 --decode > src/main/resources/application.yml
+      - name: create application.yml
+        run: echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
 
 
       - name: Build with Gradle
