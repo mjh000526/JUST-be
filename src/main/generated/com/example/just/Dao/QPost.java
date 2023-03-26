@@ -48,8 +48,6 @@ public class QPost extends EntityPathBase<Post> {
 
     public final BooleanPath secret = createBoolean("secret");
 
-    public final StringPath test = createString("test");
-
     public QPost(String variable) {
         this(Post.class, forVariable(variable), INITS);
     }
