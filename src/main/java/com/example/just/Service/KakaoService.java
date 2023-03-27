@@ -30,62 +30,21 @@ public class KakaoService {
     @Autowired
     JwtProvider jwtProvider;
 
-    //카카오 코드로 카카오로부터 토큰발급
-    public ResponseEntity getToken(String code) throws IOException{
-        String host = "https://kauth.kakao.com/oauth/token";
-        URL url = new URL(host);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        String token="";
+    //카카오 토큰으로 카카오로부터 토큰발급(로그인)
+    public ResponseEntity loginKakao(String accessToken) throws IOException{
         HashMap<String,String> m = new HashMap<>();
         try{
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setDoOutput(true);
-
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
-            sb.append("&redirect_uri=http://localhost:8080/api/kakao");
-            sb.append("&code="+code);
-            bw.write(sb.toString());
-            bw.flush();
-
-            int responseCode = urlConnection.getResponseCode();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line ="";
-            String result ="";
-            while ((line= br.readLine())!=null){
-                result+=line;
-            }
-
-            //제이슨파싱 - 카카오토큰받기기
-            JSONParser parser = new JSONParser();
-            JSONObject elem = (JSONObject) parser.parse(result);
-            String access_token = elem.get("access_token").toString();
-
             //카카오토큰으로
-            MemberDto user = getKakaoUser(access_token);
+            MemberDto user = getKakaoUser(accessToken);
             Member userbyEmail = userRepository.findByEmail(user.getEmail());
 
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
-                userbyEmail = Member.builder()
-                        .email(user.getEmail())
-                        .provider(user.getProvider())
-                        .role(Role.ROLE_USER)
-                        .blameCount(0)
-                        .blamedCount(0)
-                        .build();
-                userRepository.save(userbyEmail);
+                return new ResponseEntity<>("/api/kakao/signup", HttpStatus.OK);
             }
-            token = access_token;
             m.put("user_id",userbyEmail.getId().toString());
             m.put("email",userbyEmail.getEmail());
-            br.close();
-            bw.close();
         }catch (IOException e){
-            e.printStackTrace();
-        }catch (ParseException e){
             e.printStackTrace();
         }
         //jwt토큰생성
@@ -93,9 +52,37 @@ public class KakaoService {
         String refreshtoken = jwtProvider.generateRefreshToken(m);
         return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
     }
+
+    //카카오 토큰으로 회원가입
+    public ResponseEntity signUpKakao(String accessToken, String nickname){
+        HashMap<String,String> m = new HashMap<>();
+        try{
+            MemberDto user = getKakaoUser(accessToken);
+            Member userbyEmail = Member.builder()
+                    .email(user.getEmail())
+                    .provider(user.getProvider())
+                    .provider_id(user.getProvider_id())
+                    .role(Role.ROLE_USER)
+                    .nickname(nickname)
+                    .blameCount(0)
+                    .blamedCount(0)
+                    .build();
+            userRepository.save(userbyEmail);
+            m.put("user_id",userbyEmail.getId().toString());
+            m.put("email",userbyEmail.getEmail());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        //jwt토큰생성
+        String accesstoken = jwtProvider.generateToken(m);
+        String refreshtoken = jwtProvider.generateRefreshToken(m);
+        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+
+    }
     //카카오토큰 페이로드
     public MemberDto getKakaoUser(String token) throws IOException{
         String host = "https://kapi.kakao.com/v2/user/me";
+        String id;
         String email = "";
         MemberDto user = null;
         //access_token을 이용해 사용자 정보 조회
@@ -119,8 +106,9 @@ public class KakaoService {
             //userDto 생성후 리턴
             JsonParser parser = new JsonParser();
             JsonElement elem = parser.parse(result);
+            id = elem.getAsJsonObject().get("id").getAsString();
             email = elem.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            user = MemberDto.builder().email(email).provider("kakao").build();
+            user = MemberDto.builder().provider_id(id).email(email).provider("kakao").build();
             br.close();
         }catch (IOException e){
             e.printStackTrace();

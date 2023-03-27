@@ -32,11 +32,15 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<Post, QPost> likedPosts = this.<Post, QPost>createList("likedPosts", Post.class, QPost.class, PathInits.DIRECT2);
 
+    public final StringPath nickname = createString("nickname");
+
     public final ListPath<Notification, QNotification> notifications = this.<Notification, QNotification>createList("notifications", Notification.class, QNotification.class, PathInits.DIRECT2);
 
     public final ListPath<Post, QPost> posts = this.<Post, QPost>createList("posts", Post.class, QPost.class, PathInits.DIRECT2);
 
     public final StringPath provider = createString("provider");
+
+    public final StringPath provider_id = createString("provider_id");
 
     public final EnumPath<Role> role = createEnum("role", Role.class);
 

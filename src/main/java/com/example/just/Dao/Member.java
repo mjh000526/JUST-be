@@ -31,6 +31,9 @@
 
       private String provider;
 
+      private String provider_id;
+      private String nickname;
+
       //신고받은횟수
       @Column(name = "blamed_count")
       private int blamedCount;
@@ -41,17 +44,17 @@
 
 
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
-    @OneToMany(mappedBy = "member")
-    @JsonIgnore
-    private List<Post> posts = new ArrayList<>();
-    @Builder.Default
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
+      @OneToMany(mappedBy = "member")
+      @JsonIgnore
+      private List<Post> posts = new ArrayList<>();
+      @Builder.Default
+      @ManyToMany(cascade = CascadeType.ALL)
+      @JoinTable(
             name = "post_like",
             joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    private List<Post> likedPosts = new ArrayList<>();
+      )
+      private List<Post> likedPosts = new ArrayList<>();
 
 
       public void addLikedPost(Post post) {
