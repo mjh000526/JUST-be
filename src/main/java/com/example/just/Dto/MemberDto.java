@@ -31,6 +31,7 @@ public class MemberDto {
     private String provider;
 
     private Role role;
+    private String provider_id;
 
     private int blamedCount;
     //신고한 횟수
