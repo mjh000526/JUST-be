@@ -5,14 +5,13 @@ import com.example.just.Service.KakaoService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
-public class tokenContorller {
+public class MemberContorller {
     @Autowired
     KakaoService ks;
     @Autowired
