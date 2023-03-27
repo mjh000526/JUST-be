@@ -24,13 +24,13 @@ public class MemberContorller {
 
     @PostMapping("/kakao/login")
     @ApiOperation(value = "카카오 로그인 api", notes = "액세스토큰만 넘기기, 회원가입이 안되어있으면 /api/kakao/signup를 string로 리턴함")
-    public ResponseEntity loginKakao(@RequestParam String accessToken) throws IOException{
+    public ResponseEntity loginKakao(@RequestParam String accessToken){
         return ks.loginKakao(accessToken);
     }
 
     @PostMapping("/kakao/signup")
     @ApiOperation(value = "카카오 회원가입 api", notes = "닉네임이랑 액세스토큰 같이 넘기기")
-    public ResponseEntity signUpKakao(@RequestParam String accessToken,@RequestParam String nickName) throws IOException{
+    public ResponseEntity signUpKakao(@RequestParam String accessToken,@RequestParam String nickName){
         return ks.signUpKakao(accessToken,nickName);
     }
 
@@ -42,7 +42,7 @@ public class MemberContorller {
 
     @PostMapping("/apple/signup")
     @ApiOperation(value = "애플 회원가입 api", notes = "고유id값, email값, 닉네임 값을 파라미터로 줘야함 email값이 null이어도 보내줘야함")
-    public ResponseEntity signUpApple(@RequestParam String id,@RequestParam String email,@RequestParam String nickname) throws IOException{
+    public ResponseEntity signUpApple(@RequestParam String id,@RequestParam String email,@RequestParam String nickname){
         return as.signUpApple(id,email,nickname);
     }
 }
