@@ -24,7 +24,7 @@ public class MemberContorller {
 
     @PostMapping("/kakao/login")
     @ApiOperation(value = "카카오 로그인 api", notes = "액세스토큰만 넘기기, 회원가입이 안되어있으면 /api/kakao/signup를 string로 리턴함")
-    public ResponseEntity loginKakao(@RequestParam String accessToken){
+    public ResponseEntity loginKakao(@RequestParam String accessToken) throws IOException{
         return ks.loginKakao(accessToken);
     }
 
