@@ -1,19 +1,63 @@
-pring:
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함
+  jackson:
+    default-property-inclusion: non-null
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3307/just?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: gktkaehd
+    #url: jdbc:mysql://localhost:3306/oauthtest?serverTimezone=UTC&characterEncoding=UTF-8
+    #username: root
+    #password: admin
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 55ec14b78e17e978a4a3b64971060784
+            redirect-uri: http://localhost:8080/api/kakao
+            client-authentication-method: POST
+            client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+            authorization-grant-type: authorization_code
+            scope:
+              - account_email
+              - profile_nickname
+            client_name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true # DDL ?? ??
+    open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        use-new-id-generator-mappings: true
     properties:
       hibernate:
-        #        show_sql: true
+        show_sql: true
         format_sql: true
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
+        enable_lazy_load_no_trans: true # LAZY ??? default? ??
+jwt:
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+  #VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk
+cloud:
+  aws:
+    credentials:
+      instance-profile: false
+      access-key: AKIAZIZFTLINX4ZS7KX7
+      secret-key: 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
+    region:
+      auto: false
+      static: ap-northeast-2
+    stack:
+      auto: false
