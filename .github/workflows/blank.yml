@@ -1,8 +1,11 @@
 name: Deploy to Amazon EC2
 
-on:
-  push:
-    branches:
+on: # 이벤트 트리거
+  push: #push 이벤트 발생시
+    branches: #어떤 브랜치에서
+      - develop
+  pull_request: #pull_request 발생시
+    branches: #어떤 브랜치에서
       - develop
 
 # 본인이 설정한 값을 여기서 채워넣습니다.
