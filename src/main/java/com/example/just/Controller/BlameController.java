@@ -14,7 +14,7 @@ public class BlameController {
     @Autowired
     private BlameService blameService;
 
-    @ApiOperation(value = "게시글 신고 API")
+    @ApiOperation(value = "게시글 신고 API" ,notes = "헤더에서 액세스줄떄 access_token으로 주기")
     @PostMapping(value = "/blame/post/{target_post_id}")
     public ResponseEntity writepostBlame(HttpServletRequest request, @PathVariable Long target_post_id){
         return blameService.writeBlame(request,target_post_id,"post");
