@@ -33,6 +33,14 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: 'just'
+          mysql user: 'admin'
+          mysql password: 'gktkaehd'
+
       # (3) Gradle build (Test 제외)
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
