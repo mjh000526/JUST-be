@@ -9,8 +9,6 @@ spring:
     url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3307/just?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
     password: gktkaehd
-    validation-query: SELECT 1
-    validation-query-timeout: 380000
     #url: jdbc:mysql://localhost:3306/oauthtest?serverTimezone=UTC&characterEncoding=UTF-8
     #username: root
     #password: admin
