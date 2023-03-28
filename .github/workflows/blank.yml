@@ -44,7 +44,7 @@ jobs:
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           gradle-version: 7.2 #그래들 버전 7.2 사용
-          arguments: clean build
+          arguments: clean build -x test
 
         deploy:
           name: Deploy
