@@ -17,10 +17,9 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       # (1) 기본 체크아웃
@@ -38,7 +37,14 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
+          gradle-version: 7.2 #그래들 버전 7.2 사용
           arguments: clean build -x test
+
+        deploy:
+          name: Deploy
+          runs-on: ubuntu-latest
+          needs: build
+          environment: production
 
       # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
