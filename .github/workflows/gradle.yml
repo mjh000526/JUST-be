@@ -31,12 +31,6 @@ jobs: #작업을 정의
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Set YML
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
-          find src
-
       - name: Build with Gradle #Gradle이용하여 빌드
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
