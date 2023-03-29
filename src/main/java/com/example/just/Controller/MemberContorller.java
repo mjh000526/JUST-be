@@ -46,7 +46,7 @@ public class MemberContorller {
 
     @PostMapping("/apple/signup")
     @ApiOperation(value = "애플 회원가입 api", notes = "identify token값 닉네임 값을 파라미터로 줘야함 null이어도 보내줘야함")
-    public ResponseEntity signUpApple(@RequestParam String idToken,@RequestParam String nickname){
+    public ResponseEntity signUpApple(@RequestParam String idToken,@RequestParam String nickName){
         return appleService.signUpApple(idToken,nickName);
     }
 
