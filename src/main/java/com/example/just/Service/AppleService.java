@@ -46,6 +46,7 @@ public class AppleService {
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
         Member user = userRepository.findByEmail(apple_email);
         if(user == null){
+            System.out.println("아이디없음");
             return new ResponseEntity<>("/api/apple/signup", HttpStatus.OK);
         }
         HashMap<String,String> m = new HashMap<>();
