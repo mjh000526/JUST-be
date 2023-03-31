@@ -129,7 +129,7 @@ public class KakaoService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=2aad40910868e3c5fa9594f8de34a07b");
-            sb.append("&redirect_uri=http://43.201.174.163/kakao/testLogin");
+            sb.append("&redirect_uri=http://43.201.174.163:8080/api/kakao/loginTest");
             sb.append("&code=" + code);
 
             bw.write(sb.toString());

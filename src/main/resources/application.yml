@@ -18,7 +18,7 @@ spring:
         registration:
           kakao:
             client-id: 55ec14b78e17e978a4a3b64971060784
-            redirect-uri: http://43.201.174.163:8080/kakao/testLogin
+            redirect-uri: http://43.201.174.163:8080/api/kakao/loginTest
             client-authentication-method: POST
             client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
             authorization-grant-type: authorization_code
