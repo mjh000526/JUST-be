@@ -23,7 +23,7 @@ public class KaKaoController {
         return "kakaoCI/login";
     }
 
-    @PostMapping("/kakao/loginTest")
+    @GetMapping("/kakao/loginTest")
     @ApiOperation(value = "카카오 로그인 실행",notes = "이건 직접호출할 필요없이 member/do로 버튼누르면 실행됨")
     public ResponseEntity testLogin(@RequestParam String code,Model model) throws IOException {
         String token = ks.getToken(code);
