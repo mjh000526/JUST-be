@@ -1,6 +1,9 @@
 package com.example.just.jwt;
 
+import com.example.just.Dao.Member;
+import com.example.just.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +19,11 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    @Autowired
     private final JwtProvider jwtProvider;
+
+    @Autowired
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -28,6 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         accessToken = request.getHeader("accessToken");
         System.out.println("accesstoken:" + accessToken);
         if(accessToken==null||jwtProvider.isTokenExpired(accessToken)){ //액세스토큰이 없거나 만료될 경우
+            String email = jwtProvider.getEmailFromToken(accessToken);
+            Member member = memberRepository.findByEmail(email);
             refreshToken = request.getHeader("refreshToken");
             if(refreshToken==null||jwtProvider.isRefreshTokenExpired(refreshToken)){//리프레시토큰이 없거나 만료될 경우
                 System.out.println("refreshtoken:"+refreshToken);
