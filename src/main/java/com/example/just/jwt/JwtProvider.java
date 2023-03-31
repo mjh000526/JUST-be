@@ -27,7 +27,7 @@ public class JwtProvider implements AuthenticationProvider {
 
 
     private final MyUserDetailsService myUserDetailsService;
-    public final long AccessTokenTime = (1000*60)*60;//액세스60분
+    public final long AccessTokenTime = (1000*60)*60*24*30;//액세스60분*24시간*30일
     public final long RefreshTokenTime = (1000*60)*120;//액세스120분
 
     @Value("${spring:jwt:secret}")
