@@ -128,7 +128,7 @@ public class KakaoService {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=2aad40910868e3c5fa9594f8de34a07b");
+            sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
             sb.append("&redirect_uri=http://43.201.174.163:8080/api/kakao/loginTest");
             sb.append("&code=" + code);
 
