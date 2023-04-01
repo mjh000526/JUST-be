@@ -1,19 +1,47 @@
 package com.example.just.Config;
 
 import com.example.just.Service.KakaoService;
+import com.example.just.jwt.JwtAccessDeniedHandler;
+import com.example.just.jwt.JwtAuthenticationEntryPoint;
+import com.example.just.jwt.JwtProvider;
+import com.example.just.jwt.JwtSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private KakaoService kakaoService;
+    @Autowired
+    private final JwtProvider jwtProvider;
+    @Autowired
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    public SecurityConfig(
+            JwtProvider jwtProvider,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            JwtAccessDeniedHandler jwtAccessDeniedHandler
+    ){
+        this.jwtProvider = jwtProvider;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
         return (web -> web.ignoring().antMatchers("/api/**"));
@@ -23,18 +51,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-
-        http.authorizeRequests()
-                .antMatchers("/user/**").authenticated()
-                .antMatchers("/manager/**").access("hasRole('ROLE_MANAGER') or hasRole('ADMIN')")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().permitAll()
-                .and()					//추가
-                .oauth2Login()				// OAuth2기반의 로그인인 경우
-                .loginPage("/loginForm")		// 인증이 필요한 URL에 접근하면 /loginForm으로 이동
-                .defaultSuccessUrl("/")			// 로그인 성공하면 "/" 으로 이동
-                .failureUrl("/loginForm")		// 로그인 실패 시 /loginForm으로 이동
-                .userInfoEndpoint();			// 로그인 성공 후 사용자정보를 가져온다
+        http.csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/test/**").hasRole("USER")
+                .anyRequest().authenticated()
+                .and()
+                .apply(new JwtSecurityConfig(jwtProvider));
+                //.anyRequest().permitAll()
     }
 }

@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class KakaoService {
@@ -31,52 +33,62 @@ public class KakaoService {
     JwtProvider jwtProvider;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
-    public ResponseEntity loginKakao(String accessToken) throws IOException{
-        HashMap<String,String> m = new HashMap<>();
+    public ResponseEntity loginKakao(String token) throws IOException{
+        String accessToken = null;
+        String refreshToken = null;
+        Member userbyEmail = null;
         try{
             //카카오토큰으로
-            MemberDto user = getKakaoUser(accessToken);
-            Member userbyEmail = userRepository.findByEmail(user.getEmail());
+            MemberDto user = getKakaoUser(token);
+            userbyEmail = userRepository.findByEmail(user.getEmail());
 
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 return new ResponseEntity<>("/api/kakao/signup", HttpStatus.OK);
             }
-            m.put("user_id",userbyEmail.getId().toString());
-            m.put("email",userbyEmail.getEmail());
         }catch (IOException e){
             e.printStackTrace();
         }
         //jwt토큰생성
-        String accesstoken = jwtProvider.generateToken(m);
-        String refreshtoken = jwtProvider.generateRefreshToken(m);
-        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+        accessToken = jwtProvider.createaccessToken(userbyEmail);
+        refreshToken = jwtProvider.createRefreshToken(userbyEmail);
+        return new ResponseEntity<>(new TokenDto(accessToken,refreshToken), HttpStatus.OK);
     }
 
     //카카오 토큰으로 회원가입
-    public ResponseEntity signUpKakao(String accessToken, String nickname){
-        HashMap<String,String> m = new HashMap<>();
+    public ResponseEntity signUpKakao(String token, String nickname){
+        String accesstoken = null;
+        String refreshtoken = null;
+        Member userbyEmail = null;
         try{
-            MemberDto user = getKakaoUser(accessToken);
-            Member userbyEmail = Member.builder()
-                    .email(user.getEmail())
-                    .provider(user.getProvider())
-                    .provider_id(user.getProvider_id())
-                    .role(Role.ROLE_USER)
-                    .nickname(nickname)
-                    .blameCount(0)
-                    .blamedCount(0)
-                    .build();
-            userRepository.save(userbyEmail);
-            m.put("user_id",userbyEmail.getId().toString());
-            m.put("email",userbyEmail.getEmail());
+            //카카오토큰으로
+            MemberDto user = getKakaoUser(token);
+            userbyEmail = userRepository.findByEmail(user.getEmail());
+
+            //DB에 없는 사용자라면 회원가입 처리
+            if(userbyEmail == null){
+                userbyEmail = Member.builder()
+                        .email(user.getEmail())
+                        .provider(user.getProvider())
+                        .provider_id(user.getProvider_id())
+                        .authority(Role.ROLE_USER)
+                        .nickname(nickname)
+                        .blameCount(0)
+                        .blamedCount(0)
+                        .refreshToken(null)
+                        .build();
+                userRepository.save(userbyEmail);
+                accesstoken = jwtProvider.createaccessToken(userbyEmail);
+                refreshtoken = jwtProvider.createRefreshToken(userbyEmail);
+                userbyEmail.setRefreshToken(refreshtoken);
+                userRepository.save(userbyEmail);
+                return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+            }
         }catch (IOException e){
             e.printStackTrace();
         }
         //jwt토큰생성
-        String accesstoken = jwtProvider.generateToken(m);
-        String refreshtoken = jwtProvider.generateRefreshToken(m);
-        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+        return new ResponseEntity<>("이미 회원가입되어있는 유저입니다.", HttpStatus.OK);
 
     }
     //카카오토큰 페이로드
@@ -164,8 +176,31 @@ public class KakaoService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
         return token;
+    }
+    //닉네임 변경
+    public ResponseEntity changeNickname(HttpServletRequest request,String nickname){
+        String token = jwtProvider.getAccessToken(request);
+        String id = jwtProvider.getIdFromToken(token);
+        Member member = userRepository.findById(Long.valueOf(id)).get();
+        if(member.getNickname().equals(nickname)) return new ResponseEntity<>("이미 같은 닉네임",HttpStatus.OK);
+        Member saveMember = Member.builder()
+                .id(member.getId())
+                .authority(member.getAuthority())
+                .blamedCount(member.getBlamedCount())
+                .blameCount(member.getBlameCount())
+                .createTime(member.getCreateTime())
+                .email(member.getEmail())
+                .provider_id(member.getProvider_id())
+                .provider(member.getProvider())
+                .refreshToken(member.getRefreshToken())
+                .nickname(nickname).build();
+        userRepository.save(saveMember);
+        return new ResponseEntity<>("닉네임 변경",HttpStatus.OK);
+    }
+    //멤버조회(테스트용)
+    public ResponseEntity info(){
+        List<Member> list = userRepository.findAll();
+        return new ResponseEntity<>(list,HttpStatus.OK);
     }
 }

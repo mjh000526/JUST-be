@@ -20,6 +20,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final EnumPath<Role> authority = createEnum("authority", Role.class);
+
     public final NumberPath<Integer> blameCount = createNumber("blameCount", Integer.class);
 
     public final NumberPath<Integer> blamedCount = createNumber("blamedCount", Integer.class);
@@ -42,7 +44,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath provider_id = createString("provider_id");
 
-    public final EnumPath<Role> role = createEnum("role", Role.class);
+    public final StringPath refreshToken = createString("refreshToken");
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

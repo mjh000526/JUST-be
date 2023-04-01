@@ -6,9 +6,11 @@ import com.example.just.Service.MemberService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @RestController
@@ -21,10 +23,6 @@ public class MemberContorller {
     @Autowired
     MemberService memberService;
 
-    @GetMapping("/info")
-    public void getInfo(@RequestParam String token) throws IOException {
-        kakaoService.getKakaoUser(token);
-    }
 
     @PostMapping("/kakao/login")
     @ApiOperation(value = "카카오 로그인 api", notes = "액세스토큰만 넘기기, 회원가입이 안되어있으면 /api/kakao/signup를 string로 리턴함")
@@ -46,8 +44,15 @@ public class MemberContorller {
 
     @PostMapping("/apple/signup")
     @ApiOperation(value = "애플 회원가입 api", notes = "identify token값 닉네임 값을 파라미터로 줘야함 null이어도 보내줘야함")
-    public ResponseEntity signUpApple(@RequestParam String idToken,@RequestParam String nickName){
+    public ResponseEntity signUpApple(@RequestParam String idToken,
+                                      @RequestParam String nickName){
         return appleService.signUpApple(idToken,nickName);
+    }
+
+    @PostMapping("/nickName")
+    @ApiOperation(value = "닉네임 변경 api",notes = "같은 닉네임은 변경 안됨")
+    public ResponseEntity changeNickname(HttpServletRequest request, @RequestParam String nickName){
+        return kakaoService.changeNickname(request, nickName);
     }
 
     @PostMapping("/drop")
@@ -55,5 +60,6 @@ public class MemberContorller {
     public  ResponseEntity dropUser(HttpServletRequest request){
         return memberService.drop(request);
     }
+
 
 }
