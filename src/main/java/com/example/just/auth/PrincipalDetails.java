@@ -40,7 +40,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
             @Override
             public String getAuthority() {
                 //임의대로 변경했음
-                return member.getRole().toString();
+                return member.getAuthority().toString();
             }
         });
         return collect;

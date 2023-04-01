@@ -1,135 +1,134 @@
 package com.example.just.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.just.Service.MyUserDetailsService;
-import com.example.just.auth.PrincipalDetails;
-import lombok.RequiredArgsConstructor;
+import com.example.just.Dao.Member;
+import com.example.just.Repository.MemberRepository;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import java.sql.Ref;
+import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
-public class JwtProvider implements AuthenticationProvider {
+public class JwtProvider implements InitializingBean {
 
+    private static final String AUTHORITIES_KEY="auth";
+    @Value("${jwt.secret}")
+    private String secret;
+    private Key key;
+    private final long access_token_time = (1000 * 60) * 60 * 24 * 30L;//60분 * 24 * 30 = 30일
+    private final long refresh_token_time = (1000 * 60) * 60 * 24 *3600L;//60분 * 24*30
+    @Autowired
+    private MemberRepository memberRepository;
 
-    private final MyUserDetailsService myUserDetailsService;
-    public final long AccessTokenTime = (1000*60)*60;//액세스60분
-    public final long RefreshTokenTime = (1000*60)*120;//액세스120분
-
-    @Value("${spring:jwt:secret}")
-    private String SECRET_KEY;
-
-    private String ISSUER;
-
-    private Algorithm getSignKey(String secretKey){
-        return Algorithm.HMAC256(secretKey);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //액세스로부터 id
+
+
+    //토큰생성
+    public String createaccessToken(Member member){
+        return Jwts.builder()
+                .setSubject(String.valueOf(member.getId()))
+                .claim(AUTHORITIES_KEY, member.getAuthority())
+                .signWith(key,SignatureAlgorithm.HS512)
+                .setAudience(member.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + access_token_time))
+                .compact();
+    }
+
+    public String createRefreshToken(Member member){
+        return Jwts.builder()
+                .signWith(key,SignatureAlgorithm.HS512)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refresh_token_time))
+                .compact();
+    }
+    public boolean existsRefreshToken(String refreshtoken){
+        return memberRepository.existsByRefreshToken(refreshtoken);
+    }
+
+    //auth객체 반환
+    public Authentication getAuthentication(String token){
+        Claims claims = Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        User principal = new User(claims.getSubject(), claims.getAudience(), authorities);
+        return new UsernamePasswordAuthenticationToken(principal,token,authorities);
+    }
+    //토큰값 가져오기
+    public String getAccessToken(HttpServletRequest request){
+        if(request.getHeader("access_token")!=null){
+            System.out.println(request.getHeader("access_token"));
+            return request.getHeader("access_token");
+        }
+        return null;
+    }
+
+    public String getRefreshToken(HttpServletRequest request){
+        if(request.getHeader("refresh_token")!=null){
+            return request.getHeader("refresh_token");
+        }
+        return null;
+    }
+
+    public Member getMemberFromRefreshToken(String refreshToken){
+        return memberRepository.findByRefreshToken(refreshToken).get();
+
+    }
+
+    //토큰으로부터 id추출
     public String getIdFromToken(String token){
-        DecodedJWT verifiedToken = validateToken(token);
-        return verifiedToken.getClaim("user_id").asString();
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+        return claims.getSubject();
     }
 
-    //액세스로부터 email
+    //토큰으로부터 email추출
     public String getEmailFromToken(String token){
-        DecodedJWT verifiedToken = validateToken(token);
-        return verifiedToken.getClaim("email").asString();
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+        return claims.getAudience();
     }
 
-    //리프레시로부터 id
-    public String getIdFromRefreshToken (String token){
-        DecodedJWT verifiedToken = validateRefreshToken(token);
-        return verifiedToken.getClaim("id").asString();
-    }
-    //리프레시로부터 email
-    public String getEmailFromRefreshToken(String token){
-        DecodedJWT verifiedToken = validateToken(token);
-        return verifiedToken.getClaim("email").asString();
-    }
-
-    private JWTVerifier getTokenValidator(){
-        return JWT.require(getSignKey(SECRET_KEY))
-                .withIssuer(ISSUER)
-                .acceptExpiresAt(AccessTokenTime)
-                .build();
-    }
-
-    private JWTVerifier getRefreshTokenValidator(){
-        return JWT.require(getSignKey(SECRET_KEY))
-                .withIssuer(ISSUER)
-                .acceptExpiresAt(AccessTokenTime)
-                .build();
-    }
-
-    public String generateToken(Map<String, String> payload){
-        return doGenerateToken(AccessTokenTime,payload);
-    }
-
-    public String generateRefreshToken(Map<String, String> payload){
-        return doGenerateToken(RefreshTokenTime,payload);
-    }
-
-    public String doGenerateToken(long expireTime, Map<String, String>payload){
-        return JWT.create()
-                .withIssuedAt(new Date(System.currentTimeMillis()))
-                .withExpiresAt(new Date(System.currentTimeMillis() + expireTime))
-                .withPayload(payload)
-                .sign(getSignKey(SECRET_KEY));
-    }
-
-    private DecodedJWT validateToken(String token) throws JWTVerificationException{
-        JWTVerifier validator = getTokenValidator();
-        return validator.verify(token);
-    }
-
-    private DecodedJWT validateRefreshToken(String token) throws JWTVerificationException{
-        JWTVerifier validator = getRefreshTokenValidator();
-        return validator.verify(token);
-    }
-
-    public boolean isTokenExpired(String token){
-        try{
-            DecodedJWT decodedJWT = validateToken(token);
-            return false;
-        }catch (JWTVerificationException e){
+    //토큰파싱하고 예외처리
+    public boolean validateToken(String token){
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            System.out.println("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            System.out.println("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            System.out.println("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT 토큰이 잘못되었습니다.");
         }
-    }
-
-    public boolean isRefreshTokenExpired(String token){
-        try{
-            DecodedJWT decodedJWT = validateRefreshToken(token);
-            return false;
-        } catch(JWTVerificationException e){
-            return true;
-        }
-    }
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        PrincipalDetails user = (PrincipalDetails) myUserDetailsService.loadUserByUsername((String) authentication.getPrincipal());
-        return new UsernamePasswordAuthenticationToken(
-                user.getUsername(),
-                user.getPassword(),
-                user.getAuthorities());
-    }
-
-    @Override
-    public boolean supports(Class<?> authentication) {
         return false;
     }
 }

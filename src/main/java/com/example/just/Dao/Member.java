@@ -21,10 +21,9 @@
       private Long id;
 
       private String email;
-
       @Enumerated(EnumType.STRING)
       @Setter
-      private Role role;
+      private Role authority;
 
       @CreationTimestamp
       private Timestamp createTime;
@@ -41,8 +40,8 @@
       @Column(name = "blame_count")
       private int blameCount;
 
-
-
+      @Column(name = "refresh_token")
+      private String refreshToken;
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
       @OneToMany(mappedBy = "member")
       @JsonIgnore

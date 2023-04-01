@@ -9,7 +9,7 @@ public class Details extends User {
 
     public Details(Member member) {
         super(member.getId().toString(), member.getEmail(),
-                AuthorityUtils.createAuthorityList(String.valueOf(member.getRole())));
+                AuthorityUtils.createAuthorityList(String.valueOf(member.getAuthority())));
     }
 
 }

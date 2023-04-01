@@ -38,7 +38,7 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
 
-        Member member = memberRepository.findById(member_id).orElseGet(Member::new);
+        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
 
         Comment comment = new Comment();
         comment.setComment_content(commentDto.getComment_content());

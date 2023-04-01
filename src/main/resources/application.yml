@@ -38,7 +38,7 @@ spring:
     generate-ddl: true # DDL ?? ??
     open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         use-new-id-generator-mappings: true
@@ -48,8 +48,9 @@ spring:
         format_sql: true
         enable_lazy_load_no_trans: true # LAZY ??? default? ??
 jwt:
-  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
-  #VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk
+  header: Authorization
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5KaijdfijAIfj41jkjiUIJHI3ji123AasdhfuAUSLNJUIGh098587KJMGKN134JBN8
+  token-validity-in-seconds: 86400
 cloud:
   aws:
     credentials:

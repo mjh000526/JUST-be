@@ -55,7 +55,7 @@ public class PostService {
     public Post write(Long member_id, PostDto postDto) {
 
 
-        Member member = memberRepository.findById(member_id).orElseGet(Member::new);
+        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         Post post = new Post(postDto.getPost_content(),
                 postDto.getPost_tag(), postDto.getPost_like(),
                 postDto.getPost_create_time(), postDto.isSecret(),
@@ -113,7 +113,7 @@ public class PostService {
     @Transactional
     public void toggleLike(Long postId, Long member_id) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-        Member member = memberRepository.findById(member_id).orElseGet(Member::new);// 현재 인증된 사용자 정보를 가져오는 메소드
+        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());// 현재 인증된 사용자 정보를 가져오는 메소드
 
         if (post.getLikedMembers().contains(member)) {
             System.out.println("1번실행");
