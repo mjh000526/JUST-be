@@ -1,158 +1,214 @@
 package com.example.just;
 
 
-/*
+
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-import com.example.just.Dao.QPost;
+import com.example.just.Dao.Role;
 import com.example.just.Dto.PostDto;
 import com.example.just.Impl.MySliceImpl;
-import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.Service.PostService;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.*;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Slice;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
+@ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PostServiceTest {
 
+
+
     @Autowired
-    private PostService postService;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Mock
     private PostRepository postRepository;
 
     @Autowired
-    PostMapper postMapper;
+    private MemberRepository memberRepository;
+
+    @Mock
+    private EntityManager entityManager;
+
+    @Mock
+    private JPAQueryFactory queryFactory;
+
+    @Autowired
+    private PostService postService;
+
+    void setUp() {
+
+        // given    //Test Member , Post 객체 생성
+        Member member = new Member();
+        member.setBlameCount(0);
+        member.setBlamedCount(0);
+        member.setEmail("slee000220@naver.com");
+        member.setNickname("테스트");
+        member.setProvider("kakao");
+        member.setProvider_id("2729809374");
+        member.setRole(Role.valueOf("ROLE_USER"));
+        memberRepository.save(member);
+
+        PostDto postDto = new PostDto();    //post생성
+        postDto.setPost_content("test content");
+        postDto.setPost_tag("#Test하는 중!");
+        postDto.setSecret(true);
+
+        Long k = Long.valueOf((int)(Math.random()*3));
+        Post post = new Post(postDto.getPost_content(), postDto.getPost_tag(),
+                k, postDto.getSecret(), postDto.getEmoticon(), postDto.getPost_category(),0L,
+                member,0);
+        postRepository.save(post);
+    }
+
 
     @Test
-    public void writeTest() {
-        // given
-        Member member = new Member();
-        member.setEmail("test@test.com");
-        member.setId(1L);
+    @DisplayName("글 작성")
+    @Order(1)
+    void 글_작성() throws InterruptedException {
+        // given    //Test Member , Post 객체 생성
+        if(memberRepository.findAll()!=null) {
+            Member member = new Member();
+            member.setId(1L);
+            member.setBlameCount(0);
+            member.setBlamedCount(0);
+            member.setEmail("slee000220@naver.com");
+            member.setNickname("테스트");
+            member.setProvider("kakao");
+            member.setProvider_id("2729809374");
+            member.setRole(Role.valueOf("ROLE_USER"));
+            memberRepository.save(member);
+        }
 
-        memberRepository.save(member);
-        PostDto postDto = new PostDto("content", "tag", 0, LocalDateTime.now(),
-                false, null, null);
+        PostDto postDto = new PostDto();    //post생성
+        postDto.setPost_content("test content");
+        postDto.setPost_tag("#Test하는 중!");
+        postDto.setSecret(true);
 
-        // when
-        Post post = postService.write(member.getId(), postDto);
 
-        // then
-        assertNotNull(post);
+        // when 글쓰기 API호출
+        Post post = postService.write(1L, postDto);
+
+        // then 다 잘 저장됐는지 확인
         assertNotNull(post.getPost_id());
-        assertEquals(postDto.getPost_content(), post.getPost_content());
-        assertEquals(postDto.getPost_tag(), post.getPost_tag());
-        assertEquals(postDto.getPost_like(), post.getPost_like());
-        assertEquals(postDto.getPost_create_time(), post.getPost_create_time());
-        assertEquals(postDto.isSecret(), post.isSecret());
-        assertEquals(postDto.getEmoticon(), post.getEmoticon());
-        assertEquals(postDto.getPost_category(), post.getPost_category());
-        assertEquals(member.getId(), post.getMember().getId());
+        assertEquals("test content", post.getPost_content());
+        assertEquals("#Test하는 중!", post.getPost_tag());
+        assertEquals(true,post.getSecret());
+        assertEquals("0", post.getEmoticon());
+        assertEquals("0", post.getPost_category());
+        assertEquals(0L,post.getPost_like());
+        assertEquals(0,post.getBlamedCount());
     }
 
     @Test
-    public void searchByCursorTest() {
+    @DisplayName("글 삭제")
+    @Order(2)
+    void 글_삭제() throws InterruptedException {
         // given
-        Member member1 = new Member();
-        member1.setEmail("test1@test.com");
-        member1.setId(1L);
-        Member member2 = new Member();
-        member2.setEmail("test2@test.com");
-        member2.setId(2L);
+        Long post_id = 2L;
+        setUp();
 
-        memberRepository.saveAll(Arrays.asList(member1, member2));
-        //맴버 저장
+        // when 글쓰기 API호출
+        String post = postService.deletePost(post_id);
 
-        PostDto postDto = new PostDto("content", "tag", 0, LocalDateTime.now(), false, null, null);
-        Post post1 = postService.write(member1.getId(), postDto);
-        Post post2 = postService.write(member1.getId(), postDto);
-        Post post3 = postService.write(member1.getId(), postDto);
-        Post post4 = postService.write(member2.getId(), postDto);
-        //1번 회원글 3개 2번회원 글 1개 총 글 4개 생성
-
-        // when
-        Slice<Post> slice1 = postService.searchByCursor(null, 2L);
-        //2개의 글을 보여줌 중복당연히 X
-        Slice<Post> slice2 = postService.searchByCursor(((MySliceImpl<Post>) slice1).getNextCursor(), 2L);
-        //slice1에서 보여준글들을 제외한 글들을 보여줌
-        Slice<Post> slice3 = postService.searchByCursor(((MySliceImpl<Post>) slice1).getNextCursor()+
-                ((MySliceImpl<Post>) slice2).getNextCursor(), 2L);
-        //slice1에서 보여준글들을 제외한 글들을 보여줌
-
-        // then
-        System.out.println("slice1: " + slice1.getContent());
-        assertEquals(3, slice1.getNumberOfElements());
-        assertTrue(slice1.hasNext()); //다음글이있냐
+        // then 다 잘 삭제되는지 확인
+        assertEquals("2번 게시글 삭제 완료", post);
+    }
 
 
-        assertEquals(1, slice2.getNumberOfElements());
-        assertFalse(slice2.hasNext()); //다음글이있냐
+    @Test
+    @DisplayName("글 수정")
+    @Order(3)
+    void 글_수정() {
+        //given
+        setUp();
+        Long post_id = 2L;
+        Long member_id=2L;
+
+        Optional<Member> optionalMember = memberRepository.findById(member_id);
+        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
+        }
+        Member member = new Member(optionalMember.get());   //존재한다면 객체 생성
+
+        PostDto postDto = new PostDto();
+        postDto.setPost_category("연애");
+        postDto.setPost_create_time(new Timestamp(System.currentTimeMillis()));
+        postDto.setPost_like(5L);
+        postDto.setEmoticon("웃음");
+        postDto.setPost_picture(1L);
+        postDto.setPost_id(post_id);
+        postDto.setSecret(false);
+        postDto.setPost_tag("#테스트");
+        postDto.setBlamedCount(200);
+        postDto.setPost_content("파핫");
+        postDto.setMember(member);
+
+        //when
+        Post post = postService.putPost(post_id, member_id, postDto);
+
+        //then
+        assertEquals("연애", post.getPost_category());
+        assertEquals(5L, post.getPost_like());
+        assertEquals(false, post.getSecret());
+    }
+
+    @Test
+    @DisplayName("글 좋아요!")
+    @Order(4)
+    void 글_좋아요() {
+        //given
+        setUp();
+        Long post_id = 1L;
+        Long member_id = 1L;
+
+        //when
+        Post post = postService.postLikes(post_id, member_id); //좋아요 누르기내
+        System.out.println(post.getPost_like());
+        Post post2 = postService.postLikes(post_id, member_id);
+        System.out.println(post.getPost_like());
+        System.out.println(post.getLikedMembers().size());
+        //then
+        assertEquals(1L, post.getPost_like());
+        assertEquals(0L, post2.getPost_like());
 
 
     }
 
     /*
     @Test
-    public void PostLikeTest() {
+    @DisplayName("글 랜덤 조회")
+    @Order(5)
+    void 글_랜덤_조회() {
         //given
-        Member member = new Member();
-        member.setId(1L);
-        memberRepository.save(member);  //가입
+        setUp();
+        setUp();
+        setUp();
+        setUp();
+        Long request_page = 2L;
+        String cursor = "1,3";
 
-        PostDto postDto = new PostDto();
-        postDto.setPost_id(1L);
-        postDto.setPost_content("ㅎㅎ");
-        postDto.setPost_like(0L);
-        Post post1 = postService.write(member.getId(), postDto);    //글쓰기
-        System.out.println(postDto.getPost_content());
         //when
-        postService.toggleLike(postDto.getPost_id(), member.getId());
-        // post1글의 member가 좋아요를 함
-        Post post = postRepository.findById(post1.getPost_id()).orElseGet(Post::new);//좋아요 달린글 가져오기
-        PostDto p = postMapper.toDto(post); //직렬화
-
-        postService.toggleLike(post1.getPost_id(), member.getId()); //다시 좋아요 누름 (없어져야함 -1)
-        Post post2 = postRepository.findById(post1.getPost_id()).orElseGet(Post::new);//좋아요 없어진글
-        PostDto p2 = postMapper.toDto(post2);//직렬화
+        MySliceImpl<Post> post = (MySliceImpl<Post>) postService.searchByCursor(cursor, request_page);
 
         //then
-        assertEquals(1, p.getPost_like());
-        assertEquals(0, p2.getPost_like());
-        //통과
-
-
+        System.out.println(post);
     }
 
+     */
 
 }
-*/

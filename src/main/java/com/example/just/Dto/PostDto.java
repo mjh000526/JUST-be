@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,9 +32,9 @@ public class PostDto {
 
     private Long post_like; //공감 회수
 
-    private String post_picture;
+    private Long post_picture;
 
-    private LocalDateTime post_create_time;  //글 생성 시간
+    private Timestamp post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
 
@@ -41,20 +42,20 @@ public class PostDto {
     private String emoticon;     //글 이모티콘
 
 
-    private Long post_category; //글 카테고리
+    private String post_category; //글 카테고리
 
-    private List<Post> likedPosts = new ArrayList<>();
+    private List<Member> likedMembers = new ArrayList<>();
 
     @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id
 
     private List<Comment> comments;
 
-    public PostDto(String content, String tag, int i, LocalDateTime now, boolean b, Object o, Object o1) {
-    }
+    private int blamedCount;
 
 
-    public boolean isSecret() {
-        return secret;
+
+    public boolean getSecret() {
+        return this.secret;
     }
 }
