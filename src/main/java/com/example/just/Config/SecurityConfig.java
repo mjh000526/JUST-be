@@ -1,9 +1,12 @@
 package com.example.just.Config;
 
+
+
 import com.example.just.Service.KakaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -15,8 +18,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private KakaoService kakaoService;
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
-        return (web -> web.ignoring().antMatchers("/api/**"));
+    public WebSecurityCustomizer webSecurityCustomizer2() {  //해당 URL은 필터 거치지 않겠다
+        return (web -> web.ignoring().antMatchers("/api/**", "/h2-console"));
 
         //return (web -> web.ignoring().antMatchers("/test"));
     }
