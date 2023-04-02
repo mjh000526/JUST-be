@@ -115,4 +115,57 @@ public class KakaoService {
         }
         return user;
     }
+
+    public String getToken(String code) throws IOException{
+        String host = "https://kauth.kakao.com/oauth/token";
+        URL url = new URL(host);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        String token = "";
+        try {
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoOutput(true); // 데이터 기록 알려주기
+
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+            StringBuilder sb = new StringBuilder();
+            sb.append("grant_type=authorization_code");
+            sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
+            sb.append("&redirect_uri=http://43.201.174.163:8080/api/kakao/loginTest");
+            sb.append("&code=" + code);
+
+            bw.write(sb.toString());
+            bw.flush();
+
+            int responseCode = urlConnection.getResponseCode();
+            System.out.println("responseCode = " + responseCode);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line = "";
+            String result = "";
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+            System.out.println("result = " + result);
+
+            // json parsing
+            JSONParser parser = new JSONParser();
+            JSONObject elem = (JSONObject) parser.parse(result);
+
+            String access_token = elem.get("access_token").toString();
+            String refresh_token = elem.get("refresh_token").toString();
+            System.out.println("refresh_token = " + refresh_token);
+            System.out.println("access_token = " + access_token);
+
+            token = access_token;
+
+            br.close();
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return token;
+    }
 }
