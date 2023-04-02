@@ -36,7 +36,6 @@ import static com.example.just.Dao.QPost.post;
 
 
 @Service
-@Slf4j
 public class PostService {
 
 
