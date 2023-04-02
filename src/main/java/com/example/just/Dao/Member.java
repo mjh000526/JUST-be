@@ -41,7 +41,8 @@
       @Column(name = "blame_count")
       private int blameCount;
 
-
+      @Column(name = "refresh_token")
+      private String refreshToken;
 
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
       @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
