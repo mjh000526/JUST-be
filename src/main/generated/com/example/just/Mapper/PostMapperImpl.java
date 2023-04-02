@@ -1,6 +1,7 @@
 package com.example.just.Mapper;
 
 import com.example.just.Dao.Comment;
+import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dto.PostDto;
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-28T19:27:56+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.15.1 (Oracle Corporation)"
+    date = "2023-04-02T21:12:54+0900",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
 public class PostMapperImpl implements PostMapper {
@@ -30,14 +31,19 @@ public class PostMapperImpl implements PostMapper {
         post.setPost_picture( dto.getPost_picture() );
         post.setPost_create_time( dto.getPost_create_time() );
         post.setPost_like( dto.getPost_like() );
-        post.setSecret( dto.isSecret() );
+        post.setSecret( dto.getSecret() );
         post.setEmoticon( dto.getEmoticon() );
         post.setPost_category( dto.getPost_category() );
-        post.setMember( dto.getMember() );
-        List<Comment> list = dto.getComments();
+        List<Member> list = dto.getLikedMembers();
         if ( list != null ) {
-            post.setComments( new ArrayList<Comment>( list ) );
+            post.setLikedMembers( new ArrayList<Member>( list ) );
         }
+        post.setMember( dto.getMember() );
+        List<Comment> list1 = dto.getComments();
+        if ( list1 != null ) {
+            post.setComments( new ArrayList<Comment>( list1 ) );
+        }
+        post.setBlamedCount( dto.getBlamedCount() );
 
         return post;
     }
@@ -56,14 +62,19 @@ public class PostMapperImpl implements PostMapper {
         postDto.setPost_like( entity.getPost_like() );
         postDto.setPost_picture( entity.getPost_picture() );
         postDto.setPost_create_time( entity.getPost_create_time() );
-        postDto.setSecret( entity.isSecret() );
+        postDto.setSecret( entity.getSecret() );
         postDto.setEmoticon( entity.getEmoticon() );
         postDto.setPost_category( entity.getPost_category() );
-        postDto.setMember( entity.getMember() );
-        List<Comment> list = entity.getComments();
+        List<Member> list = entity.getLikedMembers();
         if ( list != null ) {
-            postDto.setComments( new ArrayList<Comment>( list ) );
+            postDto.setLikedMembers( new ArrayList<Member>( list ) );
         }
+        postDto.setMember( entity.getMember() );
+        List<Comment> list1 = entity.getComments();
+        if ( list1 != null ) {
+            postDto.setComments( new ArrayList<Comment>( list1 ) );
+        }
+        postDto.setBlamedCount( entity.getBlamedCount() );
 
         return postDto;
     }
