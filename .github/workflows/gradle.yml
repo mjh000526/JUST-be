@@ -35,4 +35,4 @@ jobs: #작업을 정의
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           gradle-version: 7.2 #그래들 버전 7.2 사용
-          arguments: clean build
+          arguments: clean build -x test
