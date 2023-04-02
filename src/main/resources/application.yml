@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: dev # 기본 환경을 dev로
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher #Swagger 문제로 추가함
