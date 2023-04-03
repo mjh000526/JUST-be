@@ -44,7 +44,7 @@
 
 
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
-      @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+      @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
       private List<Post> posts = new ArrayList<>();
 

@@ -22,7 +22,7 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher #Swagger 문제로 추가함
