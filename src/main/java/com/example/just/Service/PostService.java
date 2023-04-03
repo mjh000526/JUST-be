@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,11 +53,11 @@ public class PostService {
 
     @Autowired
     private JwtProvider jwtProvider;
+
     public PostService(EntityManager em, JPAQueryFactory query) {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
-
 
 
     public Post write(Long member_id, PostDto postDto) {    //글 작성
@@ -67,11 +68,11 @@ public class PostService {
         }
         Member member = optionalMember.get();   //존재한다면 객체 생성
 
-        Long k = Long.valueOf((int)(Math.random()*3));
+        Long k = Long.valueOf((int) (Math.random() * 3));
 
         Post post = new Post(postDto.getPost_content(), postDto.getPost_tag(),
-                k, postDto.getSecret(), postDto.getEmoticon(), postDto.getPost_category(),0L,
-                member,0);
+                k, postDto.getSecret(), postDto.getEmoticon(), postDto.getPost_category(), 0L,
+                member, 0);
 
         postRepository.save(post);
 
@@ -80,15 +81,20 @@ public class PostService {
 
 
     //글 삭제
+    @Transactional
     public String deletePost(Long post_id) {
-
+        Optional<Post> optionalPost = postRepository.findById(post_id);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+        }
+        Post post = optionalPost.get();
+        post.setMember(null);
         try {
-            postRepository.deleteById(post_id);
+            postRepository.delete(post);
+        } catch (Exception e) {
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다: " + post_id);
         }
-        catch(Exception e) {
-            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다: "+ post_id);
-        }
-        return String.valueOf(post_id)+"번 게시글 삭제 완료";
+        return String.valueOf(post_id) + "번 게시글 삭제 완료";
     }
 
     //글 수정
@@ -101,12 +107,14 @@ public class PostService {
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
         }
+        postDto.setPost_create_time(new Timestamp(System.currentTimeMillis()));
         Member member = optionalMember.get();   //존재한다면 객체 생성
         postDto.setMember(member);
         Post post = postMapper.toEntity(postDto);
         postRepository.save(post);
         return post;
     }
+
     public Slice<Post> searchByCursor(String cursor, Long limit) { //글 조
 
 
@@ -145,11 +153,45 @@ public class PostService {
         if (hasNext) {
             results.remove(limit);
         }
-        System.out.println("Slice.ofElem"+results.size());
+
         // Slice 객체를 생성해서 반환합니다.
         return new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor);
 
     }
+    /*
+    public Slice<Post> searchByMyPost(Long limit, Long member_id) {
+
+
+        List<Post> results = query.selectFrom(post)
+                .where(
+                        post.member.id.eq(member_id)
+                )
+                .orderBy(post.post_id.desc())
+                .limit(limit + 1)
+                .fetch();
+
+
+
+
+
+        // hasNext와 nextCursor를 계산합니다.
+        boolean hasNext = results.size() > limit;
+
+
+        // limit+1개의 글 중에서 limit개의 글만 남기고 제거합니다.
+        if (hasNext) {
+            results.remove(limit);
+        }
+
+
+        return new SliceImpl<>(results, limit, hasNext);
+    }
+
+     */
+
+
+
+
     @Transactional
     public Post postLikes(Long post_id, Long member_id) {    //글 좋아요
 
@@ -172,52 +214,8 @@ public class PostService {
             post.addLike(member);
         }
 
-        Post savePost= postRepository.save(post);
+        Post savePost = postRepository.save(post);
         return savePost;
-    }
-
-
-
-
-    public Slice<Post> searchByMyPost(Pageable pageable, HttpServletRequest request) {
-        String token = request.getHeader("access_token");
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-
-        List<Post> results = query.selectFrom(post)
-                .where(
-                        // no-offset 페이징 처리
-                        // 이전 페이지의 마지막 아이템을 기준으로 조회
-                        ltPostId(pageable.getOffset())
-                        // 기타 조건들
-                )
-                .orderBy(post.post_id.desc())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        // 무한 스크롤 처리
-        return checkLastPage(pageable, results);
-    }
-
-    // no-offset 방식 처리하는 메서드
-    private BooleanExpression ltPostId(long offset) {
-        if (offset <= 0) {
-            return null;
-        }
-        // 이전 페이지의 마지막 아이템보다 작은 post_id를 가진 아이템 조회
-        return post.post_id.lt(offset);
-    }
-
-    // 무한 스크롤 방식 처리하는 메서드
-    private Slice<Post> checkLastPage(Pageable pageable, List<Post> results) {
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
     }
 
 

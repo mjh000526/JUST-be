@@ -41,15 +41,20 @@ public class PostController {
     }
 
 
+    /*
     @Operation(summary =  "자기의 게시글을 조회하는 API", description =  "<big> 자신의 게시글을 조회한다</big>")
+    @GetMapping("/get/mypost")
     public ResponseEntity<Slice<Post>> getMyPosts(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "2") int size,
+            @RequestParam Long request_page,
             HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("post_id").descending());
-        Slice<Post> postSlice = postService.searchByMyPost(pageable, request);
+
+        String token = request.getHeader("access_token");
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Slice<Post> postSlice = postService.searchByMyPost(request_page, member_id);
         return ResponseEntity.ok().body(postSlice);
     }
+
+     */
 
     @Operation(summary = "게시글 작성 api", description = "post_content, post_tag는 null값이 발생하면" +
             " 안됨\n" + "다른 건 null이와도 예외처리 완료")

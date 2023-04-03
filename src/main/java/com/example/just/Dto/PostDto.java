@@ -34,6 +34,7 @@ public class PostDto {
 
     private Long post_picture;
 
+    @JsonIgnore
     private Timestamp post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
@@ -44,11 +45,13 @@ public class PostDto {
 
     private String post_category; //글 카테고리
 
+    @JsonIgnore
     private List<Member> likedMembers = new ArrayList<>();
 
     @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id
 
+    @JsonIgnore
     private List<Comment> comments;
 
     private int blamedCount;
