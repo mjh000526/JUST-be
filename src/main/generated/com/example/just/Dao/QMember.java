@@ -6,6 +6,8 @@ import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
+import javax.management.Query;
+
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
@@ -43,6 +45,7 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath provider_id = createString("provider_id");
 
     public final EnumPath<Role> role = createEnum("role", Role.class);
+
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));
