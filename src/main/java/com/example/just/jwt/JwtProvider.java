@@ -27,8 +27,8 @@ public class JwtProvider implements AuthenticationProvider {
 
 
     private final MyUserDetailsService myUserDetailsService;
-    public final long AccessTokenTime = (1000*60)*6000;//액세스60분
-    public final long RefreshTokenTime = (1000*60)*120;//액세스120분
+    public final long AccessTokenTime = (1000*60)*60000000;//액세스60분
+    public final long RefreshTokenTime = (1000*60)*12000000;//액세스120분
 
     @Value("${spring:jwt:secret}")
     private String SECRET_KEY;
@@ -64,14 +64,14 @@ public class JwtProvider implements AuthenticationProvider {
 
     private JWTVerifier getTokenValidator(){
         return JWT.require(getSignKey(SECRET_KEY))
-                .acceptExpiresAt(AccessTokenTime)
+                .acceptExpiresAt(Math.max(0, AccessTokenTime))
                 .build();
     }
 
     private JWTVerifier getRefreshTokenValidator(){
         return JWT.require(getSignKey(SECRET_KEY))
                 .withIssuer(ISSUER)
-                .acceptExpiresAt(AccessTokenTime)
+                .acceptExpiresAt(Math.max(0, AccessTokenTime))
                 .build();
     }
 
