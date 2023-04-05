@@ -8,7 +8,6 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.NotificationRepository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.jwt.JwtProvider;
-import org.jooq.meta.derby.sys.Sys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

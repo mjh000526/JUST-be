@@ -49,7 +49,7 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 jwt:
-  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5KaijdfijAIfj41jkjiUIJHI3ji123AasdhfuAUSLNJUIGh098587KJMGKN134JBN8
   #VlwEyVBsYt9V712583TejMnVUypblYcfPQye08f7MGVA9XkHk
 cloud:
   aws:

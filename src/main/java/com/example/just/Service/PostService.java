@@ -1,39 +1,24 @@
 package com.example.just.Service;
-
-
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-
-
 import com.example.just.Dao.QPost;
 import com.example.just.Dto.PostDto;
 import com.example.just.Impl.MySliceImpl;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
-
-
 import com.example.just.jwt.JwtProvider;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-
-
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.just.Dao.QPost.post;
 
 
 @Service
@@ -78,6 +63,7 @@ public class PostService {
 
         return post;
     }
+
 
 
     //글 삭제

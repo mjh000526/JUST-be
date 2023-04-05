@@ -4,18 +4,18 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
+import com.example.just.jwt.JwtFilter;
 import com.example.just.jwt.JwtProvider;
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import springfox.documentation.spring.web.json.Json;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,6 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Objects;
 
 @Service
@@ -49,34 +48,45 @@ public class AppleService {
             System.out.println("아이디없음");
             return new ResponseEntity<>("/api/apple/signup", HttpStatus.OK);
         }
-        HashMap<String,String> m = new HashMap<>();
-        m.put("user_id",user.getId().toString());
-        m.put("email",user.getEmail());
         //jwt토큰생성
-        String accesstoken = jwtProvider.generateToken(m);
-        String refreshtoken = jwtProvider.generateRefreshToken(m);
-        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+        String accesstoken = jwtProvider.createaccessToken(user);
+        String refreshtoken = jwtProvider.createRefreshToken(user);
+        user.setRefreshToken(refreshtoken);
+        userRepository.save(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+        httpHeaders.add("refresh_token",refreshtoken);
+        return ResponseEntity.ok().headers(httpHeaders).body("애플 로그인");
     }
 
     public ResponseEntity signUpApple(String id,String nickname){
-        Member user = Member.builder()
-                .email(this.userIdFromApple(id)+ "@apple.com") //id토큰으로 email제작
-                .provider("apple")
-                .provider_id(this.userIdFromApple(id))//apple고유 id
-                .nickname(nickname)
-                .role(Role.ROLE_USER)
-                .blameCount(0)
-                .blamedCount(0)
-                .build();
-        userRepository.save(user);
-        HashMap<String,String> m = new HashMap<>();
-        m.put("user_id",user.getId().toString());
-        m.put("email",user.getEmail());
+        String apple_email = this.userIdFromApple(id)+ "@apple.com";
+        Member user = userRepository.findByEmail(apple_email);
+        if(nickname == null ) return new ResponseEntity<>("닉네임을 입력해 주세요", HttpStatus.OK);
+        else if(user == null){
+            user = Member.builder()
+                    .email(this.userIdFromApple(id)+ "@apple.com") //id토큰으로 email제작
+                    .provider("apple")
+                    .provider_id(this.userIdFromApple(id))//apple고유 id
+                    .nickname(nickname)
+                    .authority(Role.ROLE_USER)
+                    .blameCount(0)
+                    .blamedCount(0)
+                    .build();
+            userRepository.save(user);
 
-        //jwt토큰생성
-        String accesstoken = jwtProvider.generateToken(m);
-        String refreshtoken = jwtProvider.generateRefreshToken(m);
-        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+            //jwt토큰생성
+            String accesstoken = jwtProvider.createaccessToken(user);
+            String refreshtoken = jwtProvider.createRefreshToken(user);
+            user.setRefreshToken(refreshtoken);
+            userRepository.save(user);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+            httpHeaders.add("refresh_token",refreshtoken);
+            return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        return ResponseEntity.ok().headers(httpHeaders).body("애플 회원가입");
     }
 
     //id토큰으로 고유번호를 추출해서 email제작
