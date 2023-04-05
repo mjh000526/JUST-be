@@ -21,10 +21,9 @@
       private Long id;
 
       private String email;
-
       @Enumerated(EnumType.STRING)
       @Setter
-      private Role role;
+      private Role authority;
 
       @CreationTimestamp
       private Timestamp createTime;
@@ -43,7 +42,6 @@
 
       @Column(name = "refresh_token")
       private String refreshToken;
-
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
       @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
@@ -81,7 +79,7 @@
       public Member(Member member) {
           this.id = member.getId();
           this.email = member.getEmail();
-          this.role = member.getRole();
+          this.authority = member.getAuthority();
           this.createTime = member.getCreateTime();
           this.provider = member.getProvider();
           this.provider_id = member.getProvider_id();
