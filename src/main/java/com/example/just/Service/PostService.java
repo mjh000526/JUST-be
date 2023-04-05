@@ -54,14 +54,12 @@ public class PostService {
 
     public Post write(Long member_id, PostDto postDto) {
 
-
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         Post post = new Post(postDto.getPost_content(),
                 postDto.getPost_tag(), postDto.getPost_like(),
                 postDto.getPost_create_time(), postDto.isSecret(),
                 postDto.getEmoticon(), postDto.getPost_category(),
                 member,0);
-
         postRepository.save(post);
 
        return post;

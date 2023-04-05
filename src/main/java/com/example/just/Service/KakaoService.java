@@ -42,7 +42,6 @@ public class KakaoService {
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
             userbyEmail = userRepository.findByEmail(user.getEmail());
-
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 return new ResponseEntity<>("/api/kakao/signup", HttpStatus.OK);
@@ -54,6 +53,7 @@ public class KakaoService {
         accessToken = tokenProvider.createaccessToken(userbyEmail);
         refreshToken = tokenProvider.createRefreshToken(userbyEmail);
         userbyEmail = Member.builder()
+                .id(userbyEmail.getId())
                 .email(userbyEmail.getEmail())
                 .provider(userbyEmail.getProvider())
                 .provider_id(userbyEmail.getProvider_id())
@@ -67,7 +67,7 @@ public class KakaoService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
         httpHeaders.add("refresh_token",refreshToken);
-        return new ResponseEntity<>(new TokenDto(accessToken,refreshToken), HttpStatus.OK);
+        return ResponseEntity.ok().headers(httpHeaders).body("카카오 로그인성공");
     }
 
     //카카오 토큰으로 회원가입
@@ -79,10 +79,18 @@ public class KakaoService {
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
             userbyEmail = userRepository.findByEmail(user.getEmail());
-
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
-
+                userbyEmail = Member.builder()
+                        .email(user.getEmail())
+                        .provider(user.getProvider())
+                        .provider_id(user.getProvider_id())
+                        .authority(Role.ROLE_USER)
+                        .nickname(nickname)
+                        .blameCount(0)
+                        .blamedCount(0)
+                        .refreshToken(null)
+                        .build();
                 accesstoken = tokenProvider.createaccessToken(userbyEmail);
                 refreshtoken = tokenProvider.createRefreshToken(userbyEmail);
                 userbyEmail.setRefreshToken(refreshtoken);
@@ -90,7 +98,7 @@ public class KakaoService {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
                 httpHeaders.add("refresh_token",refreshtoken);
-                return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+                return ResponseEntity.ok().headers(httpHeaders).body("카카오 회원가입");
             }
         }catch (IOException e){
             e.printStackTrace();
@@ -149,7 +157,7 @@ public class KakaoService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
-            sb.append("&redirect_uri=http://43.201.174.163:8080/api/kakao/loginTest");
+            sb.append("&redirect_uri=http://localhost:8080/api/kakao/access_token");
             sb.append("&code=" + code);
 
             bw.write(sb.toString());
@@ -176,7 +184,7 @@ public class KakaoService {
             System.out.println("access_token = " + access_token);
 
             token = access_token;
-
+            System.out.println("여기까지 완료");
             br.close();
             bw.close();
         } catch (IOException e) {

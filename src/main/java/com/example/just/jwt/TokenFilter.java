@@ -40,14 +40,16 @@ public class TokenFilter extends GenericFilterBean {
         if(StringUtils.hasText(accessToken)&& tokenProvider.validateToken(accessToken)){
             Authentication authentication = tokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            System.out.println("정상작동");
             System.out.println("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}" + authentication.getName() + requestURI);
         }
         else if(!tokenProvider.validateToken(accessToken)&&refreshToken!=null){
             if(tokenProvider.validateToken(refreshToken)&& tokenProvider.existsRefreshToken(refreshToken)){
+                System.out.println("토큰터지고 리프레시 있");
                 Member member = tokenProvider.getMemberFromRefreshToken(refreshToken);
                 String newToken = tokenProvider.createaccessToken(member);
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER,"Bearer " + newToken);
+                ((HttpServletResponse) response).setHeader(TokenFilter.AUTHORIZATION_HEADER,"Bearer " + newToken);
                 Authentication authentication = tokenProvider.getAuthentication(newToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

@@ -32,7 +32,7 @@ public class TokenProvider implements InitializingBean {
     @Value("${jwt.secret}")
     private String secret;
     private Key key;
-    private final long access_token_time = (1000 * 60) * 60 * 24 * 30L;//60분 * 24 * 30 = 30일
+    private final long access_token_time = (1000 * 60) * 1;//60 * 24 * 30L;//60분 * 24 * 30 = 30일
     private final long refresh_token_time = (1000 * 60) * 60 * 24 *3600L;//60분 * 24*30
     @Autowired
     private MemberRepository memberRepository;
