@@ -1,6 +1,7 @@
-package com.example.just;
 
 
+
+/*package com.example.just;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
@@ -211,4 +212,3 @@ public class PostServiceTest {
 
      */
 
-}
