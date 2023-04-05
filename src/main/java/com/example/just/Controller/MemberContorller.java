@@ -49,7 +49,7 @@ public class MemberContorller {
         return appleService.signUpApple(idToken,nickName);
     }
 
-    @PostMapping("/nickName")
+    @PostMapping("/change/nickName")
     @ApiOperation(value = "닉네임 변경 api",notes = "같은 닉네임은 변경 안됨")
     public ResponseEntity changeNickname(HttpServletRequest request, @RequestParam String nickName){
         return kakaoService.changeNickname(request, nickName);
