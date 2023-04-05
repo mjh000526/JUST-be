@@ -5,13 +5,15 @@ import com.example.just.Dao.Member;
 import com.example.just.Dto.MemberDto;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
-import com.example.just.jwt.JwtProvider;
+import com.example.just.jwt.TokenFilter;
+import com.example.just.jwt.TokenProvider;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -30,7 +31,7 @@ public class KakaoService {
     private MemberRepository userRepository;
 
     @Autowired
-    JwtProvider jwtProvider;
+    TokenProvider tokenProvider;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
     public ResponseEntity loginKakao(String token) throws IOException{
@@ -50,8 +51,22 @@ public class KakaoService {
             e.printStackTrace();
         }
         //jwt토큰생성
-        accessToken = jwtProvider.createaccessToken(userbyEmail);
-        refreshToken = jwtProvider.createRefreshToken(userbyEmail);
+        accessToken = tokenProvider.createaccessToken(userbyEmail);
+        refreshToken = tokenProvider.createRefreshToken(userbyEmail);
+        userbyEmail = Member.builder()
+                .email(userbyEmail.getEmail())
+                .provider(userbyEmail.getProvider())
+                .provider_id(userbyEmail.getProvider_id())
+                .authority(Role.ROLE_USER)
+                .nickname(userbyEmail.getNickname())
+                .blameCount(userbyEmail.getBlameCount())
+                .blamedCount(userbyEmail.getBlamedCount())
+                .refreshToken(refreshToken)
+                .build();
+        userRepository.save(userbyEmail);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
+        httpHeaders.add("refresh_token",refreshToken);
         return new ResponseEntity<>(new TokenDto(accessToken,refreshToken), HttpStatus.OK);
     }
 
@@ -67,21 +82,14 @@ public class KakaoService {
 
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
-                userbyEmail = Member.builder()
-                        .email(user.getEmail())
-                        .provider(user.getProvider())
-                        .provider_id(user.getProvider_id())
-                        .authority(Role.ROLE_USER)
-                        .nickname(nickname)
-                        .blameCount(0)
-                        .blamedCount(0)
-                        .refreshToken(null)
-                        .build();
-                userRepository.save(userbyEmail);
-                accesstoken = jwtProvider.createaccessToken(userbyEmail);
-                refreshtoken = jwtProvider.createRefreshToken(userbyEmail);
+
+                accesstoken = tokenProvider.createaccessToken(userbyEmail);
+                refreshtoken = tokenProvider.createRefreshToken(userbyEmail);
                 userbyEmail.setRefreshToken(refreshtoken);
                 userRepository.save(userbyEmail);
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+                httpHeaders.add("refresh_token",refreshtoken);
                 return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
             }
         }catch (IOException e){
@@ -180,8 +188,8 @@ public class KakaoService {
     }
     //닉네임 변경
     public ResponseEntity changeNickname(HttpServletRequest request,String nickname){
-        String token = jwtProvider.getAccessToken(request);
-        String id = jwtProvider.getIdFromToken(token);
+        String token = tokenProvider.getAccessToken(request);
+        String id = tokenProvider.getIdFromToken(token);
         Member member = userRepository.findById(Long.valueOf(id)).get();
         if(member.getNickname().equals(nickname)) return new ResponseEntity<>("이미 같은 닉네임",HttpStatus.OK);
         Member saveMember = Member.builder()

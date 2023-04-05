@@ -7,8 +7,7 @@ import com.example.just.Repository.EmitterRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.NotificationRepository;
 import com.example.just.Repository.PostRepository;
-import com.example.just.jwt.JwtProvider;
-import org.jooq.meta.derby.sys.Sys;
+import com.example.just.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -37,11 +36,11 @@ public class NotificationService {
     private EmitterRepository emitterRepository;
 
     @Autowired
-    private JwtProvider jwtProvider;
+    private TokenProvider tokenProvider;
 
     public SseEmitter subscribe(HttpServletRequest request, String lastEventId){
         String token = (String) request.getHeader("access_token");
-        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출;
+        Long id = Long.valueOf(tokenProvider.getIdFromToken(token)); //토큰으로 id추출;
         String emitterId = makeTimeIncludeId(id);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(timeout));
         emitter.onCompletion(()-> emitterRepository.deleteById(emitterId));

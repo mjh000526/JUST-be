@@ -23,11 +23,24 @@ public class KaKaoController {
         return "kakaoCI/login";
     }
 
-    @GetMapping("/kakao/loginTest")
-    @ApiOperation(value = "카카오 로그인 실행",notes = "이건 직접호출할 필요없이 member/do로 버튼누르면 실행됨")
-    public ResponseEntity testLogin(@RequestParam String code,Model model) throws IOException {
-        String token = ks.getToken(code);
-        return ks.signUpKakao(token,"테스트");
+    @GetMapping("/kakao/access_token")
+    @ApiOperation(value = "카카오 토큰받기",notes = "이건 직접호출할 필요없이 member/do로 버튼누르면 실행됨\n" +
+            " 이토큰을 받고 /api/kakao/testsign <-- 회원가입\n" +
+            "/api/kakao/testlogin <== 로그인으로 사용하면됨")
+    public String testLogin(@RequestParam String code,Model model) throws IOException {
+        return ks.getToken(code);
+    }
+
+    @PostMapping("/kakao/testsign")
+    @ApiOperation(value = "카카오 토큰으로 회원가입")
+    public ResponseEntity signUpKakao(@RequestParam String accessToken){
+        return ks.signUpKakao(accessToken,"테스트용");
+    }
+
+    @PostMapping("/kakao/testlogin")
+    @ApiOperation(value = "카카오 토큰으로 로그인")
+    public ResponseEntity loginKakao(@RequestParam String accessToken) throws IOException{
+        return ks.loginKakao(accessToken);
     }
 
 

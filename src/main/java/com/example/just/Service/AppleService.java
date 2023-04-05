@@ -4,18 +4,18 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
-import com.example.just.jwt.JwtProvider;
+import com.example.just.jwt.TokenFilter;
+import com.example.just.jwt.TokenProvider;
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import springfox.documentation.spring.web.json.Json;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,6 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Objects;
 
 @Service
@@ -40,7 +39,7 @@ public class AppleService {
     private MemberRepository userRepository;
 
     @Autowired
-    private JwtProvider jwtProvider;
+    private TokenProvider tokenProvider;
 
     public ResponseEntity loginApple(String id){
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
@@ -50,8 +49,11 @@ public class AppleService {
             return new ResponseEntity<>("/api/apple/signup", HttpStatus.OK);
         }
         //jwt토큰생성
-        String accesstoken = jwtProvider.createaccessToken(user);
-        String refreshtoken = jwtProvider.createRefreshToken(user);
+        String accesstoken = tokenProvider.createaccessToken(user);
+        String refreshtoken = tokenProvider.createRefreshToken(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+        httpHeaders.add("refresh_token",refreshtoken);
         return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
     }
 
@@ -72,8 +74,11 @@ public class AppleService {
             userRepository.save(user);
 
             //jwt토큰생성
-            String accesstoken = jwtProvider.createaccessToken(user);
-            String refreshtoken = jwtProvider.createRefreshToken(user);
+            String accesstoken = tokenProvider.createaccessToken(user);
+            String refreshtoken = tokenProvider.createRefreshToken(user);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+            httpHeaders.add("refresh_token",refreshtoken);
             return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
         }
         return new ResponseEntity<>("이미 회원가입되어있는 유저입니다.", HttpStatus.OK);
