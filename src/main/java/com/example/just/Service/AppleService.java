@@ -51,10 +51,12 @@ public class AppleService {
         //jwt토큰생성
         String accesstoken = tokenProvider.createaccessToken(user);
         String refreshtoken = tokenProvider.createRefreshToken(user);
+        user.setRefreshToken(refreshtoken);
+        userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
         httpHeaders.add("refresh_token",refreshtoken);
-        return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
+        return ResponseEntity.ok().headers(httpHeaders).body("애플 로그인");
     }
 
     public ResponseEntity signUpApple(String id,String nickname){
@@ -76,12 +78,15 @@ public class AppleService {
             //jwt토큰생성
             String accesstoken = tokenProvider.createaccessToken(user);
             String refreshtoken = tokenProvider.createRefreshToken(user);
+            user.setRefreshToken(refreshtoken);
+            userRepository.save(user);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
             httpHeaders.add("refresh_token",refreshtoken);
             return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
         }
-        return new ResponseEntity<>("이미 회원가입되어있는 유저입니다.", HttpStatus.OK);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        return ResponseEntity.ok().headers(httpHeaders).body("애플 회원가입");
     }
 
     //id토큰으로 고유번호를 추출해서 email제작
