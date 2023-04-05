@@ -3,6 +3,7 @@ package com.example.just.Service;
 import com.example.just.Dao.Role;
 import com.example.just.Dao.Member;
 import com.example.just.Dto.MemberDto;
+import com.example.just.Dto.ResponseMemberDto;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.jwt.JwtFilter;
 import com.example.just.jwt.JwtProvider;
@@ -66,7 +67,8 @@ public class KakaoService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
         httpHeaders.add("refresh_token",refreshToken);
-        return ResponseEntity.ok().headers(httpHeaders).body("카카오 로그인성공");
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto(userbyEmail.getEmail(),userbyEmail.getNickname());
+        return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
 
     //카카오 토큰으로 회원가입
@@ -88,8 +90,8 @@ public class KakaoService {
                         .nickname(nickname)
                         .blameCount(0)
                         .blamedCount(0)
-                        .refreshToken(null)
                         .build();
+                userbyEmail = userRepository.save(userbyEmail);
                 accesstoken = jwtProvider.createaccessToken(userbyEmail);
                 refreshtoken = jwtProvider.createRefreshToken(userbyEmail);
                 userbyEmail.setRefreshToken(refreshtoken);
@@ -97,12 +99,14 @@ public class KakaoService {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
                 httpHeaders.add("refresh_token",refreshtoken);
-                return ResponseEntity.ok().headers(httpHeaders).body("카카오 회원가입");
+                ResponseMemberDto responseMemberDto = new ResponseMemberDto(userbyEmail.getEmail(),userbyEmail.getNickname());
+                return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
             }
         }catch (IOException e){
             e.printStackTrace();
         }
         //jwt토큰생성
+
         return new ResponseEntity<>("이미 회원가입되어있는 유저입니다.", HttpStatus.OK);
 
     }

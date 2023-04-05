@@ -48,7 +48,7 @@ public class JwtProvider implements InitializingBean {
     //토큰생성
     public String createaccessToken(Member member){
         return Jwts.builder()
-                .setSubject(String.valueOf(member.getId()))
+                .setSubject(Long.toString(member.getId()))
                 .claim(AUTHORITIES_KEY, member.getAuthority())
                 .signWith(key,SignatureAlgorithm.HS512)
                 .setAudience(member.getEmail())
