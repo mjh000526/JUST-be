@@ -72,16 +72,10 @@ dependencies {
 	dependencies { implementation 'com.google.code.gson:gson:2.8.6' }
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
 
-
-
-
 	//Mapper
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-
-
-
 
 	//jooq
 	implementation 'org.jooq:jooq:3.15.3'

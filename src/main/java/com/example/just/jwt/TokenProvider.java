@@ -2,8 +2,6 @@ package com.example.just.jwt;
 
 import com.example.just.Dao.Member;
 import com.example.just.Repository.MemberRepository;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
@@ -25,9 +24,11 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtProvider implements InitializingBean {
+public class TokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY="auth";
+
+    public static final String AUTHORIZATION_HEADER = "Authorization";
     @Value("${jwt.secret}")
     private String secret;
     private Key key;
@@ -84,9 +85,9 @@ public class JwtProvider implements InitializingBean {
     }
     //토큰값 가져오기
     public String getAccessToken(HttpServletRequest request){
-        if(request.getHeader("access_token")!=null){
-            System.out.println(request.getHeader("access_token"));
-            return request.getHeader("access_token");
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring(7);
         }
         return null;
     }

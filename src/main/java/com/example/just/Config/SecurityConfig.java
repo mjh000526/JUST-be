@@ -3,11 +3,10 @@ package com.example.just.Config;
 import com.example.just.Service.KakaoService;
 import com.example.just.jwt.JwtAccessDeniedHandler;
 import com.example.just.jwt.JwtAuthenticationEntryPoint;
-import com.example.just.jwt.JwtProvider;
+import com.example.just.jwt.TokenProvider;
 import com.example.just.jwt.JwtSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,17 +22,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private KakaoService kakaoService;
     @Autowired
-    private final JwtProvider jwtProvider;
+    private final TokenProvider tokenProvider;
     @Autowired
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     public SecurityConfig(
-            JwtProvider jwtProvider,
+            TokenProvider tokenProvider,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             JwtAccessDeniedHandler jwtAccessDeniedHandler
     ){
-        this.jwtProvider = jwtProvider;
+        this.tokenProvider = tokenProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
@@ -64,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/test/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtSecurityConfig(jwtProvider));
+                .apply(new JwtSecurityConfig(tokenProvider));
                 //.anyRequest().permitAll()
     }
 }

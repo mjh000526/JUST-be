@@ -55,6 +55,11 @@ public class MemberContorller {
         return kakaoService.changeNickname(request, nickName);
     }
 
+    @PostMapping("/change/refresh")
+    @ApiOperation(value = "리프레시 교체 api", notes = "리프레시만 주면 db값 바꾸고 액세스,리프레시 재발급")
+    public ResponseEntity changeRefresh(HttpServletRequest request){
+        return memberService.changeRefresh(request);
+    }
     @PostMapping("/drop")
     @ApiOperation(value = "회원 탈퇴 api", notes = "헤더값에 access_token으로 토큰을 보내줘야함")
     public  ResponseEntity dropUser(HttpServletRequest request){
