@@ -2,6 +2,7 @@ package com.example.just.Service;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
+import com.example.just.Dto.ResponseMemberDto;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.jwt.JwtFilter;
@@ -56,12 +57,14 @@ public class AppleService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
         httpHeaders.add("refresh_token",refreshtoken);
-        return ResponseEntity.ok().headers(httpHeaders).body("애플 로그인");
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto(user.getEmail(),user.getNickname());
+        return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
 
     public ResponseEntity signUpApple(String id,String nickname){
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
         Member user = userRepository.findByEmail(apple_email);
+        HttpHeaders httpHeaders = new HttpHeaders();
         if(nickname == null ) return new ResponseEntity<>("닉네임을 입력해 주세요", HttpStatus.OK);
         else if(user == null){
             user = Member.builder()
@@ -73,20 +76,19 @@ public class AppleService {
                     .blameCount(0)
                     .blamedCount(0)
                     .build();
-            userRepository.save(user);
+            user = userRepository.save(user);
 
             //jwt토큰생성
             String accesstoken = jwtProvider.createaccessToken(user);
             String refreshtoken = jwtProvider.createRefreshToken(user);
             user.setRefreshToken(refreshtoken);
             userRepository.save(user);
-            HttpHeaders httpHeaders = new HttpHeaders();
+
             httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
             httpHeaders.add("refresh_token",refreshtoken);
-            return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
         }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return ResponseEntity.ok().headers(httpHeaders).body("애플 회원가입");
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto(user.getEmail(),user.getNickname());
+        return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
 
     //id토큰으로 고유번호를 추출해서 email제작

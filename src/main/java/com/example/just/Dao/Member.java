@@ -56,12 +56,6 @@
       )
       private List<Post> likedPosts = new ArrayList<>();
 
-
-
-
-
-
-
       public void addBlamed(){
           blamedCount++;
       }
