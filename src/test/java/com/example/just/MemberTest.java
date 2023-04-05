@@ -3,7 +3,7 @@ package com.example.just;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberTest {
     @Autowired
-    private TokenProvider tokenProvider;
+    private JwtProvider jwtProvider;
 
     @Value("${jwt.secret}")
     private String secret;

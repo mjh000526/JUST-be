@@ -7,8 +7,8 @@ import com.example.just.Dto.MemberDto;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Mapper.MemberMapper;
 import com.example.just.Repository.MemberRepository;
-import com.example.just.jwt.TokenFilter;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtFilter;
+import com.example.just.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class MemberService {
     @Autowired
     MemberMapper memberMapper;
     @Autowired
-    TokenProvider tokenProvider;
+    JwtProvider jwtProvider;
 
     public ResponseEntity<BasicResponse> join(MemberDto memberDto) {
         Member member = memberMapper.toEntity(memberDto);
@@ -40,7 +40,7 @@ public class MemberService {
     }
 
     public ResponseEntity changeRefresh(HttpServletRequest request){
-        String token = tokenProvider.getRefreshToken(request);
+        String token = jwtProvider.getRefreshToken(request);
         String accesstoken = null;
         String refreshtoken = null;
         if(token == null) return new ResponseEntity<>("리프레시 토큰이 없습니다.",HttpStatus.OK);
@@ -58,20 +58,20 @@ public class MemberService {
                     .refreshToken(null)
                     .build();
             memberRepository.save(newMember);
-            accesstoken = tokenProvider.createaccessToken(newMember);
-            refreshtoken = tokenProvider.createRefreshToken(newMember);
+            accesstoken = jwtProvider.createaccessToken(newMember);
+            refreshtoken = jwtProvider.createRefreshToken(newMember);
             newMember.setRefreshToken(refreshtoken);
             memberRepository.save(newMember);
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
             httpHeaders.add("refresh_token",refreshtoken);
         }
         return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
     }
     public ResponseEntity drop(HttpServletRequest request){
         String token = request.getHeader("access_token");
-        Long id = Long.valueOf(tokenProvider.getIdFromToken(token)); //토큰으로 id추출
-        String email = tokenProvider.getEmailFromToken(token);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        String email = jwtProvider.getEmailFromToken(token);
         memberRepository.deleteById(id);
         return new ResponseEntity<>(email + "삭제",HttpStatus.OK);
     }

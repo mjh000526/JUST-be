@@ -1,36 +1,24 @@
 package com.example.just.Service;
-
-
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-
 import com.example.just.Dao.QPost;
 import com.example.just.Dto.PostDto;
 import com.example.just.Impl.MySliceImpl;
+import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
-
-
-import com.example.just.ResourceNotFoundException;
+import com.example.just.jwt.JwtProvider;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 
 @Service
@@ -45,27 +33,75 @@ public class PostService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private PostMapper postMapper;
+
+    @Autowired
+    private JwtProvider jwtProvider;
+
     public PostService(EntityManager em, JPAQueryFactory query) {
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }
 
 
+    public Post write(Long member_id, PostDto postDto) {    //글 작성
 
-    public Post write(Long member_id, PostDto postDto) {
+        Optional<Member> optionalMember = memberRepository.findById(member_id);
+        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
+        }
+        Member member = optionalMember.get();   //존재한다면 객체 생성
 
-        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
-        Post post = new Post(postDto.getPost_content(),
-                postDto.getPost_tag(), postDto.getPost_like(),
-                postDto.getPost_create_time(), postDto.isSecret(),
-                postDto.getEmoticon(), postDto.getPost_category(),
-                member,0);
+        Long k = Long.valueOf((int) (Math.random() * 3));
+
+        Post post = new Post(postDto.getPost_content(), postDto.getPost_tag(),
+                k, postDto.getSecret(), postDto.getEmoticon(), postDto.getPost_category(), 0L,
+                member, 0);
+
         postRepository.save(post);
 
-       return post;
+        return post;
     }
 
-    public Slice<Post> searchByCursor(String cursor, Long limit) {
+
+
+    //글 삭제
+    @Transactional
+    public String deletePost(Long post_id) {
+        Optional<Post> optionalPost = postRepository.findById(post_id);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+        }
+        Post post = optionalPost.get();
+        post.setMember(null);
+        try {
+            postRepository.delete(post);
+        } catch (Exception e) {
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다: " + post_id);
+        }
+        return String.valueOf(post_id) + "번 게시글 삭제 완료";
+    }
+
+    //글 수정
+    public Post putPost(Long post_id, Long member_id, PostDto postDto) {
+        Optional<Post> optionalPost = postRepository.findById(post_id);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+        }
+        Optional<Member> optionalMember = memberRepository.findById(member_id);
+        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
+        }
+        postDto.setPost_create_time(new Timestamp(System.currentTimeMillis()));
+        Member member = optionalMember.get();   //존재한다면 객체 생성
+        postDto.setMember(member);
+        Post post = postMapper.toEntity(postDto);
+        postRepository.save(post);
+        return post;
+    }
+
+    public Slice<Post> searchByCursor(String cursor, Long limit) { //글 조
 
 
         QPost post = QPost.post;
@@ -103,24 +139,69 @@ public class PostService {
         if (hasNext) {
             results.remove(limit);
         }
-        System.out.println("Slice.ofElem"+results.size());
+
         // Slice 객체를 생성해서 반환합니다.
         return new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor);
 
     }
+    /*
+    public Slice<Post> searchByMyPost(Long limit, Long member_id) {
+
+
+        List<Post> results = query.selectFrom(post)
+                .where(
+                        post.member.id.eq(member_id)
+                )
+                .orderBy(post.post_id.desc())
+                .limit(limit + 1)
+                .fetch();
+
+
+
+
+
+        // hasNext와 nextCursor를 계산합니다.
+        boolean hasNext = results.size() > limit;
+
+
+        // limit+1개의 글 중에서 limit개의 글만 남기고 제거합니다.
+        if (hasNext) {
+            results.remove(limit);
+        }
+
+
+        return new SliceImpl<>(results, limit, hasNext);
+    }
+
+     */
+
+
+
+
     @Transactional
-    public void toggleLike(Long postId, Long member_id) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());// 현재 인증된 사용자 정보를 가져오는 메소드
+    public Post postLikes(Long post_id, Long member_id) {    //글 좋아요
+
+
+        Optional<Post> optionalPost = postRepository.findById(post_id);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+        }
+        Post post = optionalPost.get();
+
+        Optional<Member> optionalMember = memberRepository.findById(member_id);
+        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
+        }
+        Member member = optionalMember.get(); //존재한다면 객체 생성
 
         if (post.getLikedMembers().contains(member)) {
-            System.out.println("1번실행");
             post.removeLike(member);
         } else {
-            System.out.println("2번실행");
             post.addLike(member);
         }
-        postRepository.save(post);
+
+        Post savePost = postRepository.save(post);
+        return savePost;
     }
 
 

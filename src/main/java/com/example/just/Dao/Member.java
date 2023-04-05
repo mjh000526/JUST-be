@@ -43,9 +43,10 @@
       @Column(name = "refresh_token")
       private String refreshToken;
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
-      @OneToMany(mappedBy = "member")
+      @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
       private List<Post> posts = new ArrayList<>();
+
       @Builder.Default
       @ManyToMany(cascade = CascadeType.ALL)
       @JoinTable(
@@ -56,19 +57,9 @@
       private List<Post> likedPosts = new ArrayList<>();
 
 
-      public void addLikedPost(Post post) {
-          if (!likedPosts.contains(post)) {
-              likedPosts.add(post);
-              post.addLike(this);
-          }
-      }
 
-      public void removeLikedPost(Post post) {
-          if (likedPosts.contains(post)) {
-              likedPosts.remove(post);
-              post.removeLike(this);
-          }
-      }
+
+
 
 
       public void addBlamed(){
@@ -82,6 +73,22 @@
       private List<Notification> notifications;
       public void updateMember(final Post post) {
           posts.add(post);
+      }
+
+
+      public Member(Member member) {
+          this.id = member.getId();
+          this.email = member.getEmail();
+          this.authority = member.getAuthority();
+          this.createTime = member.getCreateTime();
+          this.provider = member.getProvider();
+          this.provider_id = member.getProvider_id();
+          this.nickname = member.getNickname();
+          this.blamedCount = member.getBlamedCount();
+          this.blameCount = member.getBlameCount();
+          this.posts = member.getPosts();
+          this.likedPosts = member.getLikedPosts();
+          this.notifications = member.getNotifications();
       }
   }
 
