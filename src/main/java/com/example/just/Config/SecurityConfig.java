@@ -30,6 +30,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private String[] permitList={
+            "/v2/**",
+            "/v3/**",
+            "/configuration",
+            "/swagger*/**",
+            "/webjars/**",
+            "/swagger-resources/**"
+    };
 
     public SecurityConfig(
             JwtProvider jwtProvider,
@@ -64,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/**").permitAll()
+                .antMatchers(permitList).permitAll()
                 .antMatchers("/test/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
