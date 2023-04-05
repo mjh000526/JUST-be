@@ -7,6 +7,7 @@ import com.example.just.Impl.MySliceImpl;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
+
 import com.example.just.jwt.JwtProvider;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -45,7 +46,7 @@ public class PostService {
     }
 
 
-    public Post write(Long member_id, PostDto postDto) {    //글 작성
+    public ResponsePost write(Long member_id, PostDto postDto) {    //글 작성
 
         Optional<Member> optionalMember = memberRepository.findById(member_id);
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
@@ -61,14 +62,15 @@ public class PostService {
 
         postRepository.save(post);
 
-        return post;
+        ResponsePost responsePost = new ResponsePost(post, true);
+        return responsePost;
     }
 
 
 
     //글 삭제
     @Transactional
-    public String deletePost(Long post_id) {
+    public ResponsePost deletePost(Long post_id) {
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
@@ -80,11 +82,12 @@ public class PostService {
         } catch (Exception e) {
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다: " + post_id);
         }
-        return String.valueOf(post_id) + "번 게시글 삭제 완료";
+        ResponsePost responsePost = new ResponsePost(post, true);
+        return responsePost;
     }
 
     //글 수정
-    public Post putPost(Long post_id, Long member_id, PostDto postDto) {
+    public ResponsePost putPost(Long post_id, Long member_id, PostDto postDto) {
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
@@ -98,10 +101,11 @@ public class PostService {
         postDto.setMember(member);
         Post post = postMapper.toEntity(postDto);
         postRepository.save(post);
-        return post;
+        ResponsePost responsePost = new ResponsePost(post, true);
+        return responsePost;
     }
 
-    public Slice<Post> searchByCursor(String cursor, Long limit) { //글 조
+    public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) { //글 조
 
 
         QPost post = QPost.post;
@@ -119,7 +123,8 @@ public class PostService {
         // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
         List<Post> results = query.selectFrom(post)
                 .where(post.post_id.notIn(viewedPostIds),
-                        post.post_create_time.isNotNull())
+                        post.post_create_time.isNotNull(),
+                        post.member.id.ne(member_id))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit + 1)
                 .fetch();
@@ -141,7 +146,8 @@ public class PostService {
         }
 
         // Slice 객체를 생성해서 반환합니다.
-        return new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor);
+        ResponseGetPost responseGetPost = new ResponseGetPost(new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor), false);
+        return responseGetPost;
 
     }
     /*
@@ -179,7 +185,7 @@ public class PostService {
 
 
     @Transactional
-    public Post postLikes(Long post_id, Long member_id) {    //글 좋아요
+    public ResponsePost postLikes(Long post_id, Long member_id) {    //글 좋아요
 
 
         Optional<Post> optionalPost = postRepository.findById(post_id);
@@ -201,7 +207,8 @@ public class PostService {
         }
 
         Post savePost = postRepository.save(post);
-        return savePost;
+        ResponsePost responsePost = new ResponsePost(post, true);
+        return responsePost;
     }
 
 
