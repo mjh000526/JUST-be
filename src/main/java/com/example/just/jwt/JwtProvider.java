@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
-public class TokenProvider implements InitializingBean {
+public class JwtProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY="auth";
 

@@ -4,8 +4,8 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
 import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
-import com.example.just.jwt.TokenFilter;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtFilter;
+import com.example.just.jwt.JwtProvider;
 import com.google.gson.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -39,7 +39,7 @@ public class AppleService {
     private MemberRepository userRepository;
 
     @Autowired
-    private TokenProvider tokenProvider;
+    private JwtProvider jwtProvider;
 
     public ResponseEntity loginApple(String id){
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
@@ -49,12 +49,12 @@ public class AppleService {
             return new ResponseEntity<>("/api/apple/signup", HttpStatus.OK);
         }
         //jwt토큰생성
-        String accesstoken = tokenProvider.createaccessToken(user);
-        String refreshtoken = tokenProvider.createRefreshToken(user);
+        String accesstoken = jwtProvider.createaccessToken(user);
+        String refreshtoken = jwtProvider.createRefreshToken(user);
         user.setRefreshToken(refreshtoken);
         userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
         httpHeaders.add("refresh_token",refreshtoken);
         return ResponseEntity.ok().headers(httpHeaders).body("애플 로그인");
     }
@@ -76,12 +76,12 @@ public class AppleService {
             userRepository.save(user);
 
             //jwt토큰생성
-            String accesstoken = tokenProvider.createaccessToken(user);
-            String refreshtoken = tokenProvider.createRefreshToken(user);
+            String accesstoken = jwtProvider.createaccessToken(user);
+            String refreshtoken = jwtProvider.createRefreshToken(user);
             user.setRefreshToken(refreshtoken);
             userRepository.save(user);
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
             httpHeaders.add("refresh_token",refreshtoken);
             return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
         }

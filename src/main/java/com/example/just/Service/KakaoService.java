@@ -3,10 +3,9 @@ package com.example.just.Service;
 import com.example.just.Dao.Role;
 import com.example.just.Dao.Member;
 import com.example.just.Dto.MemberDto;
-import com.example.just.Dto.TokenDto;
 import com.example.just.Repository.MemberRepository;
-import com.example.just.jwt.TokenFilter;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtFilter;
+import com.example.just.jwt.JwtProvider;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.json.simple.JSONObject;
@@ -31,7 +30,7 @@ public class KakaoService {
     private MemberRepository userRepository;
 
     @Autowired
-    TokenProvider tokenProvider;
+    JwtProvider jwtProvider;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
     public ResponseEntity loginKakao(String token) throws IOException{
@@ -50,8 +49,8 @@ public class KakaoService {
             e.printStackTrace();
         }
         //jwt토큰생성
-        accessToken = tokenProvider.createaccessToken(userbyEmail);
-        refreshToken = tokenProvider.createRefreshToken(userbyEmail);
+        accessToken = jwtProvider.createaccessToken(userbyEmail);
+        refreshToken = jwtProvider.createRefreshToken(userbyEmail);
         userbyEmail = Member.builder()
                 .id(userbyEmail.getId())
                 .email(userbyEmail.getEmail())
@@ -65,7 +64,7 @@ public class KakaoService {
                 .build();
         userRepository.save(userbyEmail);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
         httpHeaders.add("refresh_token",refreshToken);
         return ResponseEntity.ok().headers(httpHeaders).body("카카오 로그인성공");
     }
@@ -91,12 +90,12 @@ public class KakaoService {
                         .blamedCount(0)
                         .refreshToken(null)
                         .build();
-                accesstoken = tokenProvider.createaccessToken(userbyEmail);
-                refreshtoken = tokenProvider.createRefreshToken(userbyEmail);
+                accesstoken = jwtProvider.createaccessToken(userbyEmail);
+                refreshtoken = jwtProvider.createRefreshToken(userbyEmail);
                 userbyEmail.setRefreshToken(refreshtoken);
                 userRepository.save(userbyEmail);
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
+                httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
                 httpHeaders.add("refresh_token",refreshtoken);
                 return ResponseEntity.ok().headers(httpHeaders).body("카카오 회원가입");
             }
@@ -196,8 +195,8 @@ public class KakaoService {
     }
     //닉네임 변경
     public ResponseEntity changeNickname(HttpServletRequest request,String nickname){
-        String token = tokenProvider.getAccessToken(request);
-        String id = tokenProvider.getIdFromToken(token);
+        String token = jwtProvider.getAccessToken(request);
+        String id = jwtProvider.getIdFromToken(token);
         Member member = userRepository.findById(Long.valueOf(id)).get();
         if(member.getNickname().equals(nickname)) return new ResponseEntity<>("이미 같은 닉네임",HttpStatus.OK);
         Member saveMember = Member.builder()

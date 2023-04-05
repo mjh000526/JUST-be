@@ -8,7 +8,7 @@ import com.example.just.Repository.BlameRepository;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +31,12 @@ public class BlameService {
     @Autowired
     private BlameRepository blameRepository;
     @Autowired
-    private TokenProvider tokenProvider;
+    private JwtProvider jwtProvider;
 
     //게시글 및 댓글 신고(type값은 "post"또는"comment"로 할 예정
     public ResponseEntity writeBlame(HttpServletRequest request, Long target_id, String type){
         String token = request.getHeader("access_token");
-        Long id = Long.valueOf(tokenProvider.getIdFromToken(token)); //토큰으로 id추출
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
         if(blameRepository.findByBlameMemberIdAndTargetIdAndTargetType(id,target_id,type)!=null){
             return new ResponseEntity<>("이미 접수된 신고입니다.", HttpStatus.OK);
         }

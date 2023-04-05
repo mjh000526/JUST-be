@@ -1,13 +1,17 @@
 package com.example.just.Config;
 
+
+
 import com.example.just.Service.KakaoService;
 import com.example.just.jwt.JwtAccessDeniedHandler;
 import com.example.just.jwt.JwtAuthenticationEntryPoint;
-import com.example.just.jwt.TokenProvider;
+import com.example.just.jwt.JwtProvider;
 import com.example.just.jwt.JwtSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,17 +26,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private KakaoService kakaoService;
     @Autowired
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
     @Autowired
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     public SecurityConfig(
-            TokenProvider tokenProvider,
+            JwtProvider jwtProvider,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             JwtAccessDeniedHandler jwtAccessDeniedHandler
     ){
-        this.tokenProvider = tokenProvider;
+        this.jwtProvider = jwtProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
@@ -42,8 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
-        return (web -> web.ignoring().antMatchers("/api/**"));
+    public WebSecurityCustomizer webSecurityCustomizer2() {  //해당 URL은 필터 거치지 않겠다
+        return (web -> web.ignoring().antMatchers("/api/**", "/h2-console"));
 
         //return (web -> web.ignoring().antMatchers("/test"));
     }
@@ -63,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/test/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
+                .apply(new JwtSecurityConfig(jwtProvider));
                 //.anyRequest().permitAll()
     }
 }
