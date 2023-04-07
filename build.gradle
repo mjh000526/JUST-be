@@ -58,6 +58,8 @@ dependencies {
 
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.platform:junit-platform-launcher:1.5.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
