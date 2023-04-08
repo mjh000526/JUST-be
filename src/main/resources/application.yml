@@ -10,7 +10,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://megabrain-rds-instance.cvk1jyvmrhp6.ap-northeast-2.rds.amazonaws.com:3307/just?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
-    password: skfktkfkdzkem
+    password: akdlvmfhxls
     #url: jdbc:mysql://127.0.0.1:3306/just?serverTimezone=UTC&characterEncoding=UTF-8
     #username: root
     #password: 214748
@@ -40,7 +40,7 @@ spring:
     generate-ddl: true # DDL ?? ??
     open-in-view: false # View ??? Session(??? ????) ?? ?? - ??? ???? ?? false ?? (default: true)
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         use-new-id-generator-mappings: true
