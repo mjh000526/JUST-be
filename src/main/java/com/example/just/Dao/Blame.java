@@ -15,6 +15,7 @@ import java.util.Date;
 public class Blame {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "blame_id")
     private Long blameId;
 
     @Column(name = "target_id")

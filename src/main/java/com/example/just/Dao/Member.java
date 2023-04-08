@@ -26,6 +26,7 @@
       private Role authority;
 
       @CreationTimestamp
+      @Column(name = "create_time")
       private Timestamp createTime;
 
       private String provider;
