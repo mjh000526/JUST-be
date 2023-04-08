@@ -45,7 +45,7 @@ public class JwtFilter extends GenericFilterBean {
         }
         else if(!jwtProvider.validateToken(accessToken)&&refreshToken!=null){
             if(jwtProvider.validateToken(refreshToken)&& jwtProvider.existsRefreshToken(refreshToken)){
-                System.out.println("토큰터지고 리프레시 있");
+                System.out.println("토큰터지고 리프레시 있음");
                 Member member = jwtProvider.getMemberFromRefreshToken(refreshToken);
                 String newToken = jwtProvider.createaccessToken(member);
                 HttpHeaders httpHeaders = new HttpHeaders();

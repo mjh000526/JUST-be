@@ -61,7 +61,7 @@ public class PostServiceTest {
         member.setNickname("테스트");
         member.setProvider("kakao");
         member.setProvider_id("2729809374");
-        member.setRole(Role.valueOf("ROLE_USER"));
+        member.setAuthority(Role.valueOf("ROLE_USER"));
         memberRepository.save(member);
 
         PostDto postDto = new PostDto();    //post생성
@@ -91,7 +91,7 @@ public class PostServiceTest {
             member.setNickname("테스트");
             member.setProvider("kakao");
             member.setProvider_id("2729809374");
-            member.setRole(Role.valueOf("ROLE_USER"));
+            member.setAuthority(Role.valueOf("ROLE_USER"));
             memberRepository.save(member);
         }
 
