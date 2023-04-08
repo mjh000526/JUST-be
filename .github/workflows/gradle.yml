@@ -34,10 +34,9 @@ jobs: #작업을 정의
         env:
           OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
           OCCUPY_SECRET_DIR: src/main/resources
-          OCCUPY_SECRET_TEST_DIR: src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME &&
-          echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_TEST_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+
       - name: Build with Gradle #Gradle이용하여 빌드
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
