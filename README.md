@@ -16,7 +16,7 @@
 
 
   
-## [](https://github.com/inje-megabrain/JUST-FE#%EA%B0%9C%EB%B0%9C-%EC%A7%84%ED%96%89%EC%A4%91%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4)개발 진행중인 프로젝트입니다!
+## [](https://github.com/inje-megabrain/JUST-FE#%EA%B0%9C%EB%B0%9C-%EC%A7%84%ED%96%89%EC%A4%91%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4)
 
   
   
@@ -31,8 +31,6 @@
 
 -   기본적인 글쓰기, 좋아요, 무한스크롤 기능 구현
 -   피드백을 위한 신고기능 
--   직접 찍은 사진을 글 배경사진으로 할 수 있도록 올릴 수 있다(예정)
--   팔로우 기능과 구독 기능 (예정)
   
 
 
