@@ -1,4 +1,4 @@
-PROJECT_ROOT="/home/ec2-user/app"
+PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
@@ -7,6 +7,7 @@ DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
 TIME_NOW=$(date +%c)
 
+# build 파일 복사
 echo "$TIME_NOW > $JAR_FILE 파일 복사" >> $DEPLOY_LOG
 cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
