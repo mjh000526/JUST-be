@@ -22,9 +22,3 @@ public class BasicResponse {
     private Integer count;
     private List<Object> result;
 }
-/*
-
- */
-/*
-dssa
- */
