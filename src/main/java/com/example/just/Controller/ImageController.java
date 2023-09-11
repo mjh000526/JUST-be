@@ -16,10 +16,5 @@ public class ImageController {
     private ImageService imageService;
 
 
-    @GetMapping("/{filename}")
-    @ApiOperation(value = "이미지 url 가져오기", notes = "이미지 url 가져오기")
-    public ResponseEntity<Object> getImageUrl(@PathVariable String filename) {
-        String url = imageService.getPresignedUrl(filename);
-        return ResponseEntity.ok(url);
-    }
+
 }
