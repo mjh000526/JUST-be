@@ -8,3 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface BlameRepository extends JpaRepository<Blame, Long> {
     Blame findByBlameMemberIdAndTargetIdAndTargetType(Long blame_member_id,Long target_id, String target_type);
 }
+
+/*
+
+ */
