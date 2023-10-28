@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class NotificationService {
 
-    private static  final Long timeout=60L*1000*60;
+    private static final Long timeout=60L*1000*6000;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -39,8 +39,8 @@ public class NotificationService {
     private JwtProvider jwtProvider;
 
     public SseEmitter subscribe(HttpServletRequest request, String lastEventId){
-        String token = (String) request.getHeader("access_token");
-        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출;
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         String emitterId = makeTimeIncludeId(id);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(timeout));
         emitter.onCompletion(()-> emitterRepository.deleteById(emitterId));
@@ -82,28 +82,27 @@ public class NotificationService {
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
-    public void send(Member receiver, String notificationType, String content){
-        Notification notification = notificationRepository.save(createNotification(receiver,notificationType,content));
+    public void send(Member receiver, String notificationType, Long postId, Long senderId){
+        Notification notification = notificationRepository.save(createNotification(receiver,notificationType,postId,senderId));
         String receiverId = String.valueOf(receiver.getId());
-        String eventId = receiverId + "_" + System.currentTimeMillis();
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithById(receiverId);
         emitters.forEach(
                 (key, emitter) ->{
                     emitterRepository.saveEventCache(key, notification);
-                    sendNotification(emitter, eventId, key, NotificationDto.create(notification));
+                    sendNotification(emitter, receiverId, key, NotificationDto.create(notification));
                 }
         );
     }
 
     //알림객체생성
-    private Notification createNotification(Member receiver, String notificationType, String content){
+    private Notification createNotification(Member receiver, String notificationType, Long postId, Long senderId){
         return Notification.builder()
-                .not_type(notificationType)
-                .not_content(content)
-                .not_isRead(false)
-                .not_datetime(new Date(System.currentTimeMillis()))
-                .not_read_dateTime(null)
-                .member(receiver)
+                .notType(notificationType)
+                .notPostId(postId)
+                .notIsRead(false)
+                .notDatetime(new Date(System.currentTimeMillis()))
+                .receiver(receiver)
+                .senderId(senderId)
                 .build();
     }
 }
