@@ -2,21 +2,13 @@ package com.example.just.Dto;
 
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
-import com.example.just.Dao.Notification;
-import com.example.just.Dao.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
