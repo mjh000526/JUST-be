@@ -41,10 +41,6 @@ public class PostController {
     }
 
     /*
-
-     */
-
-    /*
     @Operation(summary =  "자기의 게시글을 조회하는 API", description =  "<big> 자신의 게시글을 조회한다</big>")
     @GetMapping("/get/mypost")
     public ResponseEntity<Slice<Post>> getMyPosts(
