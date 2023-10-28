@@ -41,7 +41,7 @@ public class Notification{
     @OnDelete(action = OnDeleteAction.CASCADE) //알림을 받을 member
     private Member receiver;
 
-    @Column(name = "not_sender_id")   //알림 내용
+    @Column(name = "not_sender_id")   //송신자 id
     private Long senderId;
 
 
