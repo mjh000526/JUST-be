@@ -85,10 +85,7 @@ public class PostService {
         return responsePost;
     }
 
-<<<<<<< HEAD
     //글 수정
-=======
->>>>>>> parent of 3c9dc9f (Refector: Post API)
     public ResponsePost putPost(Long member_id, PutPostDto postDto) {
         Long post_id = postDto.getPost_id();
         System.out.println(post_id);
@@ -154,10 +151,7 @@ public class PostService {
         ResponseGetPost responseGetPost = new ResponseGetPost(
                 new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor), false);
         return responseGetPost;
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 3c9dc9f (Refector: Post API)
     }
     /*
     public Slice<Post> searchByMyPost(Long limit, Long member_id) {
