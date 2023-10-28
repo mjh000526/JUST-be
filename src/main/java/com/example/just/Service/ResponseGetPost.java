@@ -2,7 +2,10 @@ package com.example.just.Service;
 
 import com.example.just.Dao.Post;
 import com.example.just.Impl.MySliceImpl;
+import lombok.Getter;
+import org.springframework.web.bind.annotation.GetMapping;
 
+@Getter
 public class ResponseGetPost {
     private MySliceImpl<Post> mySlice;
     private boolean value;
