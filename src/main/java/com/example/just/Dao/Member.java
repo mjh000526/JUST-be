@@ -64,7 +64,7 @@
           blameCount++;
       }
 
-      @OneToMany(mappedBy = "member")   //알림
+      @OneToMany(mappedBy = "receiver")   //알림
       private List<Notification> notifications;
       public void updateMember(final Post post) {
           posts.add(post);
