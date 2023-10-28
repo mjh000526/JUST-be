@@ -1,15 +1,19 @@
 package com.example.just.Dto;
 import com.example.just.Dao.Post;
 import com.example.just.Dao.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
 
 //로그인 할 때 사용할 Dto
 @Builder
