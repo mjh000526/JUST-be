@@ -36,6 +36,7 @@ public class SwaggerConfig {
                 .securitySchemes(Arrays.asList(apiKey())) // swagger에서 jwt 토큰값 넣기위한 설정
                 .apiInfo(apiInfo());
     }
+
     private ApiKey apiKey() {
         return new ApiKey("Authorization", "Authorization", "header");
     }
@@ -50,6 +51,7 @@ public class SwaggerConfig {
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
     }
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("제목")
