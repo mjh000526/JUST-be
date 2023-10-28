@@ -36,11 +36,13 @@ public class PostController {
         String token = jwtProvider.getAccessToken(req);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
 
-
         String cursor = req.getHeader("viewed");
         return postService.searchByCursor(cursor, request_page, member_id);
     }
 
+    /*
+
+     */
 
     /*
     @Operation(summary =  "자기의 게시글을 조회하는 API", description =  "<big> 자신의 게시글을 조회한다</big>")
@@ -63,7 +65,7 @@ public class PostController {
     public ResponsePost write(HttpServletRequest request,
                               @RequestBody PostDto postDto) {
         String token = jwtProvider.getAccessToken(request);
-        System.out.println(token+"ㅋㅋ");
+        System.out.println(token + "ㅋㅋ");
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
 
         return postService.write(member_id, postDto);
@@ -87,16 +89,12 @@ public class PostController {
 
     @Operation(summary = "게시글 좋아요 api", description = "\n 자기가 좋아요 한 글이면 true")
     @PostMapping("/post/like")
-    public ResponseEntity<Void> postLikes(@RequestParam Long post_id,HttpServletRequest request) {
+    public ResponseEntity<Void> postLikes(@RequestParam Long post_id, HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         postService.postLikes(post_id, member_id);
         return ResponseEntity.ok().build();
     }
-
-
-
-
 
 }
 
