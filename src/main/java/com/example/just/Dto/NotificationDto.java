@@ -2,7 +2,6 @@ package com.example.just.Dto;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Notification;
-import com.example.just.Dao.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

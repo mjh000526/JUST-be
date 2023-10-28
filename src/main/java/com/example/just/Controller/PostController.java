@@ -1,6 +1,5 @@
 package com.example.just.Controller;
 
-import com.example.just.Dto.PostDto;
 
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;

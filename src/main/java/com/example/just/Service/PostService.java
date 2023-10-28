@@ -3,7 +3,6 @@ package com.example.just.Service;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dao.QPost;
-import com.example.just.Dto.PostDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.example.just.Impl.MySliceImpl;
