@@ -10,6 +10,7 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -115,6 +116,23 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         return comment.getBlamedCount();
+    }
+
+    @Transactional
+    public void likeComment(Long postId, Long commentId, Long member_id) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다: " + commentId));
+        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        if (comment.getLikedMembers().contains(member)) {
+            comment.removeLike(member);
+        } else {
+            comment.addLike(member);
+        }
+
+       commentRepository.save(comment);
+
     }
 }
 
