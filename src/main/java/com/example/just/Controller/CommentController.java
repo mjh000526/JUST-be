@@ -57,4 +57,16 @@ public class CommentController {
         String token = jwtProvider.getAccessToken(req);
         return commentService.putComment(postId, commentId, commentDto);
     }
+
+    @ApiOperation(value = "댓글 신고")
+    @PostMapping("/post/comment/{postId}/{commentId}")
+    public ResponseEntity<String> blameComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        return commentService.blameComment(postId, commentId);
+    }
+
+    @ApiOperation(value = "댓글 신고 횟수 조회")
+    @GetMapping("/get/comment/blame/{postId}/{commentId}")
+    public int blameGetComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        return commentService.blameGetComment(postId, commentId);
+    }
 }

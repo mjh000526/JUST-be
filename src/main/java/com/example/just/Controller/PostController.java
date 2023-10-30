@@ -7,6 +7,7 @@ import com.example.just.Service.PostService;
 import com.example.just.Service.ResponseGetPost;
 import com.example.just.Service.ResponsePost;
 import com.example.just.jwt.JwtProvider;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,5 +95,16 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "게시글 신고")
+    @PostMapping("/post/blame/post")
+    public ResponseEntity<String> blamePost(@RequestParam Long post_id) {
+        return postService.blamePost(post_id);
+    }
+
+    @ApiOperation(value = "댓글 신고 횟수 조회")
+    @GetMapping("/get/post/blame/{postId}")
+    public int blameGetComment(@PathVariable Long postId) {
+        return postService.blameGetPost(postId);
+    }
 }
 

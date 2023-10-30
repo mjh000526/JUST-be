@@ -15,6 +15,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
@@ -151,6 +152,27 @@ public class PostService {
         ResponseGetPost responseGetPost = new ResponseGetPost(
                 new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor), false);
         return responseGetPost;
+
+    }
+    public ResponseEntity<String> blamePost(Long post_id) {
+        Optional<Post> optionalPost = postRepository.findById(post_id);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+        }
+        Post post = optionalPost.get();
+
+        post.setBlamedCount(post.getBlamedCount()+1);
+        postRepository.save(post);
+        return ResponseEntity.ok("ok");
+    }
+
+    public int blameGetPost(Long postId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
+            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + postId);
+        }
+        Post post = optionalPost.get();
+        return post.getBlamedCount();
 
     }
     /*
