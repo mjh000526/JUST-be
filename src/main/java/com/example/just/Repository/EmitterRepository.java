@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Repository
 public interface EmitterRepository {
-    SseEmitter save(String emmiterId, SseEmitter sseEmitter);
+    SseEmitter save(String emitterId, SseEmitter sseEmitter);
     void saveEventCache(String eventCacheId, Object Event);
     Map<String, SseEmitter> findAllEmitterStartWithById(String id);
     Map<String, Object> findAllEventCacheStartWithById(String id);

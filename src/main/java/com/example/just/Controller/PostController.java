@@ -1,7 +1,8 @@
 package com.example.just.Controller;
 
-import com.example.just.Dto.PostDto;
 
+import com.example.just.Dto.PostPostDto;
+import com.example.just.Dto.PutPostDto;
 import com.example.just.Service.PostService;
 import com.example.just.Service.ResponseGetPost;
 import com.example.just.Service.ResponsePost;
@@ -37,6 +38,7 @@ public class PostController {
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
 
         String cursor = req.getHeader("viewed");
+
         return postService.searchByCursor(cursor, request_page, member_id);
     }
 
@@ -55,11 +57,11 @@ public class PostController {
 
      */
 
-    @Operation(summary = "게시글 작성 api", description = "post_content, post_tag는 null값이 발생하면" +
-            " 안됨\n" + "다른 건 null이와도 예외처리 완료\n 자기가 쓴 글이면 true")
+    @Operation(summary = "게시글 작성 api", description = "RequestBody에 null값이 있으면 안됨"
+            + "\n 공개글이면 true 아니라면 false")
     @PostMapping("/post/post")
     public ResponsePost write(HttpServletRequest request,
-                              @RequestBody PostDto postDto) {
+                              @RequestBody PostPostDto postDto) {
         String token = jwtProvider.getAccessToken(request);
         System.out.println(token + "ㅋㅋ");
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
@@ -75,12 +77,12 @@ public class PostController {
 
     @Operation(summary = "게시글 수정 api", description = "JSON넘길 때 null이 하나도 있으면 안됨 꼭 다채워서 넘기기")
     @PutMapping("/put/post")
-    public ResponsePost putPost(@RequestParam Long post_id, HttpServletRequest request,
-                                @RequestBody PostDto postDto) {
+    public ResponsePost putPost(HttpServletRequest request,
+                                @RequestBody PutPostDto postDto) {
         String token = jwtProvider.getAccessToken(request);
 
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        return postService.putPost(post_id, member_id, postDto);
+        return postService.putPost(member_id, postDto);
     }
 
     @Operation(summary = "게시글 좋아요 api", description = "\n 자기가 좋아요 한 글이면 true")

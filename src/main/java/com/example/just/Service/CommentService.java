@@ -31,7 +31,7 @@ public class CommentService {
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
-        if (commentDto.getParentCommentId() != null) {
+        if (commentDto.getParentCommentId() != null && commentDto.getParentCommentId()!=0) {
             parentComment = commentRepository.findById(commentDto.getParentCommentId())
                     .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
         }
@@ -47,12 +47,15 @@ public class CommentService {
         comment.setPost(post);
         comment.setMember(member);
         comment.setParent(parentComment);
+        comment.setComment_like(0L);
+        comment.setComment_dislike(0L);
         comment.setComment_create_time(LocalDateTime.now());
         comment.setBlamedCount(0);
 
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
+
         }
         Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
         notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);

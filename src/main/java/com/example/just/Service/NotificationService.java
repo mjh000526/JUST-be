@@ -46,13 +46,15 @@ public class NotificationService {
         emitter.onCompletion(()-> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(()-> emitterRepository.deleteById(emitterId));
 
-        //더미이벤트를 전송하지 않으면 오류 발생 가능
-        String eventId = makeTimeIncludeId(id);
-        sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId="+id+"]");
+        sendNotification(emitter, emitterId, "EventStream Created. [userId="+id+"]");
 
         //클라이언트가 미수신한 Event목록이 존재할 경우 전송하여 Event유실 발생
-        if(hasLostData(lastEventId)){
-            sendLostData(lastEventId,id,emitterId,emitter);
+        if (!lastEventId.isEmpty()) {
+            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithById(String.valueOf(id));
+            System.out.println(events.size());
+            events.entrySet().stream()
+                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+                    .forEach(entry -> sendNotification(emitter, entry.getKey(), entry.getValue()));
         }
         return emitter;
     }
@@ -61,25 +63,15 @@ public class NotificationService {
         return id + "_" + System.currentTimeMillis();
     }
 
-    private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data){
+    private void sendNotification(SseEmitter emitter, String id, Object data){
         try{
             emitter.send(SseEmitter.event()
-                    .id(eventId)
+                    .id(id)
+                    .name(id)
                     .data(data));
         }catch (IOException e){
-            emitterRepository.deleteById(emitterId);
+            emitterRepository.deleteById(id);
         }
-    }
-    //받지 못한 데이터가 있는지 확인
-    private boolean hasLostData(String lastEventId){
-        return !lastEventId.isEmpty();
-    }
-    //받지못한 데이터가 있다면 Last 이벤트를 기준으로 그 뒤의 데이터를 추출해서 전송
-    private void sendLostData(String lastEventId, Long id, String emitterId, SseEmitter emitter){
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithById(String.valueOf(id));
-        eventCaches.entrySet().stream()
-                .filter(entry -> lastEventId.compareTo(entry.getKey())<0)
-                .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
     public void send(Member receiver, String notificationType, Long postId, Long senderId){
@@ -89,7 +81,7 @@ public class NotificationService {
         emitters.forEach(
                 (key, emitter) ->{
                     emitterRepository.saveEventCache(key, notification);
-                    sendNotification(emitter, receiverId, key, NotificationDto.create(notification));
+                    sendNotification(emitter, key, NotificationDto.create(notification));
                 }
         );
     }

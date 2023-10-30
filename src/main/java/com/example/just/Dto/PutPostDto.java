@@ -11,18 +11,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+//
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 
-public class PostDto {
+public class PutPostDto {
     private Long post_id;
 
     private String post_content;    //글 내용
 
     private String post_tag;    //글 태그
-
-    private Long post_like; //공감 회수
 
     private Long post_picture;
 
@@ -45,9 +46,6 @@ public class PostDto {
 
     @JsonIgnore
     private List<Comment> comments;
-
-    private int blamedCount;
-
 
 
     public boolean getSecret() {
