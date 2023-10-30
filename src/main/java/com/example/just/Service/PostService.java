@@ -232,7 +232,7 @@ public class PostService {
 
         Post savePost = postRepository.save(post);
         ResponsePost responsePost = new ResponsePost(post, true);
-        notificationService.send(post.getMember(), "like", post_id, member_id);
+        notificationService.send(post.getMember(), "postLike", post_id, member_id);
         return responsePost;
     }
 
