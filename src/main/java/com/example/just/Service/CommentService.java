@@ -95,5 +95,27 @@ public class CommentService {
 
         return ResponseEntity.ok("ok");
     }
+
+    public ResponseEntity<String> blameComment(Long postId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다: " + commentId));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+
+        comment.setBlamedCount(comment.getBlamedCount()+1);
+        commentRepository.save(comment);
+
+        return ResponseEntity.ok("ok");
+    }
+
+    public int blameGetComment(Long postId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다: " + commentId));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        return comment.getBlamedCount();
+    }
 }
 
