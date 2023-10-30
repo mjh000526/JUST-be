@@ -55,7 +55,14 @@
             inverseJoinColumns = @JoinColumn(name = "post_id")
       )
       private List<Post> likedPosts = new ArrayList<>();
-
+      @Builder.Default
+      @ManyToMany(cascade = CascadeType.ALL)
+      @JoinTable(
+              name = "comment_like",
+              joinColumns = @JoinColumn(name = "member_id"),
+              inverseJoinColumns = @JoinColumn(name = "comment_id")
+      )
+      private List<Comment> likedComments = new ArrayList<>();
       public void addBlamed(){
           blamedCount++;
       }
