@@ -35,6 +35,8 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private PostMapper postMapper;
@@ -230,6 +232,7 @@ public class PostService {
 
         Post savePost = postRepository.save(post);
         ResponsePost responsePost = new ResponsePost(post, true);
+        notificationService.send(post.getMember(), "like", post_id, member_id);
         return responsePost;
     }
 
