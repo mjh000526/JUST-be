@@ -69,6 +69,7 @@ public class NotificationService {
                     .id(id)
                     .name(id)
                     .data(data));
+
         }catch (IOException e){
             emitterRepository.deleteById(id);
         }
