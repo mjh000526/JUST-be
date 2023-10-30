@@ -58,7 +58,7 @@ public class CommentService {
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
-            notificationService.send(receiver.get(), "Bigcomment", parentComment.getComment_id(), member_id);
+            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
 
         }else if(parentComment == null){
             notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
@@ -134,7 +134,7 @@ public class CommentService {
         } else {
             comment.addLike(member);
         }
-
+        notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
        commentRepository.save(comment);
 
     }
