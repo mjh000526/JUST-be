@@ -22,19 +22,19 @@ public class QNotification extends EntityPathBase<Notification> {
 
     public static final QNotification notification = new QNotification("notification");
 
-    public final QMember member;
+    public final DateTimePath<java.util.Date> notDatetime = createDateTime("notDatetime", java.util.Date.class);
 
-    public final StringPath not_content = createString("not_content");
+    public final NumberPath<Long> notId = createNumber("notId", Long.class);
 
-    public final DateTimePath<java.util.Date> not_datetime = createDateTime("not_datetime", java.util.Date.class);
+    public final BooleanPath notIsRead = createBoolean("notIsRead");
 
-    public final NumberPath<Long> not_id = createNumber("not_id", Long.class);
+    public final NumberPath<Long> notPostId = createNumber("notPostId", Long.class);
 
-    public final BooleanPath not_isRead = createBoolean("not_isRead");
+    public final StringPath notType = createString("notType");
 
-    public final DateTimePath<java.util.Date> not_read_dateTime = createDateTime("not_read_dateTime", java.util.Date.class);
+    public final QMember receiver;
 
-    public final StringPath not_type = createString("not_type");
+    public final NumberPath<Long> senderId = createNumber("senderId", Long.class);
 
     public QNotification(String variable) {
         this(Notification.class, forVariable(variable), INITS);
@@ -54,7 +54,7 @@ public class QNotification extends EntityPathBase<Notification> {
 
     public QNotification(Class<? extends Notification> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.receiver = inits.isInitialized("receiver") ? new QMember(forProperty("receiver")) : null;
     }
 
 }

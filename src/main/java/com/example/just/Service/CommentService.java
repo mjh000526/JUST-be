@@ -28,6 +28,8 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
@@ -57,7 +59,8 @@ public class CommentService {
             parentComment.getChildren().add(comment);
 
         }
-
+        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
+        notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         return commentRepository.save(comment);
     }
 
