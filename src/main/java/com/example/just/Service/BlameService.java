@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class BlameService {
+public class  BlameService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
