@@ -67,7 +67,6 @@ public class NotificationService {
         try{
             emitter.send(SseEmitter.event()
                     .id(id)
-                    .name(id)
                     .data(data));
 
         }catch (IOException e){

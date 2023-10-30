@@ -57,7 +57,6 @@ public class CommentService {
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
-
         }
         Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
         notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
