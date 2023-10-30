@@ -3,7 +3,6 @@
   import com.fasterxml.jackson.annotation.JsonIgnore;
   import lombok.*;
   import org.hibernate.annotations.CreationTimestamp;
-  import org.springframework.stereotype.Service;
 
   import javax.persistence.*;
   import java.sql.Timestamp;
@@ -64,7 +63,7 @@
           blameCount++;
       }
 
-      @OneToMany(mappedBy = "member")   //알림
+      @OneToMany(mappedBy = "receiver")   //알림
       private List<Notification> notifications;
       public void updateMember(final Post post) {
           posts.add(post);

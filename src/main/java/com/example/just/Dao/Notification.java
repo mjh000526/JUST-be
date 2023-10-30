@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -17,29 +18,32 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification{
+public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long not_id;
+    private Long notId;
 
     @Column(name = "not_type")  //알림 타입
-    private String not_type;
+    private String notType;
 
-    @Column(name = "not_content")   //알림 내용
-    private String not_content;
+    @Column(name = "not_post_id")   //알림 내용
+    private Long notPostId;
 
     @Column(name = "not_datetime")  //알림 발생 시일
-    private Date not_datetime;
-
-    @Column(name = "not_read_datetime") //알림 읽은 시간
-    private Date not_read_dateTime;
+    private Date notDatetime;
+//
+//    @Column(name = "not_read_datetime") //알림 읽은 시간
+//    private Date not_read_dateTime;
 
     @Column(nullable = false)
-    private Boolean not_isRead; //알림 읽음 여부
+    private Boolean notIsRead; //알림 읽음 여부
     @ManyToOne
     @JoinColumn(name = "id")
     @OnDelete(action = OnDeleteAction.CASCADE) //알림을 받을 member
-    private Member member;
+    private Member receiver;
+
+    @Column(name = "not_sender_id")   //송신자 id
+    private Long senderId;
 
 
 }

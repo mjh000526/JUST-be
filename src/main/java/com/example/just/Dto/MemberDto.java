@@ -34,7 +34,9 @@ public class MemberDto {
 
     private int blameCount;
 
+    @Builder.Default
     private List<Post> likedPosts = new ArrayList<>();
 
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 }
