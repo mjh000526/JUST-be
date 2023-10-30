@@ -54,13 +54,17 @@ public class CommentService {
         comment.setComment_dislike(0L);
         comment.setComment_create_time(LocalDateTime.now());
         comment.setBlamedCount(0);
-
+        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
+            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
+
+        }else if(parentComment == null){
+            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
-        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
-        notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
+
+
         return commentRepository.save(comment);
     }
 
@@ -130,7 +134,7 @@ public class CommentService {
         } else {
             comment.addLike(member);
         }
-
+        notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
        commentRepository.save(comment);
 
     }
