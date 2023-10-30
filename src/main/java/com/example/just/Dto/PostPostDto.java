@@ -15,14 +15,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 
-public class PostDto {
-    private Long post_id;
-
+public class PostPostDto {
     private String post_content;    //글 내용
 
     private String post_tag;    //글 태그
-
-    private Long post_like; //공감 회수
 
     private Long post_picture;
 
@@ -45,9 +41,6 @@ public class PostDto {
 
     @JsonIgnore
     private List<Comment> comments;
-
-    private int blamedCount;
-
 
 
     public boolean getSecret() {

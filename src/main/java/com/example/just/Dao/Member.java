@@ -3,7 +3,6 @@
   import com.fasterxml.jackson.annotation.JsonIgnore;
   import lombok.*;
   import org.hibernate.annotations.CreationTimestamp;
-  import org.springframework.stereotype.Service;
 
   import javax.persistence.*;
   import java.sql.Timestamp;

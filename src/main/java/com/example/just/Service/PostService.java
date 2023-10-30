@@ -1,8 +1,10 @@
 package com.example.just.Service;
+
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dao.QPost;
-import com.example.just.Dto.PostDto;
+import com.example.just.Dto.PostPostDto;
+import com.example.just.Dto.PutPostDto;
 import com.example.just.Impl.MySliceImpl;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.MemberRepository;
@@ -19,7 +21,6 @@ import javax.persistence.EntityManager;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 
 @Service
@@ -46,7 +47,7 @@ public class PostService {
     }
 
 
-    public ResponsePost write(Long member_id, PostDto postDto) {    //글 작성
+    public ResponsePost write(Long member_id, PostPostDto postDto) {    //글 작성
 
         Optional<Member> optionalMember = memberRepository.findById(member_id);
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
@@ -67,7 +68,6 @@ public class PostService {
     }
 
 
-
     //글 삭제
     @Transactional
     public ResponsePost deletePost(Long post_id) {
@@ -76,7 +76,6 @@ public class PostService {
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
         }
         Post post = optionalPost.get();
-        post.setMember(null);
         try {
             postRepository.delete(post);
         } catch (Exception e) {
@@ -87,7 +86,9 @@ public class PostService {
     }
 
     //글 수정
-    public ResponsePost putPost(Long post_id, Long member_id, PostDto postDto) {
+    public ResponsePost putPost(Long member_id, PutPostDto postDto) {
+        Long post_id = postDto.getPost_id();
+        System.out.println(post_id);
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
@@ -96,17 +97,19 @@ public class PostService {
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
         }
+
         postDto.setPost_create_time(new Timestamp(System.currentTimeMillis()));
+
         Member member = optionalMember.get();   //존재한다면 객체 생성
         postDto.setMember(member);
         Post post = postMapper.toEntity(postDto);
+        post.setPost_like(optionalPost.get().getPost_like());
         postRepository.save(post);
         ResponsePost responsePost = new ResponsePost(post, true);
         return responsePost;
     }
 
     public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) { //글 조
-
 
         QPost post = QPost.post;
         Set<Long> viewedPostIds = new HashSet<>();
@@ -116,7 +119,7 @@ public class PostService {
             String[] viewedPostIdsArray = cursor.split(",");
             viewedPostIds = new HashSet<>();
             for (String viewedPostId : viewedPostIdsArray) {
-                viewedPostIds.add(Long.parseLong(viewedPostId));
+                viewedPostIds.add(Long.parseLong(viewedPostId.trim()));
             }
         }
 
@@ -128,7 +131,6 @@ public class PostService {
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit + 1)
                 .fetch();
-
         // 가져온 글들의 ID를 저장합니다.
         Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
         viewedPostIds.addAll(resultPostIds);
@@ -146,7 +148,8 @@ public class PostService {
         }
 
         // Slice 객체를 생성해서 반환합니다.
-        ResponseGetPost responseGetPost = new ResponseGetPost(new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor), false);
+        ResponseGetPost responseGetPost = new ResponseGetPost(
+                new MySliceImpl<>(results, PageRequest.of(0, Math.toIntExact(limit)), hasNext, nextCursor), false);
         return responseGetPost;
 
     }
@@ -182,11 +185,8 @@ public class PostService {
      */
 
 
-
-
     @Transactional
     public ResponsePost postLikes(Long post_id, Long member_id) {    //글 좋아요
-
 
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리

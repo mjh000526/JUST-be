@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationDto {
+public class NotificationDto implements Serializable {
 
     private String not_type;    //알림 타입
 
@@ -22,7 +23,7 @@ public class NotificationDto {
 
     private Date not_datetime;    //알림 발생 시일
 
-    private Member Receiver;    //알림이 발생한 글
+    private Long receiver;    //알림이 발생한 글
 
     private Long senderId;      //알림 송신자
 
@@ -31,7 +32,7 @@ public class NotificationDto {
                 notification.getNotType(),
                 notification.getNotPostId(),
                 notification.getNotDatetime(),
-                notification.getReceiver(),
+                notification.getReceiver().getId(),
                 notification.getSenderId()
         );
     }

@@ -41,6 +41,7 @@ public class EmitterRepositoryImpl implements EmitterRepository{
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+
     @Override
     public void deleteById(String id) {
         emitters.remove(id);
