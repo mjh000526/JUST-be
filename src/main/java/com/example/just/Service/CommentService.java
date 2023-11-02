@@ -34,8 +34,8 @@ public class CommentService {
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
-        if (commentDto.getParentCommentId() != null && commentDto.getParentCommentId() != 0) {
-            parentComment = commentRepository.findById(commentDto.getParentCommentId())
+        if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
+            parentComment = commentRepository.findById(commentDto.getParent_comment_id())
                     .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
         }
 
