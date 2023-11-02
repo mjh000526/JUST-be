@@ -1,0 +1,67 @@
+baseUrl : https://pick-read-me-actions-s3-bucket.s3.ap-northeast-2.amazonaws.com/
+server:
+  port: 9000
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAZIZFTLINZH6AKZ6M
+      secretKey: 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
+      region: ap-northeast-2
+      bucketName: pick-read-me-actions-s3-bucket
+      stack:
+        auto: false
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함 ㅇㅇ
+  jackson:
+    default-property-inclusion: non-null
+  datasource:
+    hikari:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://52.78.80.150:3306/pick_read_me?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: username
+    password: Newyork077!
+    connection-timeout: 30000 #30초 설정
+    maximum-pool-size: 150 #150개 설정
+    max-lifetime:  3600000 #1시간 설정
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 55ec14b78e17e978a4a3b64971060784
+            redirect-uri: http://52.78.80.150:9000/api/kakao/access_token
+            client-authentication-method: POST
+            client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+            authorization-grant-type: authorization_code
+            scope:
+              - account_email
+              - profile_nickname
+            client_name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        use-new-id-generator-mappings: true
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        enable_lazy_load_no_trans: true
+
+jwt:
+  header: Authorization
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5KaijdfijAIfj41jkjiUIJHI3ji123AasdhfuAUSLNJUIGh098587KJMGKN134JBN8
+  token-validity-in-seconds: 86400
