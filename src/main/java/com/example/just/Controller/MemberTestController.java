@@ -1,6 +1,7 @@
 package com.example.just.Controller;
 
 import com.example.just.Service.KakaoService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Api(tags = {"test controller"}, description = "카카오 oauth테스트")
 @RestController
 @RequestMapping("/api")
 public class MemberTestController {
@@ -25,13 +27,13 @@ public class MemberTestController {
 
     @PostMapping("/kakao/testsign")
     @ApiOperation(value = "카카오 토큰으로 회원가입")
-    public ResponseEntity signUpKakao(@RequestParam String accessToken){
-        return ks.signUpKakao(accessToken,"테스트용");
+    public ResponseEntity signUpKakao(@RequestParam String access_token){
+        return ks.signUpKakao(access_token,"테스트용");
     }
 
     @PostMapping("/kakao/testlogin")
     @ApiOperation(value = "카카오 토큰으로 로그인")
-    public ResponseEntity loginKakao(@RequestParam String accessToken) throws IOException{
-        return ks.loginKakao(accessToken);
+    public ResponseEntity loginKakao(@RequestParam String access_token) throws IOException{
+        return ks.loginKakao(access_token);
     }
 }

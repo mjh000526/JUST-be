@@ -1,7 +1,6 @@
 package com.example.just.Mapper;
 
 import com.example.just.Dao.Comment;
-import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dto.PutPostDto;
 import java.util.ArrayList;
@@ -11,7 +10,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
+<<<<<<< HEAD
+    date = "2023-11-02T19:23:50+0900",
+=======
     date = "2023-10-30T19:08:23+0900",
+>>>>>>> d1b8ce8a2a245334752819162b25290519764414
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
@@ -33,14 +36,10 @@ public class PostMapperImpl implements PostMapper {
         post.setSecret( dto.getSecret() );
         post.setEmoticon( dto.getEmoticon() );
         post.setPost_category( dto.getPost_category() );
-        List<Member> list = dto.getLikedMembers();
-        if ( list != null ) {
-            post.setLikedMembers( new ArrayList<Member>( list ) );
-        }
         post.setMember( dto.getMember() );
-        List<Comment> list1 = dto.getComments();
-        if ( list1 != null ) {
-            post.setComments( new ArrayList<Comment>( list1 ) );
+        List<Comment> list = dto.getComments();
+        if ( list != null ) {
+            post.setComments( new ArrayList<Comment>( list ) );
         }
 
         return post;
@@ -62,14 +61,10 @@ public class PostMapperImpl implements PostMapper {
         putPostDto.setSecret( entity.getSecret() );
         putPostDto.setEmoticon( entity.getEmoticon() );
         putPostDto.setPost_category( entity.getPost_category() );
-        List<Member> list = entity.getLikedMembers();
-        if ( list != null ) {
-            putPostDto.setLikedMembers( new ArrayList<Member>( list ) );
-        }
         putPostDto.setMember( entity.getMember() );
-        List<Comment> list1 = entity.getComments();
-        if ( list1 != null ) {
-            putPostDto.setComments( new ArrayList<Comment>( list1 ) );
+        List<Comment> list = entity.getComments();
+        if ( list != null ) {
+            putPostDto.setComments( new ArrayList<Comment>( list ) );
         }
 
         return putPostDto;

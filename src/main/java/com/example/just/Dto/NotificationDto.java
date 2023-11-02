@@ -25,7 +25,7 @@ public class NotificationDto implements Serializable {
 
     private Long receiver;    //알림이 발생한 글
 
-    private Long senderId;      //알림 송신자
+    private Long sender_id;      //알림 송신자
 
     public static NotificationDto create(Notification notification){
         return new NotificationDto(
