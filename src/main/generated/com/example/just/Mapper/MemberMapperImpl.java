@@ -10,11 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-<<<<<<< HEAD
-    date = "2023-10-30T14:06:10+0900",
-=======
-    date = "2023-10-29T14:58:38+0900",
->>>>>>> b90960540329e18af5bdb9d561e9a3eb83d88ac9
+    date = "2023-11-02T19:23:50+0900",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
@@ -30,18 +26,11 @@ public class MemberMapperImpl implements MemberMapper {
 
         member.id( dto.getId() );
         member.email( dto.getEmail() );
-        member.createTime( dto.getCreateTime() );
         member.provider( dto.getProvider() );
         member.provider_id( dto.getProvider_id() );
-        member.blamedCount( dto.getBlamedCount() );
-        member.blameCount( dto.getBlameCount() );
         List<Post> list = dto.getPosts();
         if ( list != null ) {
             member.posts( new ArrayList<Post>( list ) );
-        }
-        List<Post> list1 = dto.getLikedPosts();
-        if ( list1 != null ) {
-            member.likedPosts( new ArrayList<Post>( list1 ) );
         }
 
         return member.build();
@@ -56,19 +45,12 @@ public class MemberMapperImpl implements MemberMapper {
         MemberDto.MemberDtoBuilder memberDto = MemberDto.builder();
 
         memberDto.id( entity.getId() );
-        memberDto.createTime( entity.getCreateTime() );
         memberDto.email( entity.getEmail() );
         memberDto.provider( entity.getProvider() );
         memberDto.provider_id( entity.getProvider_id() );
-        memberDto.blamedCount( entity.getBlamedCount() );
-        memberDto.blameCount( entity.getBlameCount() );
-        List<Post> list = entity.getLikedPosts();
+        List<Post> list = entity.getPosts();
         if ( list != null ) {
-            memberDto.likedPosts( new ArrayList<Post>( list ) );
-        }
-        List<Post> list1 = entity.getPosts();
-        if ( list1 != null ) {
-            memberDto.posts( new ArrayList<Post>( list1 ) );
+            memberDto.posts( new ArrayList<Post>( list ) );
         }
 
         return memberDto.build();

@@ -26,47 +26,47 @@ public class CommentController {
 
     @Operation(summary = "댓글 작성 api", description = "parentCommentId는 부모 댓글의 아이디\n"
             + "대댓글일이 아닐때는 0을 넣으면 댓글이 쓰이고 대댓글일시 1 또 그에대한 대댓글일시 2입력")
-    @PostMapping("/post/{postId}/comments")
-    public ResponseEntity<Comment> createComment(@PathVariable Long postId,
-                                                 @RequestBody CommentDto commentDto,
+    @PostMapping("/post/{post_id}/comments")
+    public ResponseEntity<Comment> createComment(@PathVariable Long post_id,
+                                                 @RequestBody CommentDto comment_dto,
                                                  HttpServletRequest req) {
         String token = jwtProvider.getAccessToken(req);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        Comment comment = commentService.createComment(postId, member_id, commentDto);
+        Comment comment = commentService.createComment(post_id, member_id, comment_dto);
         return ResponseEntity.ok(comment);
     }
 
     @ApiOperation(value = "댓글 조회 API")
-    @GetMapping("/get/{postId}/comments")
-    public ResponseEntity<List<Comment>> getCommentList(@PathVariable Long postId) {
-        List<Comment> commentList = commentService.getCommentList(postId);
+    @GetMapping("/get/{post_id}/comments")
+    public ResponseEntity<List<Comment>> getCommentList(@PathVariable Long post_id) {
+        List<Comment> commentList = commentService.getCommentList(post_id);
         return ResponseEntity.ok(commentList);
     }
 
     @Operation(summary = "댓글 삭제 api", description = "대댓글까지 다 삭제되니 유의해야 함")
-    @DeleteMapping("/delete/comment/{postId}/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        return commentService.deleteComment(postId, commentId);
+    @DeleteMapping("/delete/comment/{post_id}/{comment_id}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
+        return commentService.deleteComment(post_id, comment_id);
     }
 
     @ApiOperation(value = "댓글 수정")
-    @PutMapping("/put/comment/{postId}/{commentId}")
-    public ResponseEntity<String> putComment(@PathVariable Long postId, @PathVariable Long commentId,
+    @PutMapping("/put/comment/{post_id}/{comment_id}")
+    public ResponseEntity<String> putComment(@PathVariable Long post_id, @PathVariable Long comment_id,
                                              @RequestBody PutCommentDto commentDto,
                                              HttpServletRequest req) {
         String token = jwtProvider.getAccessToken(req);
-        return commentService.putComment(postId, commentId, commentDto);
+        return commentService.putComment(post_id, comment_id, commentDto);
     }
 
     @ApiOperation(value = "댓글 신고")
-    @PostMapping("/post/comment/{postId}/{commentId}")
-    public ResponseEntity<String> blameComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        return commentService.blameComment(postId, commentId);
+    @PostMapping("/post/comment/{post_id}/{comment_id}")
+    public ResponseEntity<String> blameComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
+        return commentService.blameComment(post_id, comment_id);
     }
 
     @ApiOperation(value = "댓글 신고 횟수 조회")
-    @GetMapping("/get/comment/blame/{postId}/{commentId}")
-    public int blameGetComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        return commentService.blameGetComment(postId, commentId);
+    @GetMapping("/get/comment/blame/{post_id}/{comment_id}")
+    public int blameGetComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
+        return commentService.blameGetComment(post_id, comment_id);
     }
 }
