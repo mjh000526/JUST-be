@@ -19,12 +19,12 @@ public class CommentDto {
 
     private String comment_content; //댓글 내용
 
-    private Long parentCommentId;
+    private Long parent_comment_id;
     public CommentDto() {
     }
 
     public CommentDto(Comment comment) {
         this.comment_content = comment_content;
-        this.parentCommentId = comment.getParent() == null ? null : comment.getParent().getComment_id();
+        this.parent_comment_id = comment.getParent() == null ? null : comment.getParent().getComment_id();
     }
 }

@@ -39,7 +39,7 @@ public class PutPostDto {
     private String post_category; //글 카테고리
 
     @JsonIgnore
-    private List<Member> likedMembers = new ArrayList<>();
+    private List<Member> liked_members = new ArrayList<>();
 
     @JsonIgnore // Swagger에 postDto만 넘기려고
     private Member member;  //글을쓴 Member_id

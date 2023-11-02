@@ -20,7 +20,7 @@ import lombok.*;
 public class MemberDto {
     private Long id; //회원 아이디
 
-    private Timestamp createTime;
+    private Timestamp create_time;
 
     private String email;
 
@@ -29,13 +29,13 @@ public class MemberDto {
     private Role role;
     private String provider_id;
 
-    private int blamedCount;
+    private int blamed_count;
     //신고한 횟수
 
-    private int blameCount;
+    private int blame_count;
 
     @Builder.Default
-    private List<Post> likedPosts = new ArrayList<>();
+    private List<Post> liked_posts = new ArrayList<>();
 
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
