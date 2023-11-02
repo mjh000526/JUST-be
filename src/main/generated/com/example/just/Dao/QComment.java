@@ -36,6 +36,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final NumberPath<Long> comment_like = createNumber("comment_like", Long.class);
 
+    public final ListPath<Member, QMember> likedMembers = this.<Member, QMember>createList("likedMembers", Member.class, QMember.class, PathInits.DIRECT2);
+
     public final QMember member;
 
     public final QComment parent;

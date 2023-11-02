@@ -10,6 +10,7 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -53,13 +54,17 @@ public class CommentService {
         comment.setComment_dislike(0L);
         comment.setComment_create_time(LocalDateTime.now());
         comment.setBlamedCount(0);
-
+        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
+            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
+
+        }else if(parentComment == null){
+            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
-        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
-        notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
+
+
         return commentRepository.save(comment);
     }
 
@@ -115,6 +120,23 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         return comment.getBlamedCount();
+    }
+
+    @Transactional
+    public void likeComment(Long postId, Long commentId, Long member_id) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다: " + commentId));
+        Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        if (comment.getLikedMembers().contains(member)) {
+            comment.removeLike(member);
+        } else {
+            comment.addLike(member);
+        }
+        notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
+       commentRepository.save(comment);
+
     }
 }
 

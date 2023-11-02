@@ -69,4 +69,13 @@ public class CommentController {
     public int blameGetComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
         return commentService.blameGetComment(post_id, comment_id);
     }
+
+    @ApiOperation(value = "댓글 좋아요")
+    @PostMapping("/post/like/comment/{postId}/{commentId}")
+    public void likeComment(@PathVariable Long postId, @PathVariable Long commentId,
+                            HttpServletRequest req) {
+        String token = jwtProvider.getAccessToken(req);
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+        commentService.likeComment(postId, commentId, member_id);
+    }
 }
