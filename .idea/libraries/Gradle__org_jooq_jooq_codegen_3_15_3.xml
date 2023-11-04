@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jooq:jooq-codegen:3.15.3">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-codegen/3.15.3/7418cf19c2325531c939c556b8d8ba761c716a51/jooq-codegen-3.15.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-codegen/3.15.3/9a8dea878b13aba300fc99bcf0fa176718277d7f/jooq-codegen-3.15.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

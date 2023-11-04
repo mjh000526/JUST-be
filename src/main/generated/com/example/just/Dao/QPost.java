@@ -34,9 +34,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final StringPath post_category = createString("post_category");
 
-    public final StringPath post_content = createString("post_content");
-
-    public final DateTimePath<java.sql.Timestamp> post_create_time = createDateTime("post_create_time", java.sql.Timestamp.class);
+    public final DateTimePath<java.util.Date> post_create_time = createDateTime("post_create_time", java.util.Date.class);
 
     public final NumberPath<Long> post_id = createNumber("post_id", Long.class);
 
@@ -45,6 +43,8 @@ public class QPost extends EntityPathBase<Post> {
     public final NumberPath<Long> post_picture = createNumber("post_picture", Long.class);
 
     public final StringPath post_tag = createString("post_tag");
+
+    public final ListPath<String, StringPath> postContent = this.<String, StringPath>createList("postContent", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final BooleanPath secret = createBoolean("secret");
 
