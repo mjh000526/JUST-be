@@ -1,17 +1,21 @@
 package com.example.just.Service;
 
 import com.example.just.Dao.Post;
+import com.example.just.Dto.ResponseGetPostDto;
 import com.example.just.Impl.MySliceImpl;
+import java.util.List;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public class ResponseGetPost {
-    private MySliceImpl<Post> mySlice;
-    private boolean value;
+    private List<ResponseGetPostDto> mySlice;
+    private boolean hasNext;
 
-    public <Post> ResponseGetPost(MySliceImpl<Post> posts, boolean b) {
-        this.mySlice= (MySliceImpl<com.example.just.Dao.Post>) posts;
-        this.value=b;
+
+
+    public ResponseGetPost(List<ResponseGetPostDto> results, boolean b) {
+        this.mySlice= results;
+        this.hasNext=b;
     }
 }

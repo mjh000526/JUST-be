@@ -3,6 +3,8 @@ package com.example.just.Dto;
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,21 +23,19 @@ import java.util.List;
 public class PutPostDto {
     private Long post_id;
 
-    private String post_content;    //글 내용
+    private List<String> post_content;    //글 내용
 
+    @Schema(name = "post_tag", example =  "오늘, 바다, 내일")
     private String post_tag;    //글 태그
 
     private Long post_picture;
 
     @JsonIgnore
-    private Timestamp post_create_time;  //글 생성 시간
+    private Date post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
 
-
-    private String emoticon;     //글 이모티콘
-
-
+    @Schema(name = "post_category", example =  "직장인")
     private String post_category; //글 카테고리
 
     @JsonIgnore

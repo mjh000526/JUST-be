@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-11-03T11:43:43+0900",
+    date = "2023-11-02T21:47:22+0900",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
@@ -25,12 +25,10 @@ public class PostMapperImpl implements PostMapper {
         Post post = new Post();
 
         post.setPost_id( dto.getPost_id() );
-        post.setPost_content( dto.getPost_content() );
         post.setPost_tag( dto.getPost_tag() );
         post.setPost_picture( dto.getPost_picture() );
         post.setPost_create_time( dto.getPost_create_time() );
         post.setSecret( dto.getSecret() );
-        post.setEmoticon( dto.getEmoticon() );
         post.setPost_category( dto.getPost_category() );
         post.setMember( dto.getMember() );
         List<Comment> list = dto.getComments();
@@ -50,12 +48,10 @@ public class PostMapperImpl implements PostMapper {
         PutPostDto putPostDto = new PutPostDto();
 
         putPostDto.setPost_id( entity.getPost_id() );
-        putPostDto.setPost_content( entity.getPost_content() );
         putPostDto.setPost_tag( entity.getPost_tag() );
         putPostDto.setPost_picture( entity.getPost_picture() );
         putPostDto.setPost_create_time( entity.getPost_create_time() );
         putPostDto.setSecret( entity.getSecret() );
-        putPostDto.setEmoticon( entity.getEmoticon() );
         putPostDto.setPost_category( entity.getPost_category() );
         putPostDto.setMember( entity.getMember() );
         List<Comment> list = entity.getComments();

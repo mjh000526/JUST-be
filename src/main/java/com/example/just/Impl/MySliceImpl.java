@@ -9,8 +9,8 @@ public class MySliceImpl<Post> extends SliceImpl<Post> {
 
     private String nextCursor;
 
-    public MySliceImpl(List<Post> content, Pageable pageable, boolean hasNext, String nextCursor) {
-        super(content, pageable, hasNext);
+    public MySliceImpl(List<Post> content,  boolean hasNext) {
+        super(content);
         this.nextCursor = nextCursor;
     }
 

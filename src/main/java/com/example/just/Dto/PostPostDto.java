@@ -3,6 +3,7 @@ package com.example.just.Dto;
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,8 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 
 public class PostPostDto {
-    private String post_content;    //글 내용
 
+    private List<String> post_content;
+
+    @Schema(name = "post_tag", example =  "오늘, 바다, 내일")
     private String post_tag;    //글 태그
 
     private Long post_picture;
@@ -28,9 +31,7 @@ public class PostPostDto {
     private boolean secret; //글 공개 여부
 
 
-    private String emoticon;     //글 이모티콘
-
-
+    @Schema(name = "post_category", example =  "직장인")
     private String post_category; //글 카테고리
 
     @JsonIgnore
