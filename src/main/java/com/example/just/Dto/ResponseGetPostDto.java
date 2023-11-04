@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ResponseGetPostDto {
     private Long post_id;
 
+    private List<String> post_content;
     private String post_tag;    //글 태그
 
     private Long post_picture;
@@ -27,5 +28,6 @@ public class ResponseGetPostDto {
 
     private Long comment_size;
 
+    private Long post_like;
     private int blamed_count;
 }

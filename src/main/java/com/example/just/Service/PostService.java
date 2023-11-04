@@ -129,18 +129,20 @@ public class PostService {
                 .where(post.post_id.notIn(viewedPostIds),
                         post.post_create_time.isNotNull())
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(limit + 1)
+                .limit(limit)
                 .fetch();
         List<ResponseGetPostDto> getPostDtos = new ArrayList<>();
         for (int i=0; i<results.size(); i++) {
             ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
+            responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_category(results.get(i).getPost_category());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
             responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
             responseGetPostDto.setSecret(results.get(i).getSecret());
+            responseGetPostDto.setPost_like(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
             getPostDtos.add(responseGetPostDto);
             System.out.println(responseGetPostDto);
