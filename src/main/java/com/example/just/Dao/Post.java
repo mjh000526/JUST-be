@@ -1,6 +1,7 @@
 package com.example.just.Dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,8 +22,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;
 
-    @Column(name = "post_content")  //글 내용
-    private String post_content;
+    @ElementCollection
+    @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "content")
+    private List<String> postContent;
 
     @Column(name = "post_tag")  //글 태그
     private String post_tag;
@@ -32,7 +35,7 @@ public class Post {
 
     @CreationTimestamp
     @Column(name = "post_create_time")  //글 생성 시간
-    private Timestamp post_create_time;
+    private Date post_create_time;
 
 
     @Column(name = "post_like")
@@ -70,9 +73,8 @@ public class Post {
 
     }
 
-    public Post(String post_content, String post_tag, Long post_picture, boolean secret, String emoticon,
+    public Post(String post_tag, Long post_picture, boolean secret, String emoticon,
                 String post_category, Long post_like, Member member, int blamedCount) {
-        this.post_content = post_content;
         this.post_tag = post_tag;
         this.post_picture = post_picture;
         this.secret = secret;
@@ -85,9 +87,8 @@ public class Post {
 
 
 
-    public void updatePost(String post_content, String post_tag, Long post_like, Timestamp post_create_time,
+    public void updatePost(String post_tag, Long post_like, Date post_create_time,
                 boolean secret, String emoticon, String post_category, Member member) {
-        this.post_content = post_content;
         this.post_tag = post_tag;
         this.post_like = post_like;
         this.post_create_time = post_create_time;
