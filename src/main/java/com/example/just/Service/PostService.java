@@ -112,7 +112,7 @@ public class PostService {
         return responsePutPostDto;
     }
 
-    public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) { //글 조
+    public ResponseGetPost searchByCursor(String cursor, Long limit) { //글 조
         QPost post = QPost.post;
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.

@@ -35,12 +35,9 @@ public class PostController {
     @GetMapping("/get/post")
     public ResponseGetPost getPosts(@RequestParam Long request_page,
                                     HttpServletRequest req) {
-        String token = jwtProvider.getAccessToken(req);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-
         String cursor = req.getHeader("viewed");
 
-        return postService.searchByCursor(cursor, request_page, member_id);
+        return postService.searchByCursor(cursor, request_page);
     }
 
     /*
