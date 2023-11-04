@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponsePost {
-    private Post post;
+    private Long post_id;
     private boolean value;
 
-    public ResponsePost(Post post, boolean b) {
-        this.post =post;
+    public ResponsePost(Long post_id, boolean b) {
+        this.post_id =post_id;
         this.value =b;
     }
 }
