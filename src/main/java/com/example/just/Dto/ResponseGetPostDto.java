@@ -23,6 +23,6 @@ public class ResponseGetPostDto {
 
     private Long comment_size;
 
-    private Long post_like;
+    private Long post_like_size;
     private int blamed_count;
 }
