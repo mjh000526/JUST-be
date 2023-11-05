@@ -26,7 +26,7 @@ public class Comment {
     private String comment_content; //댓글 내용
 
     @Column(name = "comment_create_time")
-    private LocalDateTime comment_create_time;   //댓글 작성 시간
+    private Date comment_create_time;   //댓글 작성 시간
 
     @Column(name = "comment_like")
     private Long comment_like;  //추천수
