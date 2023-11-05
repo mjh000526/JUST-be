@@ -3,6 +3,7 @@ package com.example.just.Controller;
 import com.example.just.Dao.Comment;
 import com.example.just.Dto.CommentDto;
 import com.example.just.Dto.PutCommentDto;
+import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.ApiOperation;
@@ -54,7 +55,6 @@ public class CommentController {
     public ResponseEntity<String> putComment(@PathVariable Long post_id, @PathVariable Long comment_id,
                                              @RequestBody PutCommentDto commentDto,
                                              HttpServletRequest req) {
-        String token = jwtProvider.getAccessToken(req);
         return commentService.putComment(post_id, comment_id, commentDto);
     }
 
@@ -77,5 +77,13 @@ public class CommentController {
         String token = jwtProvider.getAccessToken(req);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
         commentService.likeComment(postId, commentId, member_id);
+    }
+
+    @ApiOperation(value = "자신의 댓글 조회")
+    @GetMapping("/get/member/comment")
+    public List<ResponseGetMemberCommentDto> getMyComment(HttpServletRequest request) {
+        String token = jwtProvider.getAccessToken(request);
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+        return commentService.getMyComment(member_id);
     }
 }
