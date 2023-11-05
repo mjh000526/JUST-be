@@ -5,9 +5,13 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dto.CommentDto;
 import com.example.just.Dto.PutCommentDto;
+import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -52,7 +56,9 @@ public class CommentService {
         comment.setParent(parentComment);
         comment.setComment_like(0L);
         comment.setComment_dislike(0L);
-        comment.setComment_create_time(LocalDateTime.now());
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Date currentTime = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        comment.setComment_create_time(currentTime);
         comment.setBlamedCount(0);
         Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
@@ -137,6 +143,21 @@ public class CommentService {
         notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
        commentRepository.save(comment);
 
+    }
+
+    public List<ResponseGetMemberCommentDto> getMyComment(Long member_id) {
+        List<Comment> comments = commentRepository.findAll();
+        List<ResponseGetMemberCommentDto> getMemberCommentDtos = new ArrayList<>();
+        for (int i=0; i<comments.size(); i++) {
+            ResponseGetMemberCommentDto getMemberCommentDto = new ResponseGetMemberCommentDto();
+            if (comments.get(i).getMember().getId()==member_id) {
+                getMemberCommentDto.setComment_content(comments.get(i).getComment_content());
+                getMemberCommentDto.setTime(comments.get(i).getComment_create_time());
+                getMemberCommentDto.setPost_id(comments.get(i).getPost().getPost_id());
+                getMemberCommentDtos.add(getMemberCommentDto);
+            }
+        }
+        return getMemberCommentDtos;
     }
 }
 

@@ -1,10 +1,5 @@
 package com.example.just.Dto;
 
-import com.example.just.Dao.Comment;
-import com.example.just.Dao.Member;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.Getter;
