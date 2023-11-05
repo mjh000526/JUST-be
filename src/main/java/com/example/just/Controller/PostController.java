@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +93,7 @@ public class PostController {
 
     @Operation(summary = "게시글 좋아요 api", description = "자기가 이 글이 좋아요를 누른거면 Response의 value는 true 좋아요를 취소한거면 value는 false")
     @PostMapping("/post/like")
-    public ResponsePost postLikes(@RequestParam Long post_id, HttpServletRequest request) {
+    public ResponseEntity postLikes(@RequestParam Long post_id, HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         return postService.postLikes(post_id, member_id);
