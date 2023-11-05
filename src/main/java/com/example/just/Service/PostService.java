@@ -18,6 +18,8 @@ import com.example.just.jwt.JwtProvider;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
@@ -141,7 +143,7 @@ public class PostService {
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
             responseGetPostDto.setSecret(results.get(i).getSecret());
-            responseGetPostDto.setPost_like(results.get(i).getPost_like());
+            responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
             getPostDtos.add(responseGetPostDto);
             System.out.println(responseGetPostDto);
@@ -219,11 +221,11 @@ public class PostService {
 
 
     @Transactional
-    public ResponsePost postLikes(Long post_id, Long member_id) {    //글 좋아요
+    public ResponseEntity<?> postLikes(Long post_id, Long member_id) {    //글 좋아요
 
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post_id의 값이 존재하지 않습니다.:" + post_id);
         }
         Post post = optionalPost.get();
 
@@ -243,7 +245,7 @@ public class PostService {
 
         Post savePost = postRepository.save(post);
 
-        return responsePost;
+        return ResponseEntity.ok(responsePost);
     }
 
 
@@ -325,7 +327,7 @@ public class PostService {
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
             responseGetPostDto.setSecret(results.get(i).getSecret());
-            responseGetPostDto.setPost_like(results.get(i).getPost_like());
+            responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
             getPostDtos.add(responseGetPostDto);
         }
