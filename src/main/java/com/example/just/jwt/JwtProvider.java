@@ -86,6 +86,7 @@ public class JwtProvider implements InitializingBean {
     //토큰값 가져오기
     public String getAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
         if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7);
         }
