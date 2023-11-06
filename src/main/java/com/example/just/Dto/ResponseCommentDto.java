@@ -25,7 +25,7 @@ public class ResponseCommentDto {
         comment_id = comment.getComment_id();
         comment_content = comment.getComment_content();
         comment_create_time = comment.getComment_create_time();
-        comment_like = comment.getComment_like();dd
+        comment_like = comment.getComment_like();
         comment_dislike = comment.getComment_dislike();
         blamed_count = comment.getBlamedCount();
         isMine = comment.getMember().getId() == member_id ? true : false;
