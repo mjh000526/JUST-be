@@ -72,18 +72,13 @@ public class PostService {
 
 
     //글 삭제
-    @Transactional
     public ResponsePost deletePost(Long post_id) {
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
         }
         Post post = optionalPost.get();
-        try {
-            postRepository.delete(post);
-        } catch (Exception e) {
-            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다: " + post_id);
-        }
+        postRepository.deleteById(post_id);
         ResponsePost responsePost = new ResponsePost(post_id, true);
         return responsePost;
     }
@@ -220,7 +215,7 @@ public class PostService {
      */
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> postLikes(Long post_id, Long member_id) {    //글 좋아요
 
         Optional<Post> optionalPost = postRepository.findById(post_id);

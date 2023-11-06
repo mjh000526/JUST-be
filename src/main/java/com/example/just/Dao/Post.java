@@ -50,7 +50,7 @@ public class Post {
     @Column(name = "post_category")
     private String post_category;
 
-    @ManyToMany(mappedBy = "likedPosts")
+    @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Member> likedMembers = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class Post {
 
 
     public void updatePost(String post_tag, Long post_like, Date post_create_time,
-                boolean secret, String emoticon, String post_category, Member member) {
+                           boolean secret, String emoticon, String post_category, Member member) {
         this.post_tag = post_tag;
         this.post_like = post_like;
         this.post_create_time = post_create_time;
