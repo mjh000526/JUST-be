@@ -1,10 +1,7 @@
 package com.example.just.Controller;
 
 import com.example.just.Dao.Comment;
-import com.example.just.Dto.CommentDto;
-import com.example.just.Dto.PutCommentDto;
-import com.example.just.Dto.ResponseCommentDto;
-import com.example.just.Dto.ResponseGetMemberCommentDto;
+import com.example.just.Dto.*;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +37,7 @@ public class CommentController {
 
     @ApiOperation(value = "댓글 조회 API")
     @GetMapping("/get/{post_id}/comments")
-    public ResponseEntity<List<ResponseCommentDto>> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
+    public ResponseEntity<ResponsePostCommentDto> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
         return ResponseEntity.ok(commentService.getCommentList(post_id, req));
     }
 
