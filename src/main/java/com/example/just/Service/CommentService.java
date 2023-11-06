@@ -3,10 +3,7 @@ package com.example.just.Service;
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-import com.example.just.Dto.CommentDto;
-import com.example.just.Dto.PutCommentDto;
-import com.example.just.Dto.ResponseCommentDto;
-import com.example.just.Dto.ResponseGetMemberCommentDto;
+import com.example.just.Dto.*;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
@@ -82,7 +79,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<ResponseCommentDto> getCommentList(Long postId, HttpServletRequest req) {
+    public ResponsePostCommentDto getCommentList(Long postId, HttpServletRequest req) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Long member_id;
@@ -91,10 +88,10 @@ public class CommentService {
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         }else member_id = 0L;
 
-
-        return post.getComments().stream()
+        List<ResponseCommentDto> comments = post.getComments().stream()
                 .map(comment -> new ResponseCommentDto(comment,member_id))
                 .collect(Collectors.toList());
+        return new ResponsePostCommentDto(post.getPostContent(), comments);
     }
 
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
