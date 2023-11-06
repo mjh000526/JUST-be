@@ -157,7 +157,7 @@ public class CommentService {
             comment.addLike(member);
         }
         notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
-       commentRepository.save(comment);
+        commentRepository.save(comment);
 
     }
 
@@ -170,6 +170,7 @@ public class CommentService {
                 getMemberCommentDto.setComment_content(comments.get(i).getComment_content());
                 getMemberCommentDto.setTime(comments.get(i).getComment_create_time());
                 getMemberCommentDto.setPost_id(comments.get(i).getPost().getPost_id());
+                getMemberCommentDto.setPost_content(comments.get(i).getPost().getPostContent());
                 getMemberCommentDtos.add(getMemberCommentDto);
             }
         }
