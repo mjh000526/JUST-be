@@ -69,8 +69,9 @@ public class MemberService {
         return new ResponseEntity<>(new TokenDto(accesstoken,refreshtoken), HttpStatus.OK);
     }
     public ResponseEntity drop(HttpServletRequest request){
-        String token = request.getHeader("access_token");
+        String token = jwtProvider.getAccessToken(request);
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+
         String email = jwtProvider.getEmailFromToken(token);
         memberRepository.deleteById(id);
         return new ResponseEntity<>(email + "삭제",HttpStatus.OK);
