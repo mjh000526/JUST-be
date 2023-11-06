@@ -4,6 +4,7 @@ import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dto.CommentDto;
+import com.example.just.Dto.CommentResponseDto;
 import com.example.just.Dto.PutCommentDto;
 import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Repository.CommentRepository;
@@ -14,13 +15,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+
+import com.example.just.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -35,6 +40,9 @@ public class CommentService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private JwtProvider jwtProvider;
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
@@ -74,11 +82,19 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> getCommentList(Long postId) {
+    public List<CommentResponseDto> getCommentList(Long postId, HttpServletRequest req) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        Long member_id;
+        if(req.getHeader("Authorization")!=null){
+            String token = jwtProvider.getAccessToken(req);
+            member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        }else member_id = 0L;
 
-        return post.getComments();
+
+        return post.getComments().stream()
+                .map(comment -> new CommentResponseDto(comment,member_id))
+                .collect(Collectors.toList());
     }
 
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
