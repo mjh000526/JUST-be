@@ -4,8 +4,8 @@ import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.example.just.Dto.CommentDto;
-import com.example.just.Dto.CommentResponseDto;
 import com.example.just.Dto.PutCommentDto;
+import com.example.just.Dto.ResponseCommentDto;
 import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
@@ -82,7 +82,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<CommentResponseDto> getCommentList(Long postId, HttpServletRequest req) {
+    public List<ResponseCommentDto> getCommentList(Long postId, HttpServletRequest req) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Long member_id;
@@ -93,7 +93,7 @@ public class CommentService {
 
 
         return post.getComments().stream()
-                .map(comment -> new CommentResponseDto(comment,member_id))
+                .map(comment -> new ResponseCommentDto(comment,member_id))
                 .collect(Collectors.toList());
     }
 

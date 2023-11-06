@@ -2,15 +2,15 @@ package com.example.just.Controller;
 
 import com.example.just.Dao.Comment;
 import com.example.just.Dto.CommentDto;
-import com.example.just.Dto.CommentResponseDto;
 import com.example.just.Dto.PutCommentDto;
+import com.example.just.Dto.ResponseCommentDto;
 import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.coyote.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +40,7 @@ public class CommentController {
 
     @ApiOperation(value = "댓글 조회 API")
     @GetMapping("/get/{post_id}/comments")
-    public ResponseEntity<List<?>> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
+    public ResponseEntity<List<ResponseCommentDto>> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
         return ResponseEntity.ok(commentService.getCommentList(post_id, req));
     }
 
