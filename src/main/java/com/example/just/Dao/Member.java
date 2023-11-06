@@ -43,12 +43,12 @@
       @Column(name = "refresh_token")
       private String refreshToken;
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
-      @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,fetch = FetchType.EAGER,  orphanRemoval=true)
+      @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
       private List<Post> posts = new ArrayList<>();
 
       @Builder.Default
-      @ManyToMany(cascade = CascadeType.ALL)
+      @ManyToMany(cascade = CascadeType.REMOVE)
       @JoinTable(
             name = "post_like",
             joinColumns = @JoinColumn(name = "member_id"),
@@ -56,7 +56,7 @@
       )
       private List<Post> likedPosts = new ArrayList<>();
       @Builder.Default
-      @ManyToMany(cascade = CascadeType.ALL)
+      @ManyToMany(cascade = CascadeType.REMOVE)
       @JoinTable(
               name = "comment_like",
               joinColumns = @JoinColumn(name = "member_id"),
