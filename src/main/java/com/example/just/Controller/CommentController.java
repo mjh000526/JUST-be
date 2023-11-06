@@ -2,6 +2,7 @@ package com.example.just.Controller;
 
 import com.example.just.Dao.Comment;
 import com.example.just.Dto.CommentDto;
+import com.example.just.Dto.CommentResponseDto;
 import com.example.just.Dto.PutCommentDto;
 import com.example.just.Dto.ResponseGetMemberCommentDto;
 import com.example.just.Service.CommentService;
@@ -39,9 +40,8 @@ public class CommentController {
 
     @ApiOperation(value = "댓글 조회 API")
     @GetMapping("/get/{post_id}/comments")
-    public ResponseEntity<List<Comment>> getCommentList(@PathVariable Long post_id) {
-        List<Comment> commentList = commentService.getCommentList(post_id);
-        return ResponseEntity.ok(commentList);
+    public ResponseEntity<List<CommentResponseDto>> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
+        return ResponseEntity.ok(commentService.getCommentList(post_id, req));
     }
 
     @Operation(summary = "댓글 삭제 api", description = "대댓글까지 다 삭제되니 유의해야 함")
