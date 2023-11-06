@@ -61,7 +61,7 @@ public class MemberContorller {
         return memberService.changeRefresh(request);
     }
     @PostMapping("/drop")
-    @ApiOperation(value = "회원 탈퇴 api", notes = "헤더값에 access_token으로 토큰을 보내줘야함")
+    @ApiOperation(value = "회원 탈퇴 api", notes = "헤더값에 Authorization으로 토큰을 보내줘야함")
     public  ResponseEntity dropUser(HttpServletRequest request){
         return memberService.drop(request);
     }
