@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,9 +79,15 @@ public class CommentController {
 
     @ApiOperation(value = "자신의 댓글 조회")
     @GetMapping("/get/member/comment")
-    public List<ResponseGetMemberCommentDto> getMyComment(HttpServletRequest request) {
-        String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+    public ResponseEntity getMyComment(HttpServletRequest request) {
+        Long member_id=0L;
+        if(request.getHeader("Authorization")!=null){
+            String token = jwtProvider.getAccessToken(request);
+            member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        }
+        if(member_id == 0L){
+            return new ResponseEntity<>("로그인 이후 이용해야 합니다.", HttpStatus.BAD_REQUEST);
+        }
         return commentService.getMyComment(member_id);
     }
 }
