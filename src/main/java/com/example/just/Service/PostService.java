@@ -306,14 +306,21 @@ public class PostService {
         return responseGetPost;
     }
 
-    public List<ResponseGetPostDto> getMyPost(Long member_id) {
+    public List<ResponseGetMemberPostDto> getMyPost(Long member_id) {
         Optional<Member> member = memberRepository.findById(member_id);
         Member realMember = member.get();
 
         List<Post> results = realMember.getPosts();
-        List<ResponseGetPostDto> getPostDtos = new ArrayList<>();
+        List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
-            ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
+            ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
+            responseGetPostDto.setLike(false);
+            for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
+                if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
+                    responseGetPostDto.setLike(true);
+                    break;
+                }
+            }
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_category(results.get(i).getPost_category());
@@ -329,16 +336,23 @@ public class PostService {
         return getPostDtos;
     }
 
-    public List<ResponseGetPostDto> getLikeMemberPost(Long member_id) {
+    public List<ResponseGetMemberPostDto> getLikeMemberPost(Long member_id) {
         Optional<Member> optionalMember = memberRepository.findById(member_id);
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
         }
         Member member = optionalMember.get(); //존재한다면 객체 생성
         List<Post> results = member.getLikedPosts();
-        List<ResponseGetPostDto> getPostDtos = new ArrayList<>();
+        List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
-            ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
+            ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
+            responseGetPostDto.setLike(false);
+            for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
+                if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
+                    responseGetPostDto.setLike(true);
+                    break;
+                }
+            }
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_category(results.get(i).getPost_category());
