@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 
 import com.example.just.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -158,20 +159,13 @@ public class CommentService {
 
     }
 
-    public List<ResponseGetMemberCommentDto> getMyComment(Long member_id) {
-        List<Comment> comments = commentRepository.findAll();
-        List<ResponseGetMemberCommentDto> getMemberCommentDtos = new ArrayList<>();
-        for (int i=0; i<comments.size(); i++) {
-            ResponseGetMemberCommentDto getMemberCommentDto = new ResponseGetMemberCommentDto();
-            if (comments.get(i).getMember().getId()==member_id) {
-                getMemberCommentDto.setComment_content(comments.get(i).getComment_content());
-                getMemberCommentDto.setTime(comments.get(i).getComment_create_time());
-                getMemberCommentDto.setPost_id(comments.get(i).getPost().getPost_id());
-                getMemberCommentDto.setPost_content(comments.get(i).getPost().getPostContent());
-                getMemberCommentDtos.add(getMemberCommentDto);
-            }
-        }
-        return getMemberCommentDtos;
+    public ResponseEntity getMyComment(Long member_id) {
+        Member member = memberRepository.findById(member_id).get();
+        List<Comment> comments = commentRepository.findAllByMember(member);
+        List<ResponseMyCommentDto> result = comments.stream()
+                .map(comment -> new ResponseMyCommentDto(comment))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
 
