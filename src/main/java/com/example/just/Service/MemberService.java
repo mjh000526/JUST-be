@@ -73,7 +73,10 @@ public class MemberService {
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
 
         String email = jwtProvider.getEmailFromToken(token);
-        memberRepository.deleteById(id);
-        return new ResponseEntity<>(email + "삭제",HttpStatus.OK);
+        if(memberRepository.existsById(id)){
+            memberRepository.deleteById(id);
+            return new ResponseEntity<>(email + "삭제",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("해당 회원이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
     }
 }
