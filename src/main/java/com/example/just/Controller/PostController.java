@@ -97,7 +97,7 @@ public class PostController {
                                     HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        return postService.postLikes(post_id, member_id);
+        return postService.postLikes(post_id, member_id, like);
     }
 
     @ApiOperation(value = "게시글 신고")
@@ -114,7 +114,7 @@ public class PostController {
 
     @ApiOperation(value = "자신이 좋아요한 글 조회")
     @GetMapping("/get/like/member/post")
-    public List<Long> getLikeMemberPost(HttpServletRequest request) {
+    public List<ResponseGetPostDto> getLikeMemberPost(HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         return postService.getLikeMemberPost(member_id);
