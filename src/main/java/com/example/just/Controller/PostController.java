@@ -1,10 +1,7 @@
 package com.example.just.Controller;
 
 
-import com.example.just.Dto.PostPostDto;
-import com.example.just.Dto.PutPostDto;
-import com.example.just.Dto.ResponseGetPostDto;
-import com.example.just.Dto.ResponsePutPostDto;
+import com.example.just.Dto.*;
 import com.example.just.Service.PostService;
 import com.example.just.Service.ResponseGetPost;
 import com.example.just.Service.ResponsePost;
@@ -46,7 +43,7 @@ public class PostController {
 
     @Operation(summary =  "자기의 게시글을 조회하는 API", description =  "<big> 자신의 게시글을 조회한다</big>")
     @GetMapping("/get/mypost")
-    public List<ResponseGetPostDto> getMyPosts(HttpServletRequest request) {
+    public List<ResponseGetMemberPostDto> getMyPosts(HttpServletRequest request) {
 
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
@@ -114,7 +111,7 @@ public class PostController {
 
     @ApiOperation(value = "자신이 좋아요한 글 조회")
     @GetMapping("/get/like/member/post")
-    public List<ResponseGetPostDto> getLikeMemberPost(HttpServletRequest request) {
+    public List<ResponseGetMemberPostDto> getLikeMemberPost(HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         return postService.getLikeMemberPost(member_id);
