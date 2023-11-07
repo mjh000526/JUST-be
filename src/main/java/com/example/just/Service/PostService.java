@@ -216,7 +216,7 @@ public class PostService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<?> postLikes(Long post_id, Long member_id) {    //글 좋아요
+    public ResponseEntity<?> postLikes(Long post_id, Long member_id, boolean like) {    //글 좋아요
 
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
@@ -230,7 +230,7 @@ public class PostService {
         }
         Member member = optionalMember.get(); //존재한다면 객체 생성
         ResponsePost responsePost;
-        if (post.getLikedMembers().contains(member)) {
+        if (like == false) {
             post.removeLike(member);
             responsePost = new ResponsePost(post_id, false);
         } else {
@@ -269,8 +269,8 @@ public class PostService {
         for (int i = 0; i < results.size(); i++) {
             ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
             responseGetPostDto.setLike(false);
-            for (int j = 0; j<results.get(i).getLikedMembers().size(); j++) {
-                if (results.get(i).getLikedMembers().get(j).getId()==member_id) {
+            for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
+                if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
                     responseGetPostDto.setLike(true);
                     break;
                 }
@@ -329,17 +329,27 @@ public class PostService {
         return getPostDtos;
     }
 
-    public List<Long> getLikeMemberPost(Long member_id) {
+    public List<ResponseGetPostDto> getLikeMemberPost(Long member_id) {
         Optional<Member> optionalMember = memberRepository.findById(member_id);
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
         }
         Member member = optionalMember.get(); //존재한다면 객체 생성
         List<Post> results = member.getLikedPosts();
-        List<Long> getPostDtos = new ArrayList<>();
+        List<ResponseGetPostDto> getPostDtos = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
-            Long post_id = results.get(i).getPost_id();
-            getPostDtos.add(post_id);
+            ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
+            responseGetPostDto.setPost_id(results.get(i).getPost_id());
+            responseGetPostDto.setPost_content(results.get(i).getPostContent());
+            responseGetPostDto.setPost_category(results.get(i).getPost_category());
+            responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
+            responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
+            responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
+            responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
+            responseGetPostDto.setSecret(results.get(i).getSecret());
+            responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
+            responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
+            getPostDtos.add(responseGetPostDto);
         }
         return getPostDtos;
     }
