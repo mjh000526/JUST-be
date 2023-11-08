@@ -38,6 +38,7 @@ public class ResponseGetMemberPostDto {
         this.secret = post.getSecret();
         this.post_category = post.getPost_category();
         this.comment_size = Long.valueOf(post.getComments().size());
+        this.post_picture = post.getPost_picture();
         this.post_like_size = post.getPost_like();
         this.blamed_count = post.getBlamedCount();
         this.like = false;
