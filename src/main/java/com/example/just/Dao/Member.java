@@ -42,10 +42,16 @@
 
       @Column(name = "refresh_token")
       private String refreshToken;
+
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
       @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
       private List<Post> posts = new ArrayList<>();
+
+      @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
+      @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,  orphanRemoval=true)
+      @JsonIgnore
+      private List<Comment> comments = new ArrayList<>();
 
       @Builder.Default
       @ManyToMany(cascade = CascadeType.REMOVE)
