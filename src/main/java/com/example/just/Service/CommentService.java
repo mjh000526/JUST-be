@@ -163,7 +163,7 @@ public class CommentService {
         Member member = memberRepository.findById(member_id).get();
         List<Comment> comments = commentRepository.findAllByMember(member);
         List<ResponseMyCommentDto> result = comments.stream()
-                .map(comment -> new ResponseMyCommentDto(comment))
+                .map(comment -> new ResponseMyCommentDto(comment, member_id, member))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
