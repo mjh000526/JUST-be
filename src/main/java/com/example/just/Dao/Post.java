@@ -50,7 +50,7 @@ public class Post {
     @Column(name = "post_category")
     private String post_category;
 
-    @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Member> likedMembers = new ArrayList<>();
 
@@ -59,7 +59,7 @@ public class Post {
     @JsonIgnore
     private Member member;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
     @Column(name = "blamed_count")
     private int blamedCount;
