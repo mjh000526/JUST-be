@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="610ec063-2e11-4e6b-99f5-bd4e823de09b" name="Changes" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.gradle/7.2/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.2/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.2/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.bin" afterDir="false" />
@@ -19,6 +20,10 @@
       <change beforePath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/PostMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/PostMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseCommentDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseCommentDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/CommentService.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/PostService.java" afterDir="false" />
+>>>>>>> 16cfd4bed79829a26c0ea5b98ac9f4e5b7d174a2
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,12 +92,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="feat/like" />
-                    <option name="lastUsedInstant" value="1699343242" />
+                    <option name="branchName" value="feat/Infinity_page_nation" />
+                    <option name="lastUsedInstant" value="1699961123" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="develop" />
-                    <option name="lastUsedInstant" value="1699343000" />
+                    <option name="lastUsedInstant" value="1699413689" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feat/like" />
+                    <option name="lastUsedInstant" value="1699343242" />
                   </RecentBranch>
                 </list>
               </option>
@@ -111,6 +120,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -123,6 +133,19 @@
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors"
+=======
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/leeseonghyeon/Documents/Just/JUST-be&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;
+>>>>>>> 16cfd4bed79829a26c0ea5b98ac9f4e5b7d174a2
   }
 }]]></component>
   <component name="RecentsManager">

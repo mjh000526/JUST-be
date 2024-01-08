@@ -147,14 +147,10 @@ public class PostService {
         // 가져온 글들의 ID를 저장합니다.
         Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
         viewedPostIds.addAll(resultPostIds);
-
+        Collection<Post> allPost = postRepository.findAll();
         // hasNext와 nextCursor를 계산합니다.
-        boolean hasNext = results.size() > limit;
+        boolean hasNext = viewedPostIds.size() < allPost.size();
 
-        // limit+1개의 글 중에서 limit개의 글만 남기고 제거합니다.
-        if (hasNext) {
-            results.remove(limit);
-        }
         // Slice 객체를 생성해서 반환합니다.
         ResponseGetPost responseGetPost = new ResponseGetPost(
                 getPostDtos, hasNext);
@@ -292,14 +288,10 @@ public class PostService {
         // 가져온 글들의 ID를 저장합니다.
         Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
         viewedPostIds.addAll(resultPostIds);
-
+        Collection<Post> allPost = postRepository.findAll();
         // hasNext와 nextCursor를 계산합니다.
-        boolean hasNext = results.size() > limit;
+        boolean hasNext = viewedPostIds.size() < allPost.size();
 
-        // limit+1개의 글 중에서 limit개의 글만 남기고 제거합니다.
-        if (hasNext) {
-            results.remove(limit);
-        }
         // Slice 객체를 생성해서 반환합니다.
         ResponseGetPost responseGetPost = new ResponseGetPost(
                 getPostDtos, hasNext);
