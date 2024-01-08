@@ -90,6 +90,7 @@ public class CommentService {
         }else member_id = 0L;
 
         List<ResponseCommentDto> comments = post.getComments().stream()
+                .filter(comment -> comment.getParent() == null)
                 .map(comment -> new ResponseCommentDto(comment,member_id))
                 .collect(Collectors.toList());
         return new ResponsePostCommentDto(post.getPostContent(), comments);
@@ -168,4 +169,5 @@ public class CommentService {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
+
 
