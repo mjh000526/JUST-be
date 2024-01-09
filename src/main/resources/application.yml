@@ -4,8 +4,8 @@ server:
 cloud:
   aws:
     credentials:
-      accessKey: AKIA2PIR5NDY2GVZRCX3
-      secretKey: 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
+      accessKey: AKIA2PIR5NDYRVE3NDUN
+      secretKey: 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
       region: ap-northeast-2
       bucketName: just-s3
       stack:
@@ -24,7 +24,6 @@ spring:
     password: 334334334!
     connection-timeout: 15000 #30초 설정
     maximum-pool-size: 150 #150개 설정
-    max-lifetime:  30000 #1시간 설정
   security:
     oauth2:
       client:
