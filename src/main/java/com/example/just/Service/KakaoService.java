@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class KakaoService {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Value("${server-add}")
+    private String address;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
     public ResponseEntity loginKakao(String token) throws IOException{
@@ -160,7 +164,7 @@ public class KakaoService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
-            sb.append("&redirect_uri=http://52.78.80.150:9000/api/kakao/access_token");
+            sb.append("&redirect_uri=http://"+address+":9000/api/kakao/access_token");
             sb.append("&code=" + code);
 
             bw.write(sb.toString());
