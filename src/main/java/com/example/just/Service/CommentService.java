@@ -96,6 +96,20 @@ public class CommentService {
         return new ResponsePostCommentDto(post.getPostContent(), comments);
     }
 
+    public ResponsePostCommentDto2 getCommentList2(Long postId, HttpServletRequest req) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        Long member_id;
+        if(req.getHeader("Authorization")!=null){
+            String token = jwtProvider.getAccessToken(req);
+            member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        }else member_id = 0L;
+
+        List<ResponseCommentDto2> comments = post.getComments().stream()
+                .map(comment -> new ResponseCommentDto2(comment,member_id))
+                .collect(Collectors.toList());
+        return new ResponsePostCommentDto2(post.getPostContent(), comments);
+    }
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
