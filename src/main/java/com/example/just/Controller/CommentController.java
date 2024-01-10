@@ -44,7 +44,7 @@ public class CommentController {
 
     @ApiOperation(value = "댓글 조회 API")
     @GetMapping("v1/get/{post_id}/comments")
-    public ResponseEntity<ResponsePostCommentDto2> getCommentList2(@PathVariable Long post_id, HttpServletRequest req) {
+    public ResponseEntity<ResponsePostCommentDtoBefore> getCommentListBefore(@PathVariable Long post_id, HttpServletRequest req) {
         return ResponseEntity.ok(commentService.getCommentList2(post_id, req));
     }
 

@@ -18,8 +18,7 @@ import javax.transaction.Transactional;
 import com.example.just.jwt.JwtProvider;
 import com.example.just.Dto.ResponsePostCommentDto;
 import com.example.just.Dto.ResponseCommentDto;
-import com.example.just.Dto.ResponseCommentDto2;
-import com.example.just.Dto.ResponsePostCommentDto2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,7 +99,7 @@ public class CommentService {
         return new ResponsePostCommentDto(post.getPostContent(), comments);
     }
 
-    public ResponsePostCommentDto2 getCommentList2(Long postId, HttpServletRequest req) {
+    public ResponsePostCommentDtoBefore getCommentListBefore(Long postId, HttpServletRequest req) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Long member_id;
@@ -109,10 +108,10 @@ public class CommentService {
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         }else member_id = 0L;
 
-        List<ResponseCommentDto2> comments = post.getComments().stream()
-                .map(comment -> new ResponseCommentDto2(comment,member_id))
+        List<ResponseCommentDtoBefore> comments = post.getComments().stream()
+                .map(comment -> new ResponseCommentDtoBefore(comment,member_id))
                 .collect(Collectors.toList());
-        return new ResponsePostCommentDto2(post.getPostContent(), comments);
+        return new ResponsePostCommentDtoBefore(post.getPostContent(), comments);
     }
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
         Post post = postRepository.findById(postId)
