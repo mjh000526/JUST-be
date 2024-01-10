@@ -60,6 +60,7 @@ spring:
         format_sql: true
         enable_lazy_load_no_trans: true
 
+server-add: 13.209.213.191
 jwt:
   header: Authorization
   secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5KaijdfijAIfj41jkjiUIJHI3ji123AasdhfuAUSLNJUIGh098587KJMGKN134JBN8
