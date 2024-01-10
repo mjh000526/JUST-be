@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import com.example.just.jwt.JwtProvider;
+import com.example.just.Dto.ResponsePostCommentDto;
+import com.example.just.Dto.ResponseCommentDto;
+import com.example.just.Dto.ResponseCommentDto2;
+import com.example.just.Dto.ResponsePostCommentDto2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
