@@ -5,6 +5,7 @@ import com.example.just.Repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.util.SortedMap;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +87,6 @@ public class JwtProvider implements InitializingBean {
     //토큰값 가져오기
     public String getAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-
         if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7);
         }
