@@ -1,12 +1,13 @@
 package com.example.just.Dao;
 
+import com.example.just.Dto.PostPostDto;
+import com.example.just.Dto.PutPostDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,10 @@ public class Post {
     @Column(name = "content")
     private List<String> postContent;
 
-    @Column(name = "post_tag")  //글 태그
-    private String post_tag;
+    //글 태그
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Column(name = "tag")
+    private List<HashTag> hash_tag;
 
     @Column(name = "post_picture")
     private Long post_picture;
@@ -37,7 +40,6 @@ public class Post {
     @CreationTimestamp
     @Column(name = "post_create_time")  //글 생성 시간
     private Date post_create_time;
-
 
     @Column(name = "post_like")
     private Long post_like;
@@ -47,9 +49,6 @@ public class Post {
 
     @Column(name = "emoticon")
     private String emoticon;
-
-    @Column(name = "post_category")
-    private String post_category;
 
     @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
     @JsonIgnore
@@ -63,39 +62,37 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
     @Column(name = "blamed_count")
-    private int blamedCount;
+    private Long blamedCount;
 
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         this.post_like = this.post_like == null ? 0L : this.post_like;
-        this.post_category=this.post_category==null ? "0" : this.post_category;
-        this.emoticon=this.emoticon==null? "0" : this.emoticon;
-
+        this.emoticon = this.emoticon == null ? "0" : this.emoticon;
     }
 
-    public Post(String post_tag, Long post_picture, boolean secret, String emoticon,
-                String post_category, Long post_like, Member member, int blamedCount) {
-        this.post_tag = post_tag;
-        this.post_picture = post_picture;
-        this.secret = secret;
-        this.emoticon = emoticon;
-        this.post_category = post_category;
+    public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
+        List<String> contentList = postDto.getPost_content();
+        this.postContent = contentList;
+        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
+            String hashTag_name = postDto.getHash_tage().get(i);
+            HashTag hashTag = new HashTag(hashTag_name);
+            addHashTag(hashTag);
+        }
+        this.post_picture = postDto.getPost_picture();
+        this.secret = postDto.getSecret();
+        this.emoticon = "";
+        this.post_like = 0L;
         this.member = member;
-        this.blamedCount = blamedCount;
-        this.member.updateMember(this);
+        this.blamedCount = 0L;
     }
-
-
 
     public void updatePost(String post_tag, Long post_like, Date post_create_time,
                            boolean secret, String emoticon, String post_category, Member member) {
-        this.post_tag = post_tag;
         this.post_like = post_like;
         this.post_create_time = post_create_time;
         this.secret = secret;
         this.emoticon = emoticon;
-        this.post_category = post_category;
         this.member = member;
         this.member.updateMember(this);
     }
@@ -114,7 +111,16 @@ public class Post {
             post_like--;
         }
     }
-    public void addBlamed(){
+
+    public void addHashTag(HashTag hashTag) {
+        if (hash_tag == null) {
+            hash_tag = new ArrayList<>();
+        }
+        hash_tag.add(hashTag);
+        hashTag.setPost(this);
+    }
+
+    public void addBlamed() {
         blamedCount++;
     }
 
@@ -123,4 +129,26 @@ public class Post {
         return this.secret;
     }
 
+    public void changePost(PutPostDto postDto, Member member, Post post) {
+        this.member = member;
+        this.setPost_create_time(new Date(System.currentTimeMillis()));
+        this.setPost_like(post.getPost_like());
+        this.post_picture = postDto.getPost_picture();
+        this.secret = postDto.getSecret();
+        this.postContent = postDto.getPost_content();
+        this.hash_tag = null;
+        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
+            String hashTag_name = postDto.getHash_tage().get(i);
+            HashTag hashTag = new HashTag(hashTag_name);
+            addHashTag(hashTag);
+        }
+    }
+
+    public List<String> getHashTag() {
+        List<String> array = new ArrayList<>();
+        for (int i = 0; i < this.hash_tag.size(); i++) {
+            array.add(this.hash_tag.get(i).getName());
+        }
+        return array;
+    }
 }
