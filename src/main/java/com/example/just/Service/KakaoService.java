@@ -32,7 +32,7 @@ public class KakaoService {
     private MemberRepository userRepository;
 
     @Autowired
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     @Value("${server-add}")
     private String address;

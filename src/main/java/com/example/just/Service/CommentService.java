@@ -44,6 +44,7 @@ public class CommentService {
 
     @Autowired
     private JwtProvider jwtProvider;
+
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
@@ -69,16 +70,16 @@ public class CommentService {
         Date currentTime = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
         comment.setComment_create_time(currentTime);
         comment.setBlamedCount(0);
-        Optional<Member> receiver = memberRepository.findById(postRepository.findById(postId).get().getMember().getId());
+        Optional<Member> receiver = memberRepository.findById(
+                postRepository.findById(postId).get().getMember().getId());
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
-            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
+//            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
 
-        }else if(parentComment == null){
-            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
+        } else if (parentComment == null) {
+//            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
-
 
         return commentRepository.save(comment);
     }
@@ -87,15 +88,21 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Long member_id;
-        if(req.getHeader("Authorization")!=null){
+        if (req.getHeader("Authorization") != null) {
             String token = jwtProvider.getAccessToken(req);
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        }else member_id = 0L;
+        } else {
+            member_id = 0L;
+        }
 
-        List<ResponseCommentDto> comments = post.getComments().stream()
-                .filter(comment -> comment.getParent() == null)
-                .map(comment -> new ResponseCommentDto(comment,member_id))
-                .collect(Collectors.toList());
+        List<ResponseCommentDto> comments = new ArrayList<>();
+        if (post != null && post.getComments() != null) {
+            comments = post.getComments().stream()
+                    .filter(comment -> comment.getParent() == null)
+                    .map(comment -> new ResponseCommentDto(comment, member_id))
+                    .collect(Collectors.toList());
+        }
+
         return new ResponsePostCommentDto(post.getPostContent(), comments);
     }
 
@@ -103,16 +110,19 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Long member_id;
-        if(req.getHeader("Authorization")!=null){
+        if (req.getHeader("Authorization") != null) {
             String token = jwtProvider.getAccessToken(req);
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        }else member_id = 0L;
+        } else {
+            member_id = 0L;
+        }
 
         List<ResponseCommentDtoBefore> comments = post.getComments().stream()
-                .map(comment -> new ResponseCommentDtoBefore(comment,member_id))
+                .map(comment -> new ResponseCommentDtoBefore(comment, member_id))
                 .collect(Collectors.toList());
         return new ResponsePostCommentDtoBefore(post.getPostContent(), comments);
     }
+
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
@@ -145,7 +155,7 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
 
-        comment.setBlamedCount(comment.getBlamedCount()+1);
+        comment.setBlamedCount(comment.getBlamedCount() + 1);
         commentRepository.save(comment);
 
         return ResponseEntity.ok("ok");
@@ -172,9 +182,8 @@ public class CommentService {
         } else {
             comment.addLike(member);
         }
-        notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
+        //notificationService.send(post.getMember(), "commentLike", post.getPost_id(), member_id);
         commentRepository.save(comment);
-
     }
 
     public ResponseEntity getMyComment(Long member_id) {
