@@ -1,5 +1,6 @@
 package com.example.just.Service;
 
+
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 
@@ -50,34 +51,35 @@ public class PostService {
         this.query = new JPAQueryFactory(em);
     }
 
-
-    public PostPostDto write(Long member_id, PostPostDto postDto) {    //글 작성
-
+    private Member checkMember(Long member_id) {
         Optional<Member> optionalMember = memberRepository.findById(member_id);
         if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
         }
         Member member = optionalMember.get();   //존재한다면 객체 생성
-
-        List<String> contentList = postDto.getPost_content();
-
-        Post post = new Post(postDto.getPost_tag(),
-                postDto.getPost_picture(), postDto.getSecret(), "", postDto.getPost_category(), 0L,
-                member, 0);
-        post.setPostContent(contentList);
-        postRepository.save(post);
-
-        return postDto;
+        return member;
     }
 
-
-    //글 삭제
-    public ResponsePost deletePost(Long post_id) {
+    private Post checkPost(Long post_id) {
         Optional<Post> optionalPost = postRepository.findById(post_id);
         if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
         }
         Post post = optionalPost.get();
+        return post;
+    }
+
+    public PostPostDto write(Long member_id, PostPostDto postDto) {    //글 작성
+        Member member = checkMember(member_id);
+        Post post = new Post();
+        post.writePost(postDto, member);
+        postRepository.save(post);
+        return postDto;
+    }
+
+    //글 삭제
+    public ResponsePost deletePost(Long post_id) {
+        Post post = checkPost(post_id);
         postRepository.deleteById(post_id);
         ResponsePost responsePost = new ResponsePost(post_id, true);
         return responsePost;
@@ -86,24 +88,15 @@ public class PostService {
     //글 수정
     public ResponsePutPostDto putPost(Long member_id, PutPostDto postDto) {
         Long post_id = postDto.getPost_id();
-        System.out.println(post_id);
-        Optional<Post> optionalPost = postRepository.findById(post_id);
-        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + post_id);
-        }
-        Optional<Member> optionalMember = memberRepository.findById(member_id);
-        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
-        }
 
-        Member member = optionalMember.get();   //존재한다면 객체 생성
-        postDto.setMember(member);
-        Post post = postMapper.toEntity(postDto);
-        post.setPost_create_time(new Date(System.currentTimeMillis()));
-        post.setPost_like(optionalPost.get().getPost_like());
+        Member member = checkMember(member_id);
+        Post checkPost = checkPost(post_id);
+
+        Post post = new Post();
+        post.changePost(postDto, member, checkPost);
+
         postRepository.save(post);
-        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(post.getPost_category(), post.getPostContent(),
-                post_id, post.getPost_picture(), post.getPost_tag(), post.getSecret());
+        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(post);
         return responsePutPostDto;
     }
 
@@ -132,11 +125,10 @@ public class PostService {
             ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
-            responseGetPostDto.setPost_category(results.get(i).getPost_category());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
+            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-            responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
+            responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
             responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
@@ -176,7 +168,7 @@ public class PostService {
             throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + postId);
         }
         Post post = optionalPost.get();
-        return post.getBlamedCount();
+        return Math.toIntExact(post.getBlamedCount());
 
     }
     /*
@@ -273,11 +265,10 @@ public class PostService {
             }
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
-            responseGetPostDto.setPost_category(results.get(i).getPost_category());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
+            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-            responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
+            responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
             responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
@@ -315,11 +306,10 @@ public class PostService {
             }
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
-            responseGetPostDto.setPost_category(results.get(i).getPost_category());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
+            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-            responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
+            responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
             responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
@@ -347,11 +337,10 @@ public class PostService {
             }
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
-            responseGetPostDto.setPost_category(results.get(i).getPost_category());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setPost_tag(results.get(i).getPost_tag());
+            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-            responseGetPostDto.setBlamed_count(results.get(i).getBlamedCount());
+            responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
             responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
             responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
