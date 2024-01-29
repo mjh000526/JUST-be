@@ -25,8 +25,8 @@ public class PutPostDto {
 
     private List<String> post_content;    //글 내용
 
-    @Schema(name = "post_tag", example =  "오늘, 바다, 내일")
-    private String post_tag;    //글 태그
+    @Schema(name = "tag", example =  "오늘, 바다, 내일")
+    private List<String> hash_tage;    //글 태그/글 태그
 
     private Long post_picture;
 
@@ -46,7 +46,6 @@ public class PutPostDto {
 
     @JsonIgnore
     private List<Comment> comments;
-
 
     public boolean getSecret() {
         return this.secret;

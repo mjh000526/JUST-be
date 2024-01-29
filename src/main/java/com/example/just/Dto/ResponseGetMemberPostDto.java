@@ -1,5 +1,6 @@
 package com.example.just.Dto;
 
+import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class ResponseGetMemberPostDto {
     private Long post_id;
 
     private List<String> post_content;
-    private String post_tag;    //글 태그
+    private List<HashTag> hash_tag;    //글 태그
 
     private Long post_picture;
 
@@ -33,14 +34,13 @@ public class ResponseGetMemberPostDto {
     public ResponseGetMemberPostDto(Post post, Long member_id, Member member) {
         this.post_id = post.getPost_id();
         this.post_content = post.getPostContent();
-        this.post_tag = post.getPost_tag();
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
-        this.post_category = post.getPost_category();
+        this.hash_tag = post.getHash_tag();
         this.comment_size = Long.valueOf(post.getComments().size());
         this.post_picture = post.getPost_picture();
         this.post_like_size = post.getPost_like();
-        this.blamed_count = post.getBlamedCount();
+        this.blamed_count = Math.toIntExact(post.getBlamedCount());
         this.like = false;
         for (int i = 0; i < post.getLikedMembers().size(); i++) {
             System.out.println(post.getLikedMembers().get(i).getId());

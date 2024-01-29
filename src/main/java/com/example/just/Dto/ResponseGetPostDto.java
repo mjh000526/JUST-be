@@ -1,5 +1,6 @@
 package com.example.just.Dto;
 
+import com.example.just.Dao.HashTag;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ public class ResponseGetPostDto {
     private Long post_id;
 
     private List<String> post_content;
-    private String post_tag;    //글 태그
+    private List<HashTag> hash_tag;
 
     private Long post_picture;
 
@@ -35,12 +36,11 @@ public class ResponseGetPostDto {
         post_content = post.getPostContent().stream()
                 .map(conent -> new String(conent))
                 .collect(Collectors.toList());
-        post_tag = post.getPost_tag();
+        hash_tag = post.getHash_tag();
         post_picture = post.getPost_picture();
         post_create_time = post.getPost_create_time();
         secret = post.getSecret();
-        post_category = post.getPost_category();
         comment_size = (long) post.getComments().size();
-        blamed_count = post.getBlamedCount();
+        blamed_count = Math.toIntExact(post.getBlamedCount());
     }
 }

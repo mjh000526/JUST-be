@@ -22,17 +22,17 @@ public class QPost extends EntityPathBase<Post> {
 
     public static final QPost post = new QPost("post");
 
-    public final NumberPath<Integer> blamedCount = createNumber("blamedCount", Integer.class);
+    public final NumberPath<Long> blamedCount = createNumber("blamedCount", Long.class);
 
     public final ListPath<Comment, QComment> comments = this.<Comment, QComment>createList("comments", Comment.class, QComment.class, PathInits.DIRECT2);
 
     public final StringPath emoticon = createString("emoticon");
 
+    public final ListPath<HashTag, QHashTag> hash_tag = this.<HashTag, QHashTag>createList("hash_tag", HashTag.class, QHashTag.class, PathInits.DIRECT2);
+
     public final ListPath<Member, QMember> likedMembers = this.<Member, QMember>createList("likedMembers", Member.class, QMember.class, PathInits.DIRECT2);
 
     public final QMember member;
-
-    public final StringPath post_category = createString("post_category");
 
     public final DateTimePath<java.util.Date> post_create_time = createDateTime("post_create_time", java.util.Date.class);
 
@@ -41,8 +41,6 @@ public class QPost extends EntityPathBase<Post> {
     public final NumberPath<Long> post_like = createNumber("post_like", Long.class);
 
     public final NumberPath<Long> post_picture = createNumber("post_picture", Long.class);
-
-    public final StringPath post_tag = createString("post_tag");
 
     public final ListPath<String, StringPath> postContent = this.<String, StringPath>createList("postContent", String.class, StringPath.class, PathInits.DIRECT2);
 
