@@ -15,7 +15,7 @@ public class ResponseGetMemberPostDto {
     private Long post_id;
 
     private List<String> post_content;
-    private List<HashTag> hash_tag;    //글 태그
+    private List<String> hash_tag;    //글 태그
 
     private Long post_picture;
 
@@ -36,7 +36,12 @@ public class ResponseGetMemberPostDto {
         this.post_content = post.getPostContent();
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
-        this.hash_tag = post.getHash_tag();
+        List<String> names = new ArrayList<>();
+        List<HashTag> hashTags = post.getHash_tag();
+        for (int j = 0; j < hashTags.size(); j++) {
+            names.add(hashTags.get(j).getName());
+        }
+        this.hash_tag = names;
         this.comment_size = Long.valueOf(post.getComments().size());
         this.post_picture = post.getPost_picture();
         this.post_like_size = post.getPost_like();
