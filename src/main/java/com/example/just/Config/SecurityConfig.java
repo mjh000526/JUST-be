@@ -1,7 +1,4 @@
 package com.example.just.Config;
-
-
-
 import com.example.just.Service.KakaoService;
 import com.example.just.jwt.JwtAccessDeniedHandler;
 import com.example.just.jwt.JwtAuthenticationEntryPoint;

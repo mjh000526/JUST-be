@@ -107,6 +107,10 @@ public class PostService {
         return responsePutPostDto;
     }
 
+    public List<Post> getAllPostList() {
+        return postRepository.findAll();
+    }
+
     public ResponseGetPost searchByCursor(String cursor, Long limit) { //글 조
         QPost post = QPost.post;
         Set<Long> viewedPostIds = new HashSet<>();
