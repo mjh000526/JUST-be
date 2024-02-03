@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-01-31T15:17:38+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
+    date = "2024-02-03T17:20:21+0900",
+    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
 public class PostMapperImpl implements PostMapper {
@@ -22,19 +22,19 @@ public class PostMapperImpl implements PostMapper {
             return null;
         }
 
-        Post post = new Post();
+        Post.PostBuilder post = Post.builder();
 
-        post.setPost_id( dto.getPost_id() );
-        post.setPost_picture( dto.getPost_picture() );
-        post.setPost_create_time( dto.getPost_create_time() );
-        post.setSecret( dto.getSecret() );
-        post.setMember( dto.getMember() );
+        post.post_id( dto.getPost_id() );
+        post.post_picture( dto.getPost_picture() );
+        post.post_create_time( dto.getPost_create_time() );
+        post.secret( dto.getSecret() );
+        post.member( dto.getMember() );
         List<Comment> list = dto.getComments();
         if ( list != null ) {
-            post.setComments( new ArrayList<Comment>( list ) );
+            post.comments( new ArrayList<Comment>( list ) );
         }
 
-        return post;
+        return post.build();
     }
 
     @Override
