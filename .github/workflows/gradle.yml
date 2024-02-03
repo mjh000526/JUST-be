@@ -15,7 +15,7 @@ on: # 이벤트 트리거
     branches: #어떤 브랜치에서
       - develop
 
-permissions: #작업에 필요한 권환₩
+permissions: #작업에 필요한 권환₩#
   contents: read
 
 jobs: #작업을 정의

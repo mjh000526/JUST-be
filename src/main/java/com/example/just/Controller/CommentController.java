@@ -37,9 +37,15 @@ public class CommentController {
     }
 
     @ApiOperation(value = "댓글 조회 API")
-    @GetMapping("/get/{post_id}/comments")
+    @GetMapping("v2/get/{post_id}/comments")
     public ResponseEntity<ResponsePostCommentDto> getCommentList(@PathVariable Long post_id, HttpServletRequest req) {
         return ResponseEntity.ok(commentService.getCommentList(post_id, req));
+    }
+
+    @ApiOperation(value = "댓글 조회 API")
+    @GetMapping("v1/get/{post_id}/comments")
+    public ResponseEntity<ResponsePostCommentDtoBefore> getCommentListBefore(@PathVariable Long post_id, HttpServletRequest req) {
+        return ResponseEntity.ok(commentService.getCommentListBefore(post_id, req));
     }
 
     @Operation(summary = "댓글 삭제 api", description = "대댓글까지 다 삭제되니 유의해야 함")

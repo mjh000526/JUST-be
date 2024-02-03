@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ResponseCommentDto {
+public class ResponseCommentDtoBefore {
     private Long comment_id;
     private String comment_content;
     private Date comment_create_time;
     private Long comment_like;
     private Long comment_dislike;
+    private ResponseCommentDtoBefore parent;
     private Integer blamed_count;
     private Boolean isMine;
-    private List<ResponseCommentDto> child;
 
-    public ResponseCommentDto(Comment comment,Long member_id){
+    public ResponseCommentDtoBefore(Comment comment,Long member_id){
         comment_id = comment.getComment_id();
         comment_content = comment.getComment_content();
         comment_create_time = comment.getComment_create_time();
@@ -29,17 +29,8 @@ public class ResponseCommentDto {
         comment_dislike = comment.getComment_dislike();
         blamed_count = comment.getBlamedCount();
         isMine = comment.getMember().getId() == member_id ? true : false;
-        child = convertChildComments(comment.getChildren(), member_id);
-    }
-
-    private List<ResponseCommentDto> convertChildComments(List<Comment> childComments, Long member_id) {
-        if (childComments == null) {
-            return new ArrayList<>();
+        if(comment.getParent() != null){
+            parent = new ResponseCommentDtoBefore(comment.getParent(), member_id);
         }
-
-        return childComments.stream()
-                .map(childComment -> new ResponseCommentDto(childComment, member_id))
-                .collect(Collectors.toList());
     }
 }
-

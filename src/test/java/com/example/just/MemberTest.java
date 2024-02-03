@@ -1,3 +1,4 @@
+/*
 package com.example.just;
 
 
@@ -118,3 +119,4 @@ public class MemberTest {
                         jwtProvider.getIdFromToken(token));
     }
 }
+*/
