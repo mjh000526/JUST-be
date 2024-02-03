@@ -167,5 +167,9 @@ public class CommentService {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
+    }
 }
 
