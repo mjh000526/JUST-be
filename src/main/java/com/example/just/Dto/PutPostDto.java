@@ -25,18 +25,13 @@ public class PutPostDto {
 
     private List<String> post_content;    //글 내용
 
-    @Schema(name = "tag", example =  "오늘, 바다, 내일")
     private List<String> hash_tage;    //글 태그/글 태그
 
     private Long post_picture;
 
     @JsonIgnore
     private Date post_create_time;  //글 생성 시간
-
     private boolean secret; //글 공개 여부
-
-    @Schema(name = "post_category", example =  "직장인")
-    private String post_category; //글 카테고리
 
     @JsonIgnore
     private List<Member> liked_members = new ArrayList<>();

@@ -112,6 +112,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -135,18 +136,16 @@
       <recent name="com.example.just.Dao" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CommentTest.getMyComments">
-    <configuration name="CommentTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="just.test" />
+  <component name="RunManager" selected="Application.JustApplication">
+    <configuration name="JustApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.just.JustApplication" />
+      <module name="just.main" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.example.just.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.example.just" />
-      <option name="MAIN_CLASS_NAME" value="com.example.just.CommentTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -217,11 +216,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.JustApplication" />
         <item itemvalue="JUnit.CommentTest.getMyComments" />
         <item itemvalue="JUnit.CommentTest.likeComment" />
         <item itemvalue="JUnit.CommentTest.getCommentList" />
         <item itemvalue="JUnit.CommentTest.CommentApplyCommentError" />
-        <item itemvalue="JUnit.CommentTest" />
       </list>
     </recent_temporary>
   </component>
