@@ -62,7 +62,6 @@ public class Comment {
     }
     public void addLike(Member member) {
         if (!likedMembers.contains(member)) {
-            System.out.println("멤버가 존재하지 않음 ");
             member.getLikedComments().add(this);//좋아한 글 List에 해당 글의 객체 추가
             comment_like++;
         }

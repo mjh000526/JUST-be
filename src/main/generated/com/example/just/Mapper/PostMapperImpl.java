@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-02-03T17:13:52+0900",
+    date = "2024-02-03T17:38:52+0900",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.21 (Oracle Corporation)"
 )
 @Component
@@ -22,21 +22,19 @@ public class PostMapperImpl implements PostMapper {
             return null;
         }
 
-        Post post = new Post();
+        Post.PostBuilder post = Post.builder();
 
-        post.setPost_id( dto.getPost_id() );
-        post.setPost_tag( dto.getPost_tag() );
-        post.setPost_picture( dto.getPost_picture() );
-        post.setPost_create_time( dto.getPost_create_time() );
-        post.setSecret( dto.getSecret() );
-        post.setPost_category( dto.getPost_category() );
-        post.setMember( dto.getMember() );
+        post.post_id( dto.getPost_id() );
+        post.post_picture( dto.getPost_picture() );
+        post.post_create_time( dto.getPost_create_time() );
+        post.secret( dto.getSecret() );
+        post.member( dto.getMember() );
         List<Comment> list = dto.getComments();
         if ( list != null ) {
-            post.setComments( new ArrayList<Comment>( list ) );
+            post.comments( new ArrayList<Comment>( list ) );
         }
 
-        return post;
+        return post.build();
     }
 
     @Override
@@ -48,11 +46,9 @@ public class PostMapperImpl implements PostMapper {
         PutPostDto putPostDto = new PutPostDto();
 
         putPostDto.setPost_id( entity.getPost_id() );
-        putPostDto.setPost_tag( entity.getPost_tag() );
         putPostDto.setPost_picture( entity.getPost_picture() );
         putPostDto.setPost_create_time( entity.getPost_create_time() );
         putPostDto.setSecret( entity.getSecret() );
-        putPostDto.setPost_category( entity.getPost_category() );
         putPostDto.setMember( entity.getMember() );
         List<Comment> list = entity.getComments();
         if ( list != null ) {

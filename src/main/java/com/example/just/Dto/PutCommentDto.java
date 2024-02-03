@@ -7,4 +7,10 @@ import lombok.Setter;
 @Setter
 public class PutCommentDto {
     private String comment_content; //댓글 내용
+
+    public PutCommentDto(){}
+
+    public PutCommentDto(String content){
+        comment_content = content;
+    }
 }

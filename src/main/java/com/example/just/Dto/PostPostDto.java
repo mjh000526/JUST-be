@@ -1,6 +1,7 @@
 package com.example.just.Dto;
 
 import com.example.just.Dao.Comment;
+import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,8 +21,7 @@ public class PostPostDto {
 
     private List<String> post_content;
 
-    @Schema(name = "post_tag", example =  "오늘, 바다, 내일")
-    private String post_tag;    //글 태그
+    private List<String> hash_tage;    //글 태그
 
     private Long post_picture;
 
@@ -29,10 +29,6 @@ public class PostPostDto {
     private Timestamp post_create_time;  //글 생성 시간
 
     private boolean secret; //글 공개 여부
-
-
-    @Schema(name = "post_category", example =  "직장인")
-    private String post_category; //글 카테고리
 
     @JsonIgnore
     private List<Member> liked_members = new ArrayList<>();
