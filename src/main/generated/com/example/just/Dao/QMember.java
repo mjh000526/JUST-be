@@ -28,7 +28,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<Comment, QComment> comments = this.<Comment, QComment>createList("comments", Comment.class, QComment.class, PathInits.DIRECT2);
 
-    public final DateTimePath<java.sql.Timestamp> createTime = createDateTime("createTime", java.sql.Timestamp.class);
+    public final DateTimePath<java.util.Date> createTime = createDateTime("createTime", java.util.Date.class);
 
     public final StringPath email = createString("email");
 

@@ -130,6 +130,7 @@ public class AppleService {
                 avaliableObject = appleObject;
                 break;
             }
+
         }
         //일치하는 공개키가 없을 경우
         if (ObjectUtils.isEmpty(avaliableObject)) return "인증키이상";//new ResponseEntity<>("인증키가 이상함", HttpStatus.OK);
