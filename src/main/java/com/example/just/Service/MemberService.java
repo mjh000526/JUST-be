@@ -82,13 +82,13 @@ public class MemberService {
         return new ResponseEntity<>("해당 회원이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
     }
 
-    public List<MemberDto> findMembers() {
+    public List<Member> findMembers() {
         List<Member> Memberlist = memberRepository.findAll();
-        List<MemberDto> memberDtoList =new ArrayList<>();
-        for(Member member :Memberlist){
-            MemberDto memberDto = memberMapper.toDto(member);
-            memberDtoList.add(memberDto);
-        }
-        return memberDtoList;
+//        List<MemberDto> memberDtoList =new ArrayList<>();
+//        for(Member member :Memberlist){
+//            MemberDto memberDto = memberMapper.toDto(member);
+//            memberDtoList.add(memberDto);
+//        }
+        return Memberlist;
     }
 }
