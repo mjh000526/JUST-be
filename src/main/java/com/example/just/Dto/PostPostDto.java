@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 
+//
 public class PostPostDto {
 
     private List<String> post_content;
