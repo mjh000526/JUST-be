@@ -75,10 +75,12 @@ public class Post {
     public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
         List<String> contentList = postDto.getPost_content();
         this.postContent = contentList;
-        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
-            String hashTag_name = postDto.getHash_tage().get(i);
-            HashTag hashTag = new HashTag(hashTag_name);
-            addHashTag(hashTag);
+        if (postDto.getHash_tage()!=null) {
+            for (int i = 0; i < postDto.getHash_tage().size(); i++) {
+                String hashTag_name = postDto.getHash_tage().get(i);
+                HashTag hashTag = new HashTag(hashTag_name);
+                addHashTag(hashTag);
+            }
         }
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
