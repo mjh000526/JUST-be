@@ -1,6 +1,7 @@
 package com.example.just.Service;
 
 
+import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 
@@ -12,6 +13,7 @@ import com.example.just.Dto.ResponseGetMemberPostDto;
 import com.example.just.Dto.ResponseGetPostDto;
 import com.example.just.Dto.ResponsePutPostDto;
 import com.example.just.Mapper.PostMapper;
+import com.example.just.Repository.HashTagRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 
@@ -39,6 +41,8 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private HashTagRepository hashTagRepository;
 
     @Autowired
     private PostMapper postMapper;
@@ -92,12 +96,18 @@ public class PostService {
         Member member = checkMember(member_id);
         Post checkPost = checkPost(post_id);
 
-        Post post = new Post();
-        post.changePost(postDto, member, checkPost);
-
-        postRepository.save(post);
-        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(post);
+        List<HashTag> hashTags = hashTagRepository.findByPost(checkPost);
+        for (int i = 0; i < hashTags.size(); i++) {
+            hashTagRepository.deleteById(hashTags.get(i).getId());
+        }
+        checkPost.changePost(postDto, member, checkPost);
+        postRepository.save(checkPost);
+        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(checkPost);
         return responsePutPostDto;
+    }
+
+    public List<Post> getAllPostList() {
+        return postRepository.findAll();
     }
 
     public ResponseGetPost searchByCursor(String cursor, Long limit) { //글 조
@@ -126,7 +136,12 @@ public class PostService {
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
+            List<String> names = new ArrayList<>();
+            List<HashTag> hashTags = results.get(i).getHash_tag();
+            for (int j = 0; j < hashTags.size(); j++) {
+                names.add(hashTags.get(j).getName());
+            }
+            responseGetPostDto.setHash_tag(names);
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
@@ -266,7 +281,12 @@ public class PostService {
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
+            List<String> names = new ArrayList<>();
+            List<HashTag> hashTags = results.get(i).getHash_tag();
+            for (int j = 0; j < hashTags.size(); j++) {
+                names.add(hashTags.get(j).getName());
+            }
+            responseGetPostDto.setHash_tag(names);
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
@@ -307,7 +327,12 @@ public class PostService {
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
+            List<String> names = new ArrayList<>();
+            List<HashTag> hashTags = results.get(i).getHash_tag();
+            for (int j = 0; j < hashTags.size(); j++) {
+                names.add(hashTags.get(j).getName());
+            }
+            responseGetPostDto.setHash_tag(names);
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
@@ -319,11 +344,7 @@ public class PostService {
     }
 
     public List<ResponseGetMemberPostDto> getLikeMemberPost(Long member_id) {
-        Optional<Member> optionalMember = memberRepository.findById(member_id);
-        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
-        }
-        Member member = optionalMember.get(); //존재한다면 객체 생성
+        Member member = checkMember(member_id); //존재한다면 객체 생성
         List<Post> results = member.getLikedPosts();
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
@@ -338,7 +359,12 @@ public class PostService {
             responseGetPostDto.setPost_id(results.get(i).getPost_id());
             responseGetPostDto.setPost_content(results.get(i).getPostContent());
             responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-            responseGetPostDto.setHash_tag(results.get(i).getHash_tag());
+            List<String> names = new ArrayList<>();
+            List<HashTag> hashTags = results.get(i).getHash_tag();
+            for (int j = 0; j < hashTags.size(); j++) {
+                names.add(hashTags.get(j).getName());
+            }
+            responseGetPostDto.setHash_tag(names);
             responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
             responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
             responseGetPostDto.setSecret(results.get(i).getSecret());
