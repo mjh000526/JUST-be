@@ -1,6 +1,7 @@
 package com.example.just.Dto;
 
 import com.example.just.Dao.Comment;
+import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,8 +24,7 @@ public class ResponsePutPostDto {
 
     private List<String> post_content;    //글 내용
 
-    @Schema(name = "tag", example = "오늘, 바다, 내일")
-    private List<String> hash_tag;    //글 태그
+    private List<HashTag> hash_tag;
 
     private Long post_picture;
 

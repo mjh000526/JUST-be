@@ -81,7 +81,8 @@ public class PostController {
         return postService.write(member_id, postDto);
     }
 
-    @Operation(summary = "게시글 삭제 api", description = "\n 자기가 지운 글이면 true")
+    @Operation(summary = "게시글 삭제 api", description = "\n 글이 삭제되면 value : 삭제 완료"
+            + "\n 글이 없으면 value : 글이 없습니다.")
     @GetMapping("/delete/post")
     public ResponsePost deletePost(@RequestParam Long post_id) {
         return postService.deletePost(post_id);
@@ -97,13 +98,14 @@ public class PostController {
         return postService.putPost(member_id, postDto);
     }
 
-    @Operation(summary = "게시글 좋아요 api", description = "자기가 이 글이 좋아요를 누른거면 Response의 value는 true 좋아요를 취소한거면 value는 false")
+    @Operation(summary = "게시글 좋아요 api", description = "자기가 이 글이 좋아요를 누른거면 Response의 value: 좋아요 완료"
+            + " 좋아요를 취소한거면 value: 좋아요 취소")
     @PostMapping("/post/like")
-    public ResponseEntity postLikes(@RequestParam Long post_id, @RequestParam boolean like,
+    public ResponseEntity postLikes(@RequestParam Long post_id,
                                     HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        return postService.postLikes(post_id, member_id, like);
+        return postService.postLikes(post_id, member_id);
     }
 
     @ApiOperation(value = "게시글 신고")
