@@ -25,7 +25,14 @@ public class CommentController {
     private JwtProvider jwtProvider;
 
     @Operation(summary = "댓글 작성 api", description = "parentCommentId는 부모 댓글의 아이디\n"
-            + "대댓글일이 아닐때는 0을 넣으면 댓글이 쓰이고 대댓글일시 1 또 그에대한 대댓글일시 2입력")
+            + "{\n"
+            + "  \"comment_content\": \"안녕\",\n"
+            + "  \"parent_comment_id\": 0\n"
+            + "}" + "해당 예시는 첫 대글 작성시 예제임" + "\n"
+            + "{\n"
+            + "  \"comment_content\": \"안녕\",\n"
+            + "  \"parent_comment_id\": 6\n"
+            + "}" + "해당 예시는 6번 댓글의 대댓글 작성시 예제임")
     @PostMapping("/post/{post_id}/comments")
     public ResponseEntity<Comment> createComment(@PathVariable Long post_id,
                                                  @RequestBody CommentDto comment_dto,
@@ -44,7 +51,8 @@ public class CommentController {
 
     @ApiOperation(value = "댓글 조회 API")
     @GetMapping("v1/get/{post_id}/comments")
-    public ResponseEntity<ResponsePostCommentDtoBefore> getCommentListBefore(@PathVariable Long post_id, HttpServletRequest req) {
+    public ResponseEntity<ResponsePostCommentDtoBefore> getCommentListBefore(@PathVariable Long post_id,
+                                                                             HttpServletRequest req) {
         return ResponseEntity.ok(commentService.getCommentListBefore(post_id, req));
     }
 
@@ -86,12 +94,12 @@ public class CommentController {
     @ApiOperation(value = "자신의 댓글 조회")
     @GetMapping("/get/member/comment")
     public ResponseEntity getMyComment(HttpServletRequest request) {
-        Long member_id=0L;
-        if(request.getHeader("Authorization")!=null){
+        Long member_id = 0L;
+        if (request.getHeader("Authorization") != null) {
             String token = jwtProvider.getAccessToken(request);
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         }
-        if(member_id == 0L){
+        if (member_id == 0L) {
             return new ResponseEntity<>("로그인 이후 이용해야 합니다.", HttpStatus.BAD_REQUEST);
         }
         return commentService.getMyComment(member_id);
