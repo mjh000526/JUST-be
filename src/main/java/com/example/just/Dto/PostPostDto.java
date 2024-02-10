@@ -21,7 +21,6 @@ public class PostPostDto {
 
     private List<String> post_content;
 
-    @Schema(name = "tag", example =  "오늘, 바다, 내일")
     private List<String> hash_tage;    //글 태그
 
     private Long post_picture;

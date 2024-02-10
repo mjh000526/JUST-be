@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
+@Builder
 @Data
 @Setter
 public class Post {
@@ -26,6 +27,7 @@ public class Post {
     @ElementCollection
     @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "content")
+    @JsonIgnore
     private List<String> postContent;
 
     //글 태그
@@ -129,13 +131,14 @@ public class Post {
     }
 
     public void changePost(PutPostDto postDto, Member member, Post post) {
+        this.post_id = post.getPost_id();
         this.member = member;
         this.setPost_create_time(new Date(System.currentTimeMillis()));
         this.setPost_like(post.getPost_like());
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.postContent = postDto.getPost_content();
-        this.hash_tag = null;
+        this.hash_tag=null;
         for (int i = 0; i < postDto.getHash_tage().size(); i++) {
             String hashTag_name = postDto.getHash_tage().get(i);
             HashTag hashTag = new HashTag(hashTag_name);
