@@ -84,8 +84,13 @@ public class PostService {
     //글 삭제
     public ResponsePost deletePost(Long post_id) {
         Post post = checkPost(post_id);
-        postRepository.deleteById(post_id);
-        ResponsePost responsePost = new ResponsePost(post_id, true);
+        ResponsePost responsePost;
+        if (post == null) {
+            responsePost = new ResponsePost(post_id, "글이 없습니다.");
+        } else {
+            postRepository.deleteById(post_id);
+            responsePost = new ResponsePost(post_id, "삭제 완료");
+        }
         return responsePost;
     }
 
@@ -219,26 +224,18 @@ public class PostService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<?> postLikes(Long post_id, Long member_id, boolean like) {    //글 좋아요
+    public ResponseEntity<?> postLikes(Long post_id, Long member_id) {    //글 좋아요
 
-        Optional<Post> optionalPost = postRepository.findById(post_id);
-        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post_id의 값이 존재하지 않습니다.:" + post_id);
-        }
-        Post post = optionalPost.get();
+        Post post = checkPost(post_id);
+        Member member = checkMember(member_id);
 
-        Optional<Member> optionalMember = memberRepository.findById(member_id);
-        if (!optionalMember.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("DB에 존재하지 않는 ID : " + member_id);
-        }
-        Member member = optionalMember.get(); //존재한다면 객체 생성
         ResponsePost responsePost;
-        if (like == false) {
+        if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
-            responsePost = new ResponsePost(post_id, false);
+            responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
-            responsePost = new ResponsePost(post_id, true);
+            responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
 
         Post savePost = postRepository.save(post);

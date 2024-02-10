@@ -94,7 +94,7 @@ public class AdminController {
     @DeleteMapping("/posts/{post_id}")
     public ResponsePost deletePost(@PathVariable Long post_id) {
         postService.deletePost(post_id);
-        ResponsePost responsePost = new ResponsePost(post_id, true);
+        ResponsePost responsePost = new ResponsePost(post_id, "삭제 완료");
         return responsePost;
     }
 }
