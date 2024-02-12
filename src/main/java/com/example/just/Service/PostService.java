@@ -90,11 +90,8 @@ public class PostService {
     //글 삭제
     public ResponsePost deletePost(Long post_id) {
         Post post = checkPost(post_id);
-<<<<<<< HEAD
         postContentESRespository.deleteById(post_id);
         postRepository.deleteById(post_id);
-        ResponsePost responsePost = new ResponsePost(post_id, true);
-=======
         ResponsePost responsePost;
         if (post == null) {
             responsePost = new ResponsePost(post_id, "글이 없습니다.");
@@ -102,7 +99,6 @@ public class PostService {
             postRepository.deleteById(post_id);
             responsePost = new ResponsePost(post_id, "삭제 완료");
         }
->>>>>>> 5273fbfd41da5930beb56142ce0d1738aa5e7b96
         return responsePost;
     }
 
@@ -243,24 +239,15 @@ public class PostService {
         Member member = checkMember(member_id);
 
         ResponsePost responsePost;
-<<<<<<< HEAD
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
-        if (like == false) {
-            post.removeLike(member);
-            postDocument.setPostLike(postDocument.getPostLike()-1);
-            responsePost = new ResponsePost(post_id, false);
-        } else {
-            post.addLike(member);
-            postDocument.setPostLike(postDocument.getPostLike()+1);
-            responsePost = new ResponsePost(post_id, true);
-=======
         if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
+            postDocument.setPostLike(postDocument.getPostLike()-1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
+            postDocument.setPostLike(postDocument.getPostLike()+1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
->>>>>>> 5273fbfd41da5930beb56142ce0d1738aa5e7b96
         }
 
         postContentESRespository.save(postDocument);
