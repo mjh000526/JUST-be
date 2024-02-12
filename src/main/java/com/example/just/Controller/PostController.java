@@ -41,7 +41,7 @@ public class PostController {
     }
 
 
-    @Operation(summary =  "자기의 게시글을 조회하는 API", description =  "<big> 자신의 게시글을 조회한다</big>")
+    @Operation(summary = "자기의 게시글을 조회하는 API", description = "<big> 자신의 게시글을 조회한다</big>")
     @GetMapping("/get/mypost")
     public List<ResponseGetMemberPostDto> getMyPosts(HttpServletRequest request) {
 
@@ -60,9 +60,18 @@ public class PostController {
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         return postService.searchByCursorMember(cursor, request_page, member_id);
     }
-    @Operation(summary = "게시글 작성 api", description = "[\"오늘은 날이 참 좋네요\"], [\"내일도 좋겠다\"] . . . (List형식)"
-            + "이런 형식으로 post_content 작성 해주세요\n post_picture 은 어떤 사진을 저장했는지 알기위해 저장합니다\n"
-            + "예를들어 1이면 1번사진 2면 2번사진")
+
+    @Operation(summary = "게시글 작성 api", description = "{\n"
+            + "  \"hash_tage\": [\n"
+            + "    \"바보\", \"멍청이\""
+            + "  ],\n"
+            + "  \"post_content\": [\n"
+            + "    \"오늘은 2월 8일 입니다.\", \"내일은 휴가입니다."
+            + "  ],\n"
+            + "  \"post_picture\": 0,\n"
+            + "  \"secret\": true\n"
+            + "}"
+            + "이런식으로 작성하면 됩니다.")
     @PostMapping("/post/post")
     public PostPostDto write(HttpServletRequest request,
                              @RequestBody PostPostDto postDto) {
@@ -72,7 +81,8 @@ public class PostController {
         return postService.write(member_id, postDto);
     }
 
-    @Operation(summary = "게시글 삭제 api", description = "\n 자기가 지운 글이면 true")
+    @Operation(summary = "게시글 삭제 api", description = "\n 글이 삭제되면 value : 삭제 완료"
+            + "\n 글이 없으면 value : 글이 없습니다.")
     @GetMapping("/delete/post")
     public ResponsePost deletePost(@RequestParam Long post_id) {
         return postService.deletePost(post_id);
@@ -88,13 +98,14 @@ public class PostController {
         return postService.putPost(member_id, postDto);
     }
 
-    @Operation(summary = "게시글 좋아요 api", description = "자기가 이 글이 좋아요를 누른거면 Response의 value는 true 좋아요를 취소한거면 value는 false")
+    @Operation(summary = "게시글 좋아요 api", description = "자기가 이 글이 좋아요를 누른거면 Response의 value: 좋아요 완료"
+            + " 좋아요를 취소한거면 value: 좋아요 취소")
     @PostMapping("/post/like")
-    public ResponseEntity postLikes(@RequestParam Long post_id, @RequestParam boolean like,
+    public ResponseEntity postLikes(@RequestParam Long post_id,
                                     HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        return postService.postLikes(post_id, member_id, like);
+        return postService.postLikes(post_id, member_id);
     }
 
     @ApiOperation(value = "게시글 신고")

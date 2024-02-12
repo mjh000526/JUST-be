@@ -61,7 +61,6 @@ public class CommentService {
         // 게시물이 있는지 확인하고 가져옴
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
-
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
 
         Comment comment = new Comment();
@@ -156,7 +155,7 @@ public class CommentService {
         // 업데이트된 댓글을 저장합니다.
         commentRepository.save(comment);
 
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok(comment.getComment_content());
     }
 
     public ResponseEntity<String> blameComment(Long postId, Long commentId) {

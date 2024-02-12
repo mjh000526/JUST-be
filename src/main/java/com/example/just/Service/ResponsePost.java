@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class ResponsePost {
     private Long post_id;
-    private boolean value;
+    private String value;
 
-    public ResponsePost(Long post_id, boolean b) {
+    public ResponsePost(Long post_id, String value) {
         this.post_id =post_id;
-        this.value =b;
+        this.value =value;
     }
 }
