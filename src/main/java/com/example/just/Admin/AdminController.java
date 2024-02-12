@@ -11,6 +11,7 @@ import com.example.just.Repository.PostRepository;
 import com.example.just.Service.ResponsePost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -92,7 +93,7 @@ public class AdminController {
    }
     //게시글 삭제
     @DeleteMapping("/posts/{post_id}")
-    public ResponsePost deletePost(@PathVariable Long post_id) {
+    public ResponsePost deletePost(@PathVariable Long post_id) throws NotFoundException {
         postService.deletePost(post_id);
         ResponsePost responsePost = new ResponsePost(post_id, "삭제 완료");
         return responsePost;
