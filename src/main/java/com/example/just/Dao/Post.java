@@ -53,6 +53,7 @@ public class Post {
 
     @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
     @JsonIgnore
+    @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
 
     @ManyToOne()
