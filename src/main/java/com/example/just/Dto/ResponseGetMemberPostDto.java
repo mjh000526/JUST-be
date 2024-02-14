@@ -30,6 +30,7 @@ public class ResponseGetMemberPostDto {
     private Long post_like_size;
     private int blamed_count;
     private boolean like;
+    private boolean mine;
 
     public ResponseGetMemberPostDto(Post post, Long member_id, Member member) {
         this.post_id = post.getPost_id();

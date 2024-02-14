@@ -9,6 +9,8 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -188,6 +190,7 @@ public class CommentService {
     public ResponseEntity getMyComment(Long member_id) {
         Member member = memberRepository.findById(member_id).get();
         List<Comment> comments = commentRepository.findAllByMember(member);
+        Collections.sort(comments, Comparator.comparing(Comment::getComment_create_time).reversed());
         List<ResponseMyCommentDto> result = comments.stream()
                 .map(comment -> new ResponseMyCommentDto(comment, member_id, member))
                 .collect(Collectors.toList());
