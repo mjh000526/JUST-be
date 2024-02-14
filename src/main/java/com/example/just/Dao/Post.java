@@ -152,8 +152,10 @@ public class Post {
 
     public List<HashTag> getHashTag() {
         List<HashTag> array = new ArrayList<>();
-        for (int i = 0; i < this.hash_tag.size(); i++) {
-            array.add(this.hash_tag.get(i));
+        if (this.hash_tag != null) {
+            for (int i = 0; i < this.hash_tag.size(); i++) {
+                array.add(this.hash_tag.get(i));
+            }
         }
         return array;
     }
