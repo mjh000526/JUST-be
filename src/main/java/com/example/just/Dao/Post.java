@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-@Data
 @Builder
+@Data
 @Setter
 public class Post {
     @Id
@@ -53,6 +53,7 @@ public class Post {
 
     @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
     @JsonIgnore
+    @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
 
     @ManyToOne()
