@@ -71,7 +71,6 @@ spring:
         format_sql: true
         enable_lazy_load_no_trans: true
 
-
 server-add: 13.209.213.191
 api-url: https://kauth.kakao.com/oauth/authorize?client_id=55ec14b78e17e978a4a3b64971060784&redirect_uri=http://13.209.213.191:9000/api/kakao/access_token&response_type=code
 
