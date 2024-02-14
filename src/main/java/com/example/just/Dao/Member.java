@@ -1,6 +1,7 @@
   package com.example.just.Dao;
 
   import com.fasterxml.jackson.annotation.JsonIgnore;
+  import java.util.Date;
   import lombok.*;
   import org.hibernate.annotations.CreationTimestamp;
 
@@ -26,7 +27,7 @@
 
       @CreationTimestamp
       @Column(name = "create_time")
-      private Timestamp createTime;
+      private Date createTime;
 
       private String provider;
 

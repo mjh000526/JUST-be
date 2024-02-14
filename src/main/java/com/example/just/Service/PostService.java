@@ -7,6 +7,7 @@ import com.example.just.Dao.Post;
 
 
 import com.example.just.Dao.QPost;
+import com.example.just.Document.PostDocument;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.example.just.Dto.ResponseGetMemberPostDto;
@@ -15,6 +16,7 @@ import com.example.just.Dto.ResponsePutPostDto;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.HashTagRepository;
 import com.example.just.Repository.MemberRepository;
+import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 
 import com.example.just.jwt.JwtProvider;
@@ -50,6 +52,9 @@ public class PostService {
     @Autowired
     private JwtProvider jwtProvider;
 
+    @Autowired
+    PostContentESRespository postContentESRespository;
+
     public PostService(EntityManager em, JPAQueryFactory query) {
         this.em = em;
         this.query = new JPAQueryFactory(em);
@@ -77,6 +82,7 @@ public class PostService {
         Member member = checkMember(member_id);
         Post post = new Post();
         post.writePost(postDto, member);
+        postContentESRespository.save(new PostDocument(post));
         postRepository.save(post);
         return postDto;
     }
@@ -84,6 +90,8 @@ public class PostService {
     //글 삭제
     public void deletePost(Long post_id) throws NotFoundException {
         Post post = checkPost(post_id);
+        postContentESRespository.deleteById(post_id);
+        postRepository.deleteById(post_id);
         ResponsePost responsePost;
         if (post == null) {
             throw new NotFoundException();
@@ -104,6 +112,7 @@ public class PostService {
             hashTagRepository.deleteById(hashTags.get(i).getId());
         }
         checkPost.changePost(postDto, member, checkPost);
+        postContentESRespository.save(new PostDocument(checkPost));
         postRepository.save(checkPost);
         ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(checkPost);
         return responsePutPostDto;
@@ -235,14 +244,18 @@ public class PostService {
         Member member = checkMember(member_id);
 
         ResponsePost responsePost;
+        PostDocument postDocument = postContentESRespository.findById(post_id).get();
         if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
+            postDocument.setPostLike(postDocument.getPostLike()-1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
+            postDocument.setPostLike(postDocument.getPostLike()+1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
 
+        postContentESRespository.save(postDocument);
         Post savePost = postRepository.save(post);
 
         return ResponseEntity.ok(responsePost);
