@@ -30,6 +30,7 @@ public class ResponseGetPostDto {
 
     private Long post_like_size;
     private int blamed_count;
+    private boolean mine;
 
     public ResponseGetPostDto(){}
     public ResponseGetPostDto(Post post){
@@ -42,8 +43,6 @@ public class ResponseGetPostDto {
         for (int j = 0; j < hashTags.size(); j++) {
             names.add(hashTags.get(j).getName());
         }
-
-
         hash_tag = names;
         post_picture = post.getPost_picture();
         post_create_time = post.getPost_create_time();
