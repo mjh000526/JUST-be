@@ -12,17 +12,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.example.just.Service.MemberService;
 import com.example.just.Service.CommentService;
 import com.example.just.Service.PostService;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.ui.Model;
 
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
     @Autowired
