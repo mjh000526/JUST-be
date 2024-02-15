@@ -19,10 +19,7 @@ import org.springframework.web.client.RestTemplate;
 )
 @EnableScheduling
 public class JustApplication {
-	@Bean
-	public RestTemplate restTemplate(){
-		return new RestTemplate();
-	}
+
 	@Bean
 	public BCryptPasswordEncoder encoder(){
 		return new BCryptPasswordEncoder();
