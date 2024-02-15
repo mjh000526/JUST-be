@@ -1,3 +1,8 @@
+gpt :
+  model: gpt-3.5-turbo
+  api:
+    key: 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
+    url: https://api.openai.com/v1/chat/completions
 baseUrl : https://just-s3.s3.ap-northeast-2.amazonaws.com/
 server:
   port: 9000
@@ -63,7 +68,6 @@ spring:
         show_sql: false
         format_sql: true
         enable_lazy_load_no_trans: true
-
 
 server-add: 13.209.213.191
 api-url: https://kauth.kakao.com/oauth/authorize?client_id=55ec14b78e17e978a4a3b64971060784&redirect_uri=http://13.209.213.191:9000/api/kakao/access_token&response_type=code

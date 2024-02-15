@@ -3,12 +3,16 @@ package com.example.just.Service;
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
+import com.example.just.Document.PostDocument;
 import com.example.just.Dto.*;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
+import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -45,6 +49,9 @@ public class CommentService {
     @Autowired
     private JwtProvider jwtProvider;
 
+    @Autowired
+    PostContentESRespository postContentESRespository;
+
     public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
@@ -56,7 +63,6 @@ public class CommentService {
         // 게시물이 있는지 확인하고 가져옴
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
-
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
 
         Comment comment = new Comment();
@@ -78,6 +84,9 @@ public class CommentService {
 //            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
 
         } else if (parentComment == null) {
+            PostDocument postDocument = postContentESRespository.findById(postId).get();
+            postDocument.setCommentCount(postDocument.getCommentCount() + 1);
+            postContentESRespository.save(postDocument);
 //            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
 
@@ -129,6 +138,9 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
         comment.setChildren(null);
+        PostDocument postDocument = postContentESRespository.findById(postId).get();
+        postDocument.setCommentCount(postDocument.getCommentCount() - 1);
+        postContentESRespository.save(postDocument);
         commentRepository.deleteById(commentId);
         return ResponseEntity.ok("ok");
     }
@@ -145,7 +157,7 @@ public class CommentService {
         // 업데이트된 댓글을 저장합니다.
         commentRepository.save(comment);
 
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok(comment.getComment_content());
     }
 
     public ResponseEntity<String> blameComment(Long postId, Long commentId) {
@@ -189,6 +201,7 @@ public class CommentService {
     public ResponseEntity getMyComment(Long member_id) {
         Member member = memberRepository.findById(member_id).get();
         List<Comment> comments = commentRepository.findAllByMember(member);
+        Collections.sort(comments, Comparator.comparing(Comment::getComment_create_time).reversed());
         List<ResponseMyCommentDto> result = comments.stream()
                 .map(comment -> new ResponseMyCommentDto(comment, member_id, member))
                 .collect(Collectors.toList());
