@@ -51,7 +51,12 @@ public class Post {
     @Column(name = "emoticon")
     private String emoticon;
 
-    @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
+    @ManyToMany()
+    @JoinTable(
+            name = "post_like",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
     @JsonIgnore
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
@@ -62,7 +67,7 @@ public class Post {
     private Member member;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
     @Column(name = "blamed_count")
     private Long blamedCount;
 
@@ -76,9 +81,9 @@ public class Post {
     public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
         List<String> contentList = postDto.getPost_content();
         this.postContent = contentList;
-        if (postDto.getHash_tage() != null) {
-            for (int i = 0; i < postDto.getHash_tage().size(); i++) {
-                String hashTag_name = postDto.getHash_tage().get(i);
+        if (postDto.getHash_tag() != null) {
+            for (int i = 0; i < postDto.getHash_tag().size(); i++) {
+                String hashTag_name = postDto.getHash_tag().get(i);
                 HashTag hashTag = new HashTag(hashTag_name);
                 addHashTag(hashTag);
             }
@@ -103,7 +108,6 @@ public class Post {
 
     public void addLike(Member member) {
         if (!likedMembers.contains(member)) {
-            System.out.println("멤버가 존재하지 않음 ");
             member.getLikedPosts().add(this);//좋아한 글 List에 해당 글의 객체 추가
             post_like++;
         }
