@@ -55,20 +55,11 @@
       private List<Comment> comments = new ArrayList<>();
 
       @Builder.Default
-      @ManyToMany(cascade = CascadeType.REMOVE)
-      @JoinTable(
-            name = "post_like",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-      )
+      @ManyToMany(mappedBy = "likedMembers", cascade = CascadeType.REMOVE)
       private List<Post> likedPosts = new ArrayList<>();
+
       @Builder.Default
-      @ManyToMany(cascade = CascadeType.REMOVE)
-      @JoinTable(
-              name = "comment_like",
-              joinColumns = @JoinColumn(name = "member_id"),
-              inverseJoinColumns = @JoinColumn(name = "comment_id")
-      )
+      @ManyToMany(mappedBy = "likedMembers", cascade = CascadeType.REMOVE)
       private List<Comment> likedComments = new ArrayList<>();
       public void addBlamed(){
           blamedCount++;
