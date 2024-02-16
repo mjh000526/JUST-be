@@ -20,8 +20,9 @@ public class ResponseCommentDto {
     private Integer blamed_count;
     private Boolean isMine;
     private List<ResponseCommentDto> child;
+    private String message;
 
-    public ResponseCommentDto(Comment comment,Long member_id){
+    public ResponseCommentDto(Comment comment,Long member_id,String message){
         comment_id = comment.getComment_id();
         comment_content = comment.getComment_content();
         comment_create_time = comment.getComment_create_time();
@@ -30,6 +31,18 @@ public class ResponseCommentDto {
         blamed_count = comment.getBlamedCount();
         isMine = comment.getMember().getId() == member_id ? true : false;
         child = convertChildComments(comment.getChildren(), member_id);
+        this.message = message;
+    }
+    public ResponseCommentDto(String message){
+        comment_id = 0L;
+        comment_content = null;
+        comment_create_time = null;
+        comment_like = null;
+        comment_dislike = null;
+        blamed_count = null;
+        isMine = true;
+        child = null;
+        this.message = message;
     }
 
     private List<ResponseCommentDto> convertChildComments(List<Comment> childComments, Long member_id) {
@@ -38,7 +51,7 @@ public class ResponseCommentDto {
         }
 
         return childComments.stream()
-                .map(childComment -> new ResponseCommentDto(childComment, member_id))
+                .map(childComment -> new ResponseCommentDto(childComment, member_id,""))
                 .collect(Collectors.toList());
     }
 }
