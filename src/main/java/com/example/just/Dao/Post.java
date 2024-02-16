@@ -51,7 +51,12 @@ public class Post {
     @Column(name = "emoticon")
     private String emoticon;
 
-    @ManyToMany(mappedBy = "likedPosts", cascade = CascadeType.REMOVE)
+    @ManyToMany()
+    @JoinTable(
+            name = "post_like",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
     @JsonIgnore
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
@@ -62,7 +67,7 @@ public class Post {
     private Member member;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
     @Column(name = "blamed_count")
     private Long blamedCount;
 
@@ -103,7 +108,6 @@ public class Post {
 
     public void addLike(Member member) {
         if (!likedMembers.contains(member)) {
-            System.out.println("멤버가 존재하지 않음 ");
             member.getLikedPosts().add(this);//좋아한 글 List에 해당 글의 객체 추가
             post_like++;
         }

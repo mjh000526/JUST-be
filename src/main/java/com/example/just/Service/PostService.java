@@ -82,8 +82,8 @@ public class PostService {
         Member member = checkMember(member_id);
         Post post = new Post();
         post.writePost(postDto, member);
-        postContentESRespository.save(new PostDocument(post));
-        postRepository.save(post);
+        Post p = postRepository.save(post);
+        postContentESRespository.save(new PostDocument(p));
         return postDto;
     }
 
