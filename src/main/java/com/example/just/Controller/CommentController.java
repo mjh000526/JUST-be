@@ -1,11 +1,14 @@
 package com.example.just.Controller;
 
 import com.example.just.Dao.Comment;
+import com.example.just.Dao.Post;
 import com.example.just.Dto.*;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,16 @@ public class CommentController {
     @Autowired
     private JwtProvider jwtProvider;
 
+    private String errorMassage = "{\n"
+            + "  \"comment_id\": \"\",\n"
+            + "  \"comment_create_time\": 0\n"
+            + "  \"comment_create_time\": \"\",\n"
+            + "  \"comment_like\": 0\n"
+            + "  \"comment_dislike\": 0\n"
+            + "  \"blamed_count\": true\n"
+            + "  \"child\": []\n"
+            + "  \"message\": \"";
+
     @Operation(summary = "댓글 작성 api", description = "parentCommentId는 부모 댓글의 아이디\n"
             + "{\n"
             + "  \"comment_content\": \"안녕\",\n"
@@ -33,14 +46,45 @@ public class CommentController {
             + "  \"comment_content\": \"안녕\",\n"
             + "  \"parent_comment_id\": 6\n"
             + "}" + "해당 예시는 6번 댓글의 대댓글 작성시 예제임")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{\n"
+                    + "  \"comment_id\": \"\",\n"
+                    + "  \"comment_create_time\": 0\n"
+                    + "  \"comment_create_time\": \"\",\n"
+                    + "  \"comment_like\": 0\n"
+                    + "  \"comment_dislike\": 0\n"
+                    + "  \"blamed_count\": true\n"
+                    + "  \"child\": []\n"
+                    + "  \"message\": \"입력 완료\"\n"
+                    + "}"),
+            @ApiResponse(responseCode = "404", description = "{\n"
+                    + "  \"comment_id\": \"\",\n"
+                    + "  \"comment_create_time\": 0\n"
+                    + "  \"comment_create_time\": \"\",\n"
+                    + "  \"comment_like\": 0\n"
+                    + "  \"comment_dislike\": 0\n"
+                    + "  \"blamed_count\": true\n"
+                    + "  \"child\": []\n"
+                    + "  \"message\": \"해당 부모 댓글 없음, 대댓글에는 대댓글 작성 불가\"\n"
+                    + "}")
+    })
     @PostMapping("/post/{post_id}/comments")
-    public ResponseEntity<Comment> createComment(@PathVariable Long post_id,
+    public ResponseEntity<ResponseCommentDto> createComment(@PathVariable Long post_id,
                                                  @RequestBody CommentDto comment_dto,
                                                  HttpServletRequest req) {
-        String token = jwtProvider.getAccessToken(req);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        Comment comment = commentService.createComment(post_id, member_id, comment_dto);
-        return ResponseEntity.ok(comment);
+        Comment comment = null;
+        Long member_id = null;
+        try {
+            String token = jwtProvider.getAccessToken(req);
+            member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+            comment = commentService.createComment(post_id, member_id, comment_dto);
+
+        } catch (NullPointerException e){
+            return ResponseEntity.status(404).body(new ResponseCommentDto("해당 부모 댓글 없음"));
+        } catch (RuntimeException e){
+            return ResponseEntity.status(404).body(new ResponseCommentDto("대댓글에는 대댓글 작성 불가"));
+        }
+        return ResponseEntity.ok(new ResponseCommentDto(comment,member_id,"입력 완료"));
     }
 
     @ApiOperation(value = "댓글 조회 API")
@@ -63,6 +107,10 @@ public class CommentController {
     }
 
     @ApiOperation(value = "댓글 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "댓글 내용"),
+            @ApiResponse(responseCode = "404",description = "댓글이 존재하지 않습니다.\n게시물이 존재하지 않습니다.")
+    })
     @PutMapping("/put/comment/{post_id}/{comment_id}")
     public ResponseEntity<String> putComment(@PathVariable Long post_id, @PathVariable Long comment_id,
                                              @RequestBody PutCommentDto commentDto,
@@ -103,5 +151,18 @@ public class CommentController {
             return new ResponseEntity<>("로그인 이후 이용해야 합니다.", HttpStatus.BAD_REQUEST);
         }
         return commentService.getMyComment(member_id);
+    }
+
+    private String errorMassage(String error){
+        return "{\n"
+                + "  \"comment_id\": \"\",\n"
+                + "  \"comment_create_time\": 0\n"
+                + "  \"comment_create_time\": \"\",\n"
+                + "  \"comment_like\": 0\n"
+                + "  \"comment_dislike\": 0\n"
+                + "  \"blamed_count\": true\n"
+                + "  \"child\": []\n"
+                + "  \"message\": \"성공\"\n"
+                + "}";
     }
 }

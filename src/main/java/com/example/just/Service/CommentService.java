@@ -57,7 +57,10 @@ public class CommentService {
         Comment parentComment = null;
         if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
             parentComment = commentRepository.findById(commentDto.getParent_comment_id())
-                    .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
+                    .orElseThrow(() -> new NullPointerException("부모 댓글이 존재하지 않습니다."));
+            if(parentComment.getParent() != null){
+                throw new RuntimeException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
+            }
         }
 
         // 게시물이 있는지 확인하고 가져옴
@@ -108,7 +111,7 @@ public class CommentService {
         if (post != null && post.getComments() != null) {
             comments = post.getComments().stream()
                     .filter(comment -> comment.getParent() == null)
-                    .map(comment -> new ResponseCommentDto(comment, member_id))
+                    .map(comment -> new ResponseCommentDto(comment, member_id,""))
                     .collect(Collectors.toList());
         }
 
@@ -147,11 +150,11 @@ public class CommentService {
 
     public ResponseEntity<String> putComment(Long postId, Long commentId,
                                              PutCommentDto commentDto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다: " + commentId));
+        Comment comment = commentRepository.findById(commentId).get();
+        if(comment == null) ResponseEntity.status(404).body("댓글이 존재하지 않습니다.");
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
+        Post post = postRepository.findById(postId).get();
+        if(post == null) ResponseEntity.status(404).body("게시물이 존재하지 않습니다.");
 
         comment.setComment_content(commentDto.getComment_content());
         // 업데이트된 댓글을 저장합니다.
