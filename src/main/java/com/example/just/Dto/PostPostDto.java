@@ -22,7 +22,7 @@ public class PostPostDto {
 
     private List<String> post_content;
 
-    private List<String> hash_tage;    //글 태그
+    private List<String> hash_tag;    //글 태그
 
     private Long post_picture;
 

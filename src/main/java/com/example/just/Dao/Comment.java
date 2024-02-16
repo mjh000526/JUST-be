@@ -54,7 +54,13 @@ public class Comment {
 
     @Column(name = "blamed_count")
     private int blamedCount;
-    @ManyToMany(mappedBy = "likedComments")
+
+    @ManyToMany()
+    @JoinTable(
+            name = "comment_like",
+            joinColumns = @JoinColumn(name = "comment_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
     @JsonIgnore
     private List<Member> likedMembers = new ArrayList<>();
     public void addBlamed(){
