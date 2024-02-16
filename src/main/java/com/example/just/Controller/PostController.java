@@ -35,8 +35,10 @@ public class PostController {
                                            HttpServletRequest req) throws NotFoundException {
 
         String cursor = req.getHeader("viewed");
+        String token = jwtProvider.getAccessToken(req);
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         try {
-            return ResponseEntity.ok(postService.searchByCursor(cursor, request_page));
+            return ResponseEntity.ok(postService.searchByCursor(cursor, request_page, member_id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -95,7 +97,7 @@ public class PostController {
 
     @Operation(summary = "게시글 삭제 api", description = "\n 글이 삭제되면 value : 삭제 완료"
             + "\n 글이 없으면 value : 글이 없습니다.")
-    @GetMapping("/delete/post")
+    @DeleteMapping("/delete/post")
     public ResponseEntity<String> deletePost(@RequestParam Long post_id) throws NotFoundException {
         try {
             postService.deletePost(post_id);

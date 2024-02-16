@@ -11,6 +11,8 @@ import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -83,7 +85,7 @@ public class CommentService {
 
         } else if (parentComment == null) {
             PostDocument postDocument = postContentESRespository.findById(postId).get();
-            postDocument.setCommentCount(postDocument.getCommentCount()+1);
+            postDocument.setCommentCount(postDocument.getCommentCount() + 1);
             postContentESRespository.save(postDocument);
 //            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
@@ -137,7 +139,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
         comment.setChildren(null);
         PostDocument postDocument = postContentESRespository.findById(postId).get();
-        postDocument.setCommentCount(postDocument.getCommentCount()-1);
+        postDocument.setCommentCount(postDocument.getCommentCount() - 1);
         postContentESRespository.save(postDocument);
         commentRepository.deleteById(commentId);
         return ResponseEntity.ok("ok");
@@ -199,6 +201,7 @@ public class CommentService {
     public ResponseEntity getMyComment(Long member_id) {
         Member member = memberRepository.findById(member_id).get();
         List<Comment> comments = commentRepository.findAllByMember(member);
+        Collections.sort(comments, Comparator.comparing(Comment::getComment_create_time).reversed());
         List<ResponseMyCommentDto> result = comments.stream()
                 .map(comment -> new ResponseMyCommentDto(comment, member_id, member))
                 .collect(Collectors.toList());
