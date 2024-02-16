@@ -23,9 +23,7 @@ import com.example.just.jwt.JwtProvider;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,7 +122,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public ResponseGetPost searchByCursor(String cursor, Long limit) throws NotFoundException { //글 조
+    public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) throws NotFoundException { //글 조
         QPost post = QPost.post;
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
@@ -163,6 +161,11 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
+                if (results.get(i).getMember().getId() == member_id) {
+                    responseGetPostDto.setMine(true);
+                } else {
+                    responseGetPostDto.setMine(false);
+                }
                 getPostDtos.add(responseGetPostDto);
                 System.out.println(responseGetPostDto);
             }
@@ -307,6 +310,12 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
+                if (results.get(i).getMember().getId()==member_id) {
+                    responseGetPostDto.setMine(true);
+                } else {
+                    responseGetPostDto.setMine(false);
+                }
+
                 getPostDtos.add(responseGetPostDto);
                 System.out.println(responseGetPostDto);
             }
@@ -330,6 +339,9 @@ public class PostService {
         Member realMember = member.get();
 
         List<Post> results = realMember.getPosts();
+        // results를 최신 순으로 정렬
+        Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
+
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
             throw new NotFoundException();
@@ -357,6 +369,11 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
+                if (results.get(i).getMember().getId()==member_id) {
+                    responseGetPostDto.setMine(true);
+                } else {
+                    responseGetPostDto.setMine(false);
+                }
                 getPostDtos.add(responseGetPostDto);
             }
 
@@ -368,6 +385,9 @@ public class PostService {
     public List<ResponseGetMemberPostDto> getLikeMemberPost(Long member_id) throws NotFoundException {
         Member member = checkMember(member_id); //존재한다면 객체 생성
         List<Post> results = member.getLikedPosts();
+        // results를 최신 순으로 정렬
+        Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
+
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
@@ -395,6 +415,12 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
+                if (results.get(i).getMember().getId()==member_id) {
+                    responseGetPostDto.setMine(true);
+                } else {
+                    responseGetPostDto.setMine(false);
+                }
+
                 getPostDtos.add(responseGetPostDto);
             }
             return getPostDtos;
