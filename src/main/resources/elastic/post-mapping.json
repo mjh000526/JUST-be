@@ -1,0 +1,34 @@
+{
+  "properties": {
+    "postContent": {
+      "type": "nested",
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "korean"
+        }
+      }
+    },
+    "postPicture": {
+      "type": "long"
+    },
+    "postCreateTime": {
+      "type": "long"
+    },
+    "postLike": {
+      "type": "long"
+    },
+    "emoticon": {
+      "type": "text"
+    },
+    "blamedCount": {
+      "type": "long"
+    },
+    "memberNickname": {
+      "type": "text"
+    },
+    "commentCount": {
+      "type": "integer"
+    }
+  }
+}

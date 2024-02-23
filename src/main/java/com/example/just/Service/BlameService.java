@@ -37,9 +37,9 @@ public class  BlameService {
     public ResponseEntity writeBlame(HttpServletRequest request, Long target_id, String type){
         String token = request.getHeader("access_token");
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
-        if(blameRepository.findByBlameMemberIdAndTargetIdAndTargetType(id,target_id,type)!=null){
-            return new ResponseEntity<>("이미 접수된 신고입니다.", HttpStatus.OK);
-        }
+//        if(blameRepository.findByBlameMemberIdAndTargetIdAndTargetType(id,target_id,type)!=null){
+//            return new ResponseEntity<>("이미 접수된 신고입니다.", HttpStatus.OK);
+//        }
         Member member = memberRepository.findById(id).get();
         member.addBlame();
         memberRepository.save(member);
@@ -61,9 +61,7 @@ public class  BlameService {
         Blame blame = Blame.builder()
                 .blameMemberId(id)
                 .targetMemberId(member.getId())
-                .targetId(target_id)
                 .blameDatetime(new Date(System.currentTimeMillis()))
-                .targetType(type)
                 .build();
         blameRepository.save(blame);
         return new ResponseEntity<>(blame, HttpStatus.OK);
