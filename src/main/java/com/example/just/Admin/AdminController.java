@@ -31,8 +31,7 @@ import org.springframework.ui.Model;
 
 @RestController
 @RequestMapping("/api/admin")
-public class
-AdminController {
+public class AdminController {
 
     @Autowired
     private CommentService commentService;
