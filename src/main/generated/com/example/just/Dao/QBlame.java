@@ -25,11 +25,13 @@ public class QBlame extends EntityPathBase<Blame> {
 
     public final NumberPath<Long> blameMemberId = createNumber("blameMemberId", Long.class);
 
-    public final NumberPath<Long> targetId = createNumber("targetId", Long.class);
+    public final NumberPath<Long> targetCommentId = createNumber("targetCommentId", Long.class);
+
+    public final NumberPath<Long> targetIndex = createNumber("targetIndex", Long.class);
 
     public final NumberPath<Long> targetMemberId = createNumber("targetMemberId", Long.class);
 
-    public final StringPath targetType = createString("targetType");
+    public final NumberPath<Long> targetPostId = createNumber("targetPostId", Long.class);
 
     public QBlame(String variable) {
         super(Blame.class, forVariable(variable));

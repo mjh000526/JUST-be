@@ -9,6 +9,9 @@ import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
+import com.example.just.Response.ResponseCommentDtoBefore;
+import com.example.just.Response.ResponseMyCommentDto;
+import com.example.just.Response.ResponsePostCommentDtoBefore;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import com.example.just.jwt.JwtProvider;
-import com.example.just.Dto.ResponsePostCommentDto;
-import com.example.just.Dto.ResponseCommentDto;
+import com.example.just.Response.ResponsePostCommentDto;
+import com.example.just.Response.ResponseCommentDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,7 +70,6 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
-
         Comment comment = new Comment();
         comment.setComment_content(commentDto.getComment_content());
         comment.setPost(post);

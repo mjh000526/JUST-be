@@ -55,6 +55,9 @@ public class PostDocument {
     @Field(type = FieldType.Text)
     private String memberNickname;
 
+    @Field(type = FieldType.Long)
+    private Long memberId;
+
     @Field(type = FieldType.Integer)
     private Integer commentCount;
 
@@ -84,6 +87,7 @@ public class PostDocument {
         this.emoticon = post.getEmoticon();
         this.blamedCount = post.getBlamedCount();
         this.memberNickname = post.getMember().getNickname();
+        this.memberId = post.getMember().getId();
         this.commentCount = post.getComments().size();
 
 //        this.hash_tag = post.getHash_tag();

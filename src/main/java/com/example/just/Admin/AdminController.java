@@ -4,7 +4,7 @@ import com.example.just.Dao.Comment;
 import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-import com.example.just.Dto.ResponseUpdateHashtagsDto;
+import com.example.just.Response.ResponseUpdateHashtagsDto;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.HashTagRepository;
 import com.example.just.Repository.MemberRepository;
@@ -25,8 +25,6 @@ import com.example.just.Service.PostService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.springframework.ui.Model;
 
 
 @RestController

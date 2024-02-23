@@ -64,6 +64,8 @@
       public void addBlamed(){
           blamedCount++;
       }
+
+      public void removeBlame() {blameCount--;}
       public void addBlame(){
           blameCount++;
       }
