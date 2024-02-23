@@ -14,4 +14,8 @@ import lombok.Setter;
 @Setter
 public class GptRequestDto {
     private String prompt;
+
+    public GptRequestDto(String prompt) {
+        this.prompt = prompt;
+    }
 }

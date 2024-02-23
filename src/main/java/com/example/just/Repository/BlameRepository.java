@@ -16,3 +16,4 @@ public interface BlameRepository extends JpaRepository<Blame, Long> {
     Optional<Blame> findByBlameMemberIdAndTargetCommentId(Long blameMemberId, Long targetCommentId);
     List<Blame> findByBlameMemberId(Long blameMemberId);
 }
+

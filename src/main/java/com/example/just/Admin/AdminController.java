@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
-public class
-AdminController {
+public class AdminController {
 
     @Autowired
     private CommentService commentService;

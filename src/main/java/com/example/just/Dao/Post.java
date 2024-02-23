@@ -26,7 +26,7 @@ public class Post {
 
     @ElementCollection
     @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "content")
+    @Column(name = "content", length = 300)
     @JsonIgnore
     private List<String> postContent;
 
