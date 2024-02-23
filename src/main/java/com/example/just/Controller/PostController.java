@@ -91,7 +91,6 @@ public class PostController {
                              @RequestBody PostPostDto postDto) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-
         return postService.write(member_id, postDto);
     }
 
@@ -128,11 +127,9 @@ public class PostController {
                                     HttpServletRequest request) throws NotFoundException {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        try {
+
             return ResponseEntity.ok(postService.postLikes(post_id, member_id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+
     }
 
     @ApiOperation(value = "게시글 신고")

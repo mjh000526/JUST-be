@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "blame")
@@ -18,12 +19,10 @@ public class Blame {
     @Column(name = "blame_id")
     private Long blameId;
 
-    @Column(name = "target_id")
-    private Long targetId; //신고한 게시물 or 댓글 (id)
+    @Column(name = "target_index")
+    private Long target_Index; //신고내용 index
 
-    @Column(name = "target_type")
-    private String targetType; //신고 분류
-
+    @CreationTimestamp
     @Column(name = "blame_datetime")
     private Date blameDatetime; //신고를한 일시
 
@@ -32,5 +31,11 @@ public class Blame {
 
     @Column(name = "target_member_id")
     private Long targetMemberId; //신고를 당한 회원
+
+    @Column(name = "target_post_id")
+    private Long targetPostId; //신고를 한 회원
+
+    @Column(name = "target_comment_id")
+    private Long targetCommentId; //신고를 당한 회원
 
 }
