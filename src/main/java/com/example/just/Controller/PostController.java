@@ -4,9 +4,9 @@ package com.example.just.Controller;
 import com.example.just.Dto.*;
 import com.example.just.Service.PostService;
 import com.example.just.jwt.JwtProvider;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/api")
+@Api(tags = {"post controller"},description = "게시글 관련 api")
 @RestController
-@Tag(name = "Post", description = "게시글 관련 api")
 public class PostController {
 
     @Autowired

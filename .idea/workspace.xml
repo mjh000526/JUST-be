@@ -25,6 +25,10 @@
       <change beforePath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dto/ResponseGetMemberPostDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dto/ResponseGetPostDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Service/CommentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Service/CommentService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Service/KakaoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Service/KakaoService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Config/SecurityConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dao/Comment.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dao/Comment.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dao/Post.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/example/just/Dao/Post.class" afterDir="false" />
@@ -40,11 +44,33 @@
       <change beforePath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/MemberMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/MemberMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/PostMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/generated/com/example/just/Mapper/PostMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Admin/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Admin/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/BlameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/BlameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/CommentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/PostController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/SearchController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Controller/SearchController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Blame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Blame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Member.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Document/PostDocument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Document/PostDocument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseCommentDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseCommentDtoBefore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseGetMemberCommentDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseGetMemberPostDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseGetPostDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseMemberDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseMyCommentDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponsePostCommentDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponsePostCommentDtoBefore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponsePutPostDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dto/ResponseUpdateHashtagsDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Repository/BlameRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Repository/BlameRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/AppleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/AppleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/BlameService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/BlameService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/CommentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/KakaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/KakaoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/MigrationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/MigrationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Service/SearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Service/SearchService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Comment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Member.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Post.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/just/Dao/Post.java" afterDir="false" />
@@ -156,21 +182,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "dart.analysis.tool.window.visible": "false",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="PropertiesComponent">{
+        &quot;keyToString&quot;: {
+        &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+        &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+        &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+        &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+        &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.example.just.Response" />
@@ -190,7 +215,7 @@
       <recent name="com.example.just.Dao" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.JustApplication">
+  <component name="RunManager" selected="Spring Boot.JustApplication">
     <configuration name="JustApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.just.JustApplication" />
       <module name="just.main" />
@@ -223,23 +248,30 @@
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>false</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="CommentTest.getCommentList" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="just.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.example.just.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.example.just" />
-      <option name="MAIN_CLASS_NAME" value="com.example.just.CommentTest" />
-      <option name="METHOD_NAME" value="getCommentList" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="JUST-be [compileJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="compileJava" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>false</ForceTestExec>
+      <method v="2" />
     </configuration>
     <configuration name="CommentTest.getMyComments" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="just.test" />
@@ -282,11 +314,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.JUST-be [compileJava]" />
         <item itemvalue="Application.JustApplication" />
         <item itemvalue="Gradle.JUST-be [build]" />
         <item itemvalue="JUnit.CommentTest.getMyComments" />
         <item itemvalue="JUnit.CommentTest.likeComment" />
-        <item itemvalue="JUnit.CommentTest.getCommentList" />
       </list>
     </recent_temporary>
   </component>

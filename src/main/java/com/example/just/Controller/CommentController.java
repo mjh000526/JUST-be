@@ -1,8 +1,10 @@
 package com.example.just.Controller;
 
 import com.example.just.Dao.Comment;
-import com.example.just.Dao.Post;
 import com.example.just.Dto.*;
+import com.example.just.Response.ResponseCommentDto;
+import com.example.just.Response.ResponsePostCommentDto;
+import com.example.just.Response.ResponsePostCommentDtoBefore;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -70,8 +70,8 @@ public class CommentController {
     })
     @PostMapping("/post/{post_id}/comments")
     public ResponseEntity<ResponseCommentDto> createComment(@PathVariable Long post_id,
-                                                 @RequestBody CommentDto comment_dto,
-                                                 HttpServletRequest req) {
+                                                            @RequestBody CommentDto comment_dto,
+                                                            HttpServletRequest req) {
         Comment comment = null;
         Long member_id = null;
         try {

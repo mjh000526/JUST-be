@@ -1,20 +1,23 @@
 package com.example.just.Service;
 
 
+import com.example.just.Dao.Blame;
 import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 
 
+import com.example.just.Dao.QBlame;
 import com.example.just.Dao.QPost;
 import com.example.just.Document.PostDocument;
 import com.example.just.Dto.GptDto;
 import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
-import com.example.just.Dto.ResponseGetMemberPostDto;
-import com.example.just.Dto.ResponseGetPostDto;
-import com.example.just.Dto.ResponsePutPostDto;
+import com.example.just.Repository.BlameRepository;
+import com.example.just.Response.ResponseGetMemberPostDto;
+import com.example.just.Response.ResponseGetPostDto;
+import com.example.just.Response.ResponsePutPostDto;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.HashTagRepository;
 import com.example.just.Repository.MemberRepository;
@@ -48,7 +51,8 @@ public class PostService {
     private MemberRepository memberRepository;
     @Autowired
     private HashTagRepository hashTagRepository;
-
+    @Autowired
+    private BlameRepository blameRepository;
     @Autowired
     private PostMapper postMapper;
 
@@ -141,6 +145,7 @@ public class PostService {
 
     public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) throws NotFoundException { //글 조
         QPost post = QPost.post;
+        QBlame blame = QBlame.blame;
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
         if (cursor != null) {
@@ -150,7 +155,6 @@ public class PostService {
                 viewedPostIds.add(Long.parseLong(viewedPostId.trim()));
             }
         }
-
         // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
         List<Post> results = query.selectFrom(post)
                 .where(post.post_id.notIn(viewedPostIds),
