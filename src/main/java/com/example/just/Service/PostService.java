@@ -10,6 +10,8 @@ import com.example.just.Dao.Post;
 import com.example.just.Dao.QBlame;
 import com.example.just.Dao.QPost;
 import com.example.just.Document.PostDocument;
+import com.example.just.Dto.GptDto;
+import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.example.just.Repository.BlameRepository;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Service
@@ -55,6 +58,8 @@ public class PostService {
 
     @Autowired
     private JwtProvider jwtProvider;
+    @Autowired
+    private GptService gptService;
 
     @Autowired
     PostContentESRespository postContentESRespository;
@@ -85,6 +90,19 @@ public class PostService {
     public PostPostDto write(Long member_id, PostPostDto postDto) {    //글 작성
         Member member = checkMember(member_id);
         Post post = new Post();
+
+
+        if (postDto.getHash_tag() == null) {
+            String prompt = "";
+            for (int i = 0; i < postDto.getPost_content().size(); i++) {
+                prompt += postDto.getPost_content().get(i) + " ";
+            }
+            GptRequestDto gptRequestDto = new GptRequestDto(prompt);
+            List<String> tag = gptService.getTag(gptRequestDto);
+
+                postDto.setHash_tag(tag);
+
+        }
         post.writePost(postDto, member);
         Post p = postRepository.save(post);
         postContentESRespository.save(new PostDocument(p));
@@ -94,12 +112,11 @@ public class PostService {
     //글 삭제
     public void deletePost(Long post_id) throws NotFoundException {
         Post post = checkPost(post_id);
-        postContentESRespository.deleteById(post_id);
-        postRepository.deleteById(post_id);
         ResponsePost responsePost;
         if (post == null) {
             throw new NotFoundException();
         } else {
+            postContentESRespository.deleteById(post_id);
             postRepository.deleteById(post_id);
         }
     }
@@ -251,11 +268,11 @@ public class PostService {
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
         if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
-            postDocument.setPostLike(postDocument.getPostLike()-1);
+            postDocument.setPostLike(postDocument.getPostLike() - 1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
-            postDocument.setPostLike(postDocument.getPostLike()+1);
+            postDocument.setPostLike(postDocument.getPostLike() + 1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
 
@@ -314,7 +331,7 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId()==member_id) {
+                if (results.get(i).getMember().getId() == member_id) {
                     responseGetPostDto.setMine(true);
                 } else {
                     responseGetPostDto.setMine(false);
@@ -373,7 +390,7 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId()==member_id) {
+                if (results.get(i).getMember().getId() == member_id) {
                     responseGetPostDto.setMine(true);
                 } else {
                     responseGetPostDto.setMine(false);
@@ -419,7 +436,7 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId()==member_id) {
+                if (results.get(i).getMember().getId() == member_id) {
                     responseGetPostDto.setMine(true);
                 } else {
                     responseGetPostDto.setMine(false);

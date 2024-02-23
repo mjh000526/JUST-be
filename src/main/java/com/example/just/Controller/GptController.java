@@ -3,6 +3,7 @@ package com.example.just.Controller;
 import com.example.just.Dto.GptDto;
 import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.GptResponseDto;
+import com.example.just.Service.GptService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,42 +23,15 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/api/gpt")
 @RequiredArgsConstructor
 public class GptController {
-
-    @Value("${gpt.model}")
-    private String model;
-
-    @Value("${gpt.api.url}")
-    private String apiUrl;
-
-    private final RestTemplate restTemplate;
-
+    @Autowired
+    private GptService gptService;
 
     @Operation(summary = "Gpt를 통한 태그 생성 API", description = "태그 3개를 생성 List<String>형식으로 반환합니다."
             + "prompt안에는 글 내용을 넣으면 됩니다.\n\n 많이 테스트하지 마세요!!!!! 돈 나와요! 연결이 잘 되는지 용도로만 확인 바람.")
     @PostMapping("/chat")
     public List<String> chat(@RequestBody GptRequestDto prompt) {
-        GptDto request = new GptDto(
-                model, prompt.getPrompt(), 1, 256, 1, 1, 2);
 
-        GptResponseDto gptResponse = restTemplate.postForObject(
-                apiUrl
-                , request
-                , GptResponseDto.class
-        );
-        List<String> message = new ArrayList<>();
-        String content = gptResponse.getChoices().get(0).getMessage().getContent();
-        String[] splitContent = content.split("#");
-
-        for (String word : splitContent) {
-            if (!word.isEmpty()) {
-                if (message.size()!=2) {
-                    word = word.substring(0, word.length() - 2);
-                }
-                message.add(word);
-            }
-        }
-
-        return message;
+        return gptService.getTag(prompt);
     }
 
 }
