@@ -2,8 +2,7 @@ package com.example.just.Service;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
-import com.example.just.Dto.ResponseMemberDto;
-import com.example.just.Dto.TokenDto;
+import com.example.just.Response.ResponseMemberDto;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.jwt.JwtFilter;
 import com.example.just.jwt.JwtProvider;

@@ -8,6 +8,7 @@ import com.example.just.Repository.BlameRepository;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;
+import com.example.just.Response.ResponseBlameDto;
 import com.example.just.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,37 +35,127 @@ public class  BlameService {
     private JwtProvider jwtProvider;
 
     //게시글 및 댓글 신고(type값은 "post"또는"comment"로 할 예정
-    public ResponseEntity writeBlame(HttpServletRequest request, Long target_id, String type){
-        String token = request.getHeader("access_token");
+    public ResponseEntity writeMemberBlame(HttpServletRequest request, Long target_id,Long type){
+        String token = jwtProvider.getAccessToken(request);
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
-//        if(blameRepository.findByBlameMemberIdAndTargetIdAndTargetType(id,target_id,type)!=null){
-//            return new ResponseEntity<>("이미 접수된 신고입니다.", HttpStatus.OK);
-//        }
         Member member = memberRepository.findById(id).get();
         member.addBlame();
         memberRepository.save(member);
-        if(type.equals("post")){
-            Post post = postRepository.findById(target_id).get();
-            post.addBlamed();
-            postRepository.save(post);
-            member = post.getMember();
-            member.addBlamed();
+        if(!memberRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 회원이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
         }
-        else if(type.equals("comment")){
-            Comment comment = commentRepository.findById(target_id).get();
-            comment.addBlamed();
-            commentRepository.save(comment);
-            member = comment.getMember();
-            member.addBlamed();
+        else if(blameRepository.existsByBlameMemberIdAndTargetMemberId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 회원입니다."),HttpStatus.NOT_FOUND);
         }
+        member = memberRepository.findById(target_id).get();
+        member.addBlamed();
         memberRepository.save(member);
         Blame blame = Blame.builder()
                 .blameMemberId(id)
-                .targetMemberId(member.getId())
-                .blameDatetime(new Date(System.currentTimeMillis()))
+                .targetMemberId(target_id)
+                .targetIndex(type)
+                .targetPostId(null)
+                .targetCommentId(null)
                 .build();
-        blameRepository.save(blame);
-        return new ResponseEntity<>(blame, HttpStatus.OK);
+        blame = blameRepository.save(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(blame,"회원 신고완료"), HttpStatus.OK);
+    }
+
+    public ResponseEntity writePostBlame(HttpServletRequest request, Long target_id,Long type){
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        Member member = memberRepository.findById(id).get();
+        member.addBlame();
+        memberRepository.save(member);
+        if(!postRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 게시글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+        }
+        else if(blameRepository.existsByBlameMemberIdAndTargetPostId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 게시글입니다."),HttpStatus.NOT_FOUND);
+        }
+        Blame blame = Blame.builder()
+                .blameMemberId(id)
+                .targetMemberId(null)
+                .targetIndex(type)
+                .targetPostId(target_id)
+                .targetCommentId(null)
+                .build();
+        blame = blameRepository.save(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(blame,"게시글 신고완료"), HttpStatus.OK);
+    }
+
+    public ResponseEntity writeCommentBlame(HttpServletRequest request, Long target_id,Long type){
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        Member member = memberRepository.findById(id).get();
+        member.addBlame();
+        memberRepository.save(member);
+        if(!commentRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+        }
+        else if(blameRepository.existsByBlameMemberIdAndTargetCommentId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 댓글입니다."),HttpStatus.NOT_FOUND);
+        }
+        Blame blame = Blame.builder()
+                .blameMemberId(id)
+                .targetMemberId(null)
+                .targetIndex(type)
+                .targetPostId(null)
+                .targetCommentId(target_id)
+                .build();
+        blame = blameRepository.save(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(blame,"댓글 신고완료"), HttpStatus.OK);
+    }
+
+    public ResponseEntity deleteMemberBlame(HttpServletRequest request, Long target_id){
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        Member member = memberRepository.findById(id).get();
+        member.removeBlame();
+        memberRepository.save(member);
+        if(!memberRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"회원이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+        }
+        else if(!blameRepository.existsByBlameMemberIdAndTargetMemberId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 회원입니다."),HttpStatus.NOT_FOUND);
+        }
+        Blame blame = blameRepository.findByBlameMemberIdAndTargetMemberId(id,target_id).get();
+        blameRepository.delete(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(null,"회원 신고취소"), HttpStatus.OK);
+    }
+
+    public ResponseEntity deletePostBlame(HttpServletRequest request, Long target_id){
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        Member member = memberRepository.findById(id).get();
+        member.addBlame();
+        memberRepository.save(member);
+        if(!postRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"게시글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+        }
+        else if(!blameRepository.existsByBlameMemberIdAndTargetPostId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 게시글입니다."),HttpStatus.NOT_FOUND);
+        }
+        Blame blame = blameRepository.findByBlameMemberIdAndTargetPostId(id,target_id).get();
+        blameRepository.delete(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(null,"게시글 신고취소"), HttpStatus.OK);
+    }
+
+    public ResponseEntity deleteCommentBlame(HttpServletRequest request, Long target_id){
+        String token = jwtProvider.getAccessToken(request);
+        Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰으로 id추출
+        Member member = memberRepository.findById(id).get();
+        member.addBlame();
+        memberRepository.save(member);
+        if(!commentRepository.findById(target_id).isPresent()) {
+            return new ResponseEntity<>(new ResponseBlameDto(null,"댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+        }
+        else if(!blameRepository.existsByBlameMemberIdAndTargetCommentId(id,target_id)){
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 댓글입니다."),HttpStatus.NOT_FOUND);
+        }
+        Blame blame = blameRepository.findByBlameMemberIdAndTargetCommentId(id,target_id).get();
+        blameRepository.delete(blame);
+        return new ResponseEntity<>(new ResponseBlameDto(null,"댓글 신고취소"), HttpStatus.OK);
     }
     //신고당한 상위 10개의 리스트가져오기(type값으로 "member","comment","post"에 따라 값달라짐)
     public ResponseEntity getBlamedList(String type){

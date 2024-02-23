@@ -20,11 +20,9 @@ public class MigrationService {
 
     public void migrationDB(){
         List<Post> dbPosts = postRepository.findAll();
-        System.out.println("디비값"+dbPosts.size());
         List<PostDocument> postDocuments = dbPosts.stream()
                 .map(PostDocument::new)
                 .collect(Collectors.toList());
-        System.out.println("객체는 만들어짐" + postDocuments.size());
         postContentESRespository.saveAll(postDocuments);
     }
 }

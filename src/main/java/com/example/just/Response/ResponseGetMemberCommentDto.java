@@ -1,4 +1,4 @@
-package com.example.just.Dto;
+package com.example.just.Response;
 
 import java.util.Date;
 import java.util.List;

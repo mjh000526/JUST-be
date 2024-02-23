@@ -20,7 +20,7 @@ public class Blame {
     private Long blameId;
 
     @Column(name = "target_index")
-    private Long target_Index; //신고내용 index
+    private Long targetIndex; //신고내용 index
 
     @CreationTimestamp
     @Column(name = "blame_datetime")
