@@ -91,7 +91,6 @@ public class PostService {
         Member member = checkMember(member_id);
         Post post = new Post();
 
-
         if (postDto.getHash_tag() == null) {
             String prompt = "";
             for (int i = 0; i < postDto.getPost_content().size(); i++) {
@@ -100,7 +99,7 @@ public class PostService {
             GptRequestDto gptRequestDto = new GptRequestDto(prompt);
             List<String> tag = gptService.getTag(gptRequestDto);
 
-                postDto.setHash_tag(tag);
+            postDto.setHash_tag(tag);
 
         }
         post.writePost(postDto, member);
@@ -182,10 +181,12 @@ public class PostService {
                 responseGetPostDto.setSecret(results.get(i).getSecret());
                 responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
                 responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId() == member_id) {
-                    responseGetPostDto.setMine(true);
-                } else {
-                    responseGetPostDto.setMine(false);
+                if (member_id != -1) {
+                    if (results.get(i).getMember().getId() == member_id) {
+                        responseGetPostDto.setMine(true);
+                    } else {
+                        responseGetPostDto.setMine(false);
+                    }
                 }
                 getPostDtos.add(responseGetPostDto);
                 System.out.println(responseGetPostDto);
@@ -409,9 +410,7 @@ public class PostService {
         // results를 최신 순으로 정렬
         Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
 
-        if (results.size() == 0) {
-            throw new NotFoundException();
-        } else {
+
             List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
             for (int i = 0; i < results.size(); i++) {
                 ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
@@ -441,10 +440,9 @@ public class PostService {
                 } else {
                     responseGetPostDto.setMine(false);
                 }
-
                 getPostDtos.add(responseGetPostDto);
             }
             return getPostDtos;
-        }
+
     }
 }
