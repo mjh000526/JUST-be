@@ -34,7 +34,7 @@ public class SearchController {
 
     @GetMapping("/get/search/post")
     @Operation(summary = "게시글 내용 검색", description = "해당 keyword를 content에 포함하는 게시글 검색\n태그검색구현시 추후 변경 가능")
-    public ResponseEntity getPosts(@RequestParam String keyword, HttpServletRequest request) {
-        return searchService.searchPostContent(request,keyword);
+    public ResponseEntity getPosts(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
+        return searchService.searchPostContent(request,keyword,page-1);
     }
 }
