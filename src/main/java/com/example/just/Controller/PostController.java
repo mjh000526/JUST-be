@@ -127,13 +127,13 @@ public class PostController {
         return ResponseEntity.ok(postService.postLikes(post_id, member_id));
 
     }
-
+/*
     @ApiOperation(value = "게시글 신고")
     @PostMapping("/post/blame/post")
     public Long blamePost(@RequestParam Long post_id) throws NotFoundException {
         return postService.blamePost(post_id);
     }
-
+*/
     @ApiOperation(value = "댓글 신고 횟수 조회")
     @GetMapping("/get/post/blame/{postId}")
     public int blameGetComment(@PathVariable Long postId) {

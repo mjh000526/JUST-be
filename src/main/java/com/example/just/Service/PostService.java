@@ -100,7 +100,6 @@ public class PostService {
             List<String> tag = gptService.getTag(gptRequestDto);
 
             postDto.setHash_tag(tag);
-
         }
         post.writePost(postDto, member);
         Post p = postRepository.save(post);
@@ -286,6 +285,7 @@ public class PostService {
 
     public ResponseGetPost searchByCursorMember(String cursor, Long limit, Long member_id) throws NotFoundException {
         QPost post = QPost.post;
+        QBlame blame = QBlame.blame;
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
         if (cursor != null) {
@@ -296,15 +296,33 @@ public class PostService {
             }
         }
 
+        Optional<Member> member = memberRepository.findById(member_id);
+        Member realMember = member.get();
+
+        List<Long> blames = query.select(blame.targetPostId)
+                .from(blame)
+                .where(blame.blameMemberId.eq(realMember.getId()))
+                .fetch();
+        List<Long> targetMembers = query.select(blame.targetMemberId)
+                .from(blame)
+                .where(blame.blameMemberId.eq(realMember.getId()))
+                .fetch();
+
+        System.out.println(blames);
+        System.out.println(targetMembers);
         // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
-        List<Post> results = query.selectFrom(post)
+        List<Post> results = query.select(post)
+                .from(post)
                 .where(post.post_id.notIn(viewedPostIds),
-                        post.post_create_time.isNotNull())
+                        post.post_create_time.isNotNull(),
+                        post.post_id.notIn(blames),
+                        post.member.id.notIn(targetMembers))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
                 .fetch();
-        Optional<Member> member = memberRepository.findById(member_id);
-        Member realMember = member.get();
+
+
+
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
             throw new NotFoundException();
