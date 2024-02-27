@@ -54,8 +54,8 @@ public class  BlameService {
                 .blameMemberId(id)
                 .targetMemberId(target_id)
                 .targetIndex(type)
-                .targetPostId(null)
-                .targetCommentId(null)
+                .targetPostId(-1L)
+                .targetCommentId(-1L)
                 .build();
         blame = blameRepository.save(blame);
         return new ResponseEntity<>(new ResponseBlameDto(blame,"회원 신고완료"), HttpStatus.OK);
@@ -75,10 +75,10 @@ public class  BlameService {
         }
         Blame blame = Blame.builder()
                 .blameMemberId(id)
-                .targetMemberId(null)
+                .targetMemberId(-1L)
                 .targetIndex(type)
                 .targetPostId(target_id)
-                .targetCommentId(null)
+                .targetCommentId(-1L)
                 .build();
         blame = blameRepository.save(blame);
         return new ResponseEntity<>(new ResponseBlameDto(blame,"게시글 신고완료"), HttpStatus.OK);
@@ -98,9 +98,9 @@ public class  BlameService {
         }
         Blame blame = Blame.builder()
                 .blameMemberId(id)
-                .targetMemberId(null)
+                .targetMemberId(-1L)
                 .targetIndex(type)
-                .targetPostId(null)
+                .targetPostId(-1L)
                 .targetCommentId(target_id)
                 .build();
         blame = blameRepository.save(blame);
