@@ -7,10 +7,14 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.jwt.JwtProvider;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +36,7 @@ public class SearchService {
     @Autowired
     MemberRepository memberRepository;
 
-    public ResponseEntity searchPostContent(HttpServletRequest request,String keyword){
+    public ResponseEntity searchPostContent(HttpServletRequest request,String keyword,int page){
         String token = jwtProvider.getAccessToken(request);
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         List<Blame> blames = blameRepository.findByBlameMemberId(id);
@@ -51,8 +55,12 @@ public class SearchService {
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
                 .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(filterList);
+        PageRequest pageRequest = PageRequest.of(page,5);
+        filterList.sort(Comparator.comparing(PostDocument::getPostCreateTime).reversed());
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()),filterList.size());
+        Page<PostDocument> postPage = new PageImpl<>(filterList.subList(start,end), pageRequest, filterList.size());
+        return ResponseEntity.ok(postPage);
     }
 
 }
