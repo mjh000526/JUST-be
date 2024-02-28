@@ -208,7 +208,7 @@ public class CommentService {
         List<Comment> comments = commentRepository.findAllByMember(member);
         Collections.sort(comments, Comparator.comparing(Comment::getComment_create_time).reversed());
         List<ResponseMyCommentDto> result = comments.stream()
-                .map(comment -> new ResponseMyCommentDto(comment, member_id, member))
+                .map(comment -> new ResponseMyCommentDto(comment, member_id, member, true))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
