@@ -15,10 +15,13 @@ public class ResponseMyCommentDto {
     private ResponseGetMemberPostDto post;
     private Date time;
 
-    public ResponseMyCommentDto(Comment comment, Long member_id, Member member){
+    private boolean isMine;
+
+    public ResponseMyCommentDto(Comment comment, Long member_id, Member member, boolean isMine){
         comment_id = comment.getComment_id();
         comment_content = comment.getComment_content();
         post = new ResponseGetMemberPostDto(comment.getPost(), member_id, member);
         time = comment.getComment_create_time();
+        this.isMine = isMine;
     }
 }
