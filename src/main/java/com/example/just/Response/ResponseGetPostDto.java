@@ -32,8 +32,9 @@ public class ResponseGetPostDto {
     private int blamed_count;
     private boolean mine;
 
-    public ResponseGetPostDto(){}
-    public ResponseGetPostDto(Post post){
+
+
+    public ResponseGetPostDto(Post post) {
         post_id = post.getPost_id();
         post_content = post.getPostContent().stream()
                 .map(conent -> new String(conent))

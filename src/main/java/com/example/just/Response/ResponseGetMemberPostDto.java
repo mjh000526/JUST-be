@@ -61,4 +61,30 @@ public class ResponseGetMemberPostDto {
     public ResponseGetMemberPostDto() {
 
     }
+
+    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i) {
+
+        this.post_id = results.get(i).getPost_id();
+        this.post_content = results.get(i).getPostContent();
+        this.post_picture = results.get(i).getPost_picture();
+        List<String> names = new ArrayList<>();
+        List<HashTag> hashTags = results.get(i).getHash_tag();
+        for (int j = 0; j < hashTags.size(); j++) {
+            names.add(hashTags.get(j).getName());
+        }
+        this.hash_tag = names;
+        this.post_create_time = results.get(i).getPost_create_time();
+        this.blamed_count = Math.toIntExact(results.get(i).getBlamedCount());
+        this.secret = results.get(i).getSecret();
+        this.post_like_size = results.get(i).getPost_like();
+        this.comment_size = ((long) results.get(i).getComments().size());
+        if (member_id != -1) {
+            if (results.get(i).getMember().getId() == member_id) {
+                this.mine = true;
+            } else {
+                this.mine = false;
+            }
+        }
+
+    }
 }
