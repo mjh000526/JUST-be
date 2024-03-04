@@ -22,11 +22,11 @@ public class GptService {
     private String apiUrl;
 
     @Autowired
-    private  final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
     public List<String> getTag(GptRequestDto prompt) {
         GptDto request = new GptDto(
                 model, prompt.getPrompt(), 1, 256, 1, 1, 2);
-
         GptResponseDto gptResponse = restTemplate.postForObject(
                 apiUrl
                 , request
@@ -38,7 +38,7 @@ public class GptService {
 
         for (String word : splitContent) {
             if (!word.isEmpty()) {
-                if (message.size()!=2) {
+                if (message.size() != 2) {
                     word = word.substring(0, word.length() - 2);
                 }
                 message.add(word);
