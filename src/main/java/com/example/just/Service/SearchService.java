@@ -6,6 +6,7 @@ import com.example.just.Repository.BlameRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
+import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
 import java.util.Comparator;
 import java.util.List;
@@ -49,17 +50,21 @@ public class SearchService {
                 .map(Blame::getTargetMemberId)
                 .collect(Collectors.toList());
 
-        List<PostDocument> searchList = postContentESRespository.findByPostContent_ContentContains(keyword);
+        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
 
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
                 .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
                 .collect(Collectors.toList());
-        PageRequest pageRequest = PageRequest.of(page,5);
-        filterList.sort(Comparator.comparing(PostDocument::getPostCreateTime).reversed());
+
+        List<ResponseSearchDto> result = filterList.stream()
+                .map(postDocument -> new ResponseSearchDto(postDocument,id))
+                .collect(Collectors.toList());
+        PageRequest pageRequest = PageRequest.of(page,10);
+        result.sort(Comparator.comparing(ResponseSearchDto::getPost_create_time).reversed());
         int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()),filterList.size());
-        Page<PostDocument> postPage = new PageImpl<>(filterList.subList(start,end), pageRequest, filterList.size());
+        int end = Math.min((start + pageRequest.getPageSize()),result.size());
+        Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
         return ResponseEntity.ok(postPage);
     }
 

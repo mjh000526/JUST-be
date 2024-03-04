@@ -1,34 +1,33 @@
 {
   "properties": {
-    "postContent": {
-      "type": "nested",
-      "properties": {
-        "content": {
-          "type": "text",
-          "analyzer": "korean"
-        }
-      }
+    "post_content": {
+      "type": "text",
+      "analyzer": "korean"
     },
-    "postPicture": {
+    "hash_tag": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "post_picture": {
       "type": "long"
     },
-    "postCreateTime": {
+    "post_create_time": {
       "type": "long"
     },
-    "postLike": {
+    "secret": {
+      "type": "boolean"
+    },
+    "comment_size": {
       "type": "long"
     },
-    "emoticon": {
-      "type": "text"
-    },
-    "blamedCount": {
+    "post_like_size": {
       "type": "long"
     },
-    "memberNickname": {
-      "type": "text"
+    "blame_count": {
+      "type": "long"
     },
-    "commentCount": {
-      "type": "integer"
+    "member_id": {
+      "type": "long"
     }
   }
 }

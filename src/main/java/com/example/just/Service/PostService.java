@@ -206,11 +206,11 @@ public class PostService {
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
         if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
-            postDocument.setPostLike(postDocument.getPostLike() - 1);
+            postDocument.setPostLikeSize(postDocument.getPostLikeSize() - 1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
-            postDocument.setPostLike(postDocument.getPostLike() + 1);
+            postDocument.setPostLikeSize(postDocument.getPostLikeSize() + 1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
 
