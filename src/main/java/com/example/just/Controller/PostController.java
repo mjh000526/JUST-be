@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/api")
-@Api(tags = {"post controller"},description = "게시글 관련 api")
+@Api(tags = {"post controller"}, description = "게시글 관련 api")
 @RestController
 public class PostController {
 
@@ -46,8 +46,7 @@ public class PostController {
     @GetMapping("/get/mypost")
     public ResponseEntity<Object> getMyPosts(HttpServletRequest request) throws NotFoundException {
 
-        String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Long member_id = getAccessTokenOfMemberId(request);
         try {
             return ResponseEntity.ok(postService.getMyPost(member_id));
         } catch (NotFoundException e) {
@@ -61,8 +60,7 @@ public class PostController {
     @GetMapping("/get/member/post")
     public ResponseEntity<Object> getMemberPosts(@RequestParam Long request_page, HttpServletRequest request) {
         String cursor = request.getHeader("viewed");
-        String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Long member_id = getAccessTokenOfMemberId(request);
 
         try {
             return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id));
@@ -85,8 +83,7 @@ public class PostController {
     @PostMapping("/post/post")
     public PostPostDto write(HttpServletRequest request,
                              @RequestBody PostPostDto postDto) {
-        String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Long member_id = getAccessTokenOfMemberId(request);
         return postService.write(member_id, postDto);
     }
 
@@ -106,9 +103,7 @@ public class PostController {
     @PutMapping("/put/post")
     public ResponseEntity<Object> putPost(HttpServletRequest request,
                                           @RequestBody PutPostDto postDto) throws NotFoundException {
-        String token = jwtProvider.getAccessToken(request);
-
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Long member_id = getAccessTokenOfMemberId(request);
         try {
             return ResponseEntity.ok(postService.putPost(member_id, postDto));
         } catch (NotFoundException e) {
@@ -121,31 +116,27 @@ public class PostController {
     @PostMapping("/post/like")
     public ResponseEntity postLikes(@RequestParam Long post_id,
                                     HttpServletRequest request) throws NotFoundException {
-        String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-
+        Long member_id = getAccessTokenOfMemberId(request);
         return ResponseEntity.ok(postService.postLikes(post_id, member_id));
+    }
 
-    }
-/*
-    @ApiOperation(value = "게시글 신고")
-    @PostMapping("/post/blame/post")
-    public Long blamePost(@RequestParam Long post_id) throws NotFoundException {
-        return postService.blamePost(post_id);
-    }
-*/
     @ApiOperation(value = "댓글 신고 횟수 조회")
     @GetMapping("/get/post/blame/{postId}")
-    public int blameGetComment(@PathVariable Long postId) {
+    public int blameGetComment(@PathVariable Long postId) throws NotFoundException {
         return postService.blameGetPost(postId);
     }
 
     @ApiOperation(value = "자신이 좋아요한 글 조회")
     @GetMapping("/get/like/member/post")
     public ResponseEntity<Object> getLikeMemberPost(HttpServletRequest request) throws NotFoundException {
+        Long member_id = getAccessTokenOfMemberId(request);
+        return ResponseEntity.ok(postService.getLikeMemberPost(member_id));
+    }
+
+    public Long getAccessTokenOfMemberId(HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
-        return ResponseEntity.ok(postService.getLikeMemberPost(member_id));
+        return member_id;
     }
 }
 

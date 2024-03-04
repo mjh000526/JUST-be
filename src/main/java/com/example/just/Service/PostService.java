@@ -1,7 +1,6 @@
 package com.example.just.Service;
 
 
-import com.example.just.Dao.Blame;
 import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
@@ -10,7 +9,6 @@ import com.example.just.Dao.Post;
 import com.example.just.Dao.QBlame;
 import com.example.just.Dao.QPost;
 import com.example.just.Document.PostDocument;
-import com.example.just.Dto.GptDto;
 import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
@@ -35,13 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Service
 public class PostService {
-
-
     private final EntityManager em;
 
     private final JPAQueryFactory query;
@@ -98,7 +93,6 @@ public class PostService {
             }
             GptRequestDto gptRequestDto = new GptRequestDto(prompt);
             List<String> tag = gptService.getTag(gptRequestDto);
-
             postDto.setHash_tag(tag);
         }
         post.writePost(postDto, member);
@@ -122,7 +116,6 @@ public class PostService {
     //글 수정
     public ResponsePutPostDto putPost(Long member_id, PutPostDto postDto) throws NotFoundException {
         Long post_id = postDto.getPost_id();
-
         Member member = checkMember(member_id);
         Post checkPost = checkPost(post_id);
 
@@ -163,100 +156,45 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            List<ResponseGetPostDto> getPostDtos = new ArrayList<>();
-            for (int i = 0; i < results.size(); i++) {
-                ResponseGetPostDto responseGetPostDto = new ResponseGetPostDto();
-                responseGetPostDto.setPost_id(results.get(i).getPost_id());
-                responseGetPostDto.setPost_content(results.get(i).getPostContent());
-                responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-                List<String> names = new ArrayList<>();
-                List<HashTag> hashTags = results.get(i).getHash_tag();
-                for (int j = 0; j < hashTags.size(); j++) {
-                    names.add(hashTags.get(j).getName());
-                }
-                responseGetPostDto.setHash_tag(names);
-                responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-                responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
-                responseGetPostDto.setSecret(results.get(i).getSecret());
-                responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
-                responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (member_id != -1) {
-                    if (results.get(i).getMember().getId() == member_id) {
-                        responseGetPostDto.setMine(true);
-                    } else {
-                        responseGetPostDto.setMine(false);
-                    }
-                }
-                getPostDtos.add(responseGetPostDto);
-                System.out.println(responseGetPostDto);
-            }
-
-            // 가져온 글들의 ID를 저장합니다.
-            Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
-            viewedPostIds.addAll(resultPostIds);
-            Collection<Post> allPost = postRepository.findAll();
-            // hasNext와 nextCursor를 계산합니다.
-            boolean hasNext = viewedPostIds.size() < allPost.size();
-
-            // Slice 객체를 생성해서 반환합니다.
-            ResponseGetPost responseGetPost = new ResponseGetPost(
-                    getPostDtos, hasNext);
-            return responseGetPost;
+            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id);
+            return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
 
-    public Long blamePost(Long post_id) throws NotFoundException {
-        Optional<Post> optionalPost = postRepository.findById(post_id);
-        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
-            throw new NotFoundException();
-        }
-        Post post = optionalPost.get();
+    private ResponseGetPost resultPostIds(Set<Long> viewedPostIds, List<Post> results,
+                                          List<ResponseGetMemberPostDto> getPostDtos) {
+        Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
+        viewedPostIds.addAll(resultPostIds);
+        Collection<Post> allPost = postRepository.findAll();
+        // hasNext와 nextCursor를 계산합니다.
+        boolean hasNext = viewedPostIds.size() < allPost.size();
+        // Slice 객체를 생성해서 반환합니다.
+        ResponseGetPost responseGetPost = new ResponseGetPost(
+                getPostDtos, hasNext);
+        return responseGetPost;
+    }
 
+    private List<ResponseGetMemberPostDto> createResponseGetMemberPostDto(List<Post> results, Long member_id) {
+        List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            ResponseGetMemberPostDto responseGetMemberPostDto = new ResponseGetMemberPostDto(results, member_id, i);
+            getPostDtos.add(responseGetMemberPostDto);
+        }
+        return getPostDtos;
+    }
+
+    public Long blamePost(Long post_id) throws NotFoundException {
+        Post post = checkPost(post_id);
         post.setBlamedCount(post.getBlamedCount() + 1);
         postRepository.save(post);
         return post_id;
     }
 
-    public int blameGetPost(Long postId) {
-        Optional<Post> optionalPost = postRepository.findById(postId);
-        if (!optionalPost.isPresent()) {  //아이디 없을시 예외처리
-            throw new NoSuchElementException("post_id의 값이 DB에 존재하지 않습니다:" + postId);
-        }
-        Post post = optionalPost.get();
+    public int blameGetPost(Long postId) throws NotFoundException {
+        Post post = checkPost(postId);
         return Math.toIntExact(post.getBlamedCount());
 
     }
-    /*
-    public Slice<Post> searchByMyPost(Long limit, Long member_id) {
-
-
-        List<Post> results = query.selectFrom(post)
-                .where(
-                        post.member.id.eq(member_id)
-                )
-                .orderBy(post.post_id.desc())
-                .limit(limit + 1)
-                .fetch();
-
-
-
-
-
-        // hasNext와 nextCursor를 계산합니다.
-        boolean hasNext = results.size() > limit;
-
-
-        // limit+1개의 글 중에서 limit개의 글만 남기고 제거합니다.
-        if (hasNext) {
-            results.remove(limit);
-        }
-
-
-        return new SliceImpl<>(results, limit, hasNext);
-    }
-
-     */
-
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> postLikes(Long post_id, Long member_id) throws NotFoundException {    //글 좋아요
@@ -320,57 +258,13 @@ public class PostService {
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
                 .fetch();
-
-
-
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            for (int i = 0; i < results.size(); i++) {
-                ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
-                responseGetPostDto.setLike(false);
-                for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
-                    if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
-                        responseGetPostDto.setLike(true);
-                        break;
-                    }
-                }
-                responseGetPostDto.setPost_id(results.get(i).getPost_id());
-                responseGetPostDto.setPost_content(results.get(i).getPostContent());
-                responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-                List<String> names = new ArrayList<>();
-                List<HashTag> hashTags = results.get(i).getHash_tag();
-                for (int j = 0; j < hashTags.size(); j++) {
-                    names.add(hashTags.get(j).getName());
-                }
-                responseGetPostDto.setHash_tag(names);
-                responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-                responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
-                responseGetPostDto.setSecret(results.get(i).getSecret());
-                responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
-                responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId() == member_id) {
-                    responseGetPostDto.setMine(true);
-                } else {
-                    responseGetPostDto.setMine(false);
-                }
-
-                getPostDtos.add(responseGetPostDto);
-                System.out.println(responseGetPostDto);
-            }
-
+            getPostDtos = createResponseGetMemberPostDto(results, member_id);
             // 가져온 글들의 ID를 저장합니다.
-            Set<Long> resultPostIds = results.stream().map(Post::getPost_id).collect(Collectors.toSet());
-            viewedPostIds.addAll(resultPostIds);
-            Collection<Post> allPost = postRepository.findAll();
-            // hasNext와 nextCursor를 계산합니다.
-            boolean hasNext = viewedPostIds.size() < allPost.size();
-
-            // Slice 객체를 생성해서 반환합니다.
-            ResponseGetPost responseGetPost = new ResponseGetPost(
-                    getPostDtos, hasNext);
-            return responseGetPost;
+            return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
 
@@ -386,81 +280,17 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            for (int i = 0; i < results.size(); i++) {
-                ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
-                responseGetPostDto.setLike(false);
-                for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
-                    if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
-                        responseGetPostDto.setLike(true);
-                        break;
-                    }
-                }
-                responseGetPostDto.setPost_id(results.get(i).getPost_id());
-                responseGetPostDto.setPost_content(results.get(i).getPostContent());
-                responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-                List<String> names = new ArrayList<>();
-                List<HashTag> hashTags = results.get(i).getHash_tag();
-                for (int j = 0; j < hashTags.size(); j++) {
-                    names.add(hashTags.get(j).getName());
-                }
-                responseGetPostDto.setHash_tag(names);
-                responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-                responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
-                responseGetPostDto.setSecret(results.get(i).getSecret());
-                responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
-                responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId() == member_id) {
-                    responseGetPostDto.setMine(true);
-                } else {
-                    responseGetPostDto.setMine(false);
-                }
-                getPostDtos.add(responseGetPostDto);
-            }
-
-            return getPostDtos;
+            getPostDtos = createResponseGetMemberPostDto(results, member_id);
         }
+        return getPostDtos;
     }
-
 
     public List<ResponseGetMemberPostDto> getLikeMemberPost(Long member_id) throws NotFoundException {
         Member member = checkMember(member_id); //존재한다면 객체 생성
         List<Post> results = member.getLikedPosts();
         // results를 최신 순으로 정렬
         Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
-
-
-            List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
-            for (int i = 0; i < results.size(); i++) {
-                ResponseGetMemberPostDto responseGetPostDto = new ResponseGetMemberPostDto();
-                responseGetPostDto.setLike(false);
-                for (int j = 0; j < results.get(i).getLikedMembers().size(); j++) {
-                    if (results.get(i).getLikedMembers().get(j).getId() == member_id) {
-                        responseGetPostDto.setLike(true);
-                        break;
-                    }
-                }
-                responseGetPostDto.setPost_id(results.get(i).getPost_id());
-                responseGetPostDto.setPost_content(results.get(i).getPostContent());
-                responseGetPostDto.setPost_picture(results.get(i).getPost_picture());
-                List<String> names = new ArrayList<>();
-                List<HashTag> hashTags = results.get(i).getHash_tag();
-                for (int j = 0; j < hashTags.size(); j++) {
-                    names.add(hashTags.get(j).getName());
-                }
-                responseGetPostDto.setHash_tag(names);
-                responseGetPostDto.setPost_create_time(results.get(i).getPost_create_time());
-                responseGetPostDto.setBlamed_count(Math.toIntExact(results.get(i).getBlamedCount()));
-                responseGetPostDto.setSecret(results.get(i).getSecret());
-                responseGetPostDto.setPost_like_size(results.get(i).getPost_like());
-                responseGetPostDto.setComment_size((long) results.get(i).getComments().size());
-                if (results.get(i).getMember().getId() == member_id) {
-                    responseGetPostDto.setMine(true);
-                } else {
-                    responseGetPostDto.setMine(false);
-                }
-                getPostDtos.add(responseGetPostDto);
-            }
-            return getPostDtos;
-
+        List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id);
+        return getPostDtos;
     }
 }
