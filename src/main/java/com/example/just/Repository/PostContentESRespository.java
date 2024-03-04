@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface PostContentESRespository extends ElasticsearchRepository<PostDocument,Long>,
         CrudRepository<PostDocument,Long> {
-    List<PostDocument> findByPostContent_ContentContains(String text);
+//    List<PostDocument> findByPostContent_ContentContains(String text);
+    List<PostDocument> findByPostContentContaining(String text);
 
 
 }
