@@ -14,7 +14,9 @@ import lombok.Setter;
 @Setter
 public class GptRequestDto {
     private String prompt;
-
+    // 기본 생성자 추가
+    public GptRequestDto() {
+    }
     public GptRequestDto(String prompt) {
         this.prompt = prompt;
     }

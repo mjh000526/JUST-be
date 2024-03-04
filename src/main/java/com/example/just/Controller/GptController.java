@@ -30,7 +30,6 @@ public class GptController {
             + "prompt안에는 글 내용을 넣으면 됩니다.\n\n 많이 테스트하지 마세요!!!!! 돈 나와요! 연결이 잘 되는지 용도로만 확인 바람.")
     @PostMapping("/chat")
     public List<String> chat(@RequestBody GptRequestDto prompt) {
-
         return gptService.getTag(prompt);
     }
 
