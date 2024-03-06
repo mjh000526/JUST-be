@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HashTagRepository extends JpaRepository<HashTag, Long> {
-    List<HashTag> findByPost(Post post_id);
+   // List<HashTag> findByPost(Post post_id);
 }

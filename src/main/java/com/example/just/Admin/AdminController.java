@@ -113,7 +113,7 @@ public class AdminController {
         ResponsePost responsePost = new ResponsePost(post_id, "삭제 완료");
         return responsePost;
     }
-
+/*
     @ApiOperation(value = "포스트페이지 해시태그 수정 ")
     @Operation(summary = "해시태그 수정", description = "\n hashtag_id 헤더로 받고 내용을 수정하면 새로운 해시태그를 생성하여 저장 ex) id_101 -> id_104로")
     @PutMapping("/posts/{hashtag_id}")
@@ -151,7 +151,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-
+*/
 }
 
 

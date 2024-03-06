@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,35 +17,24 @@ public class QHashTag extends EntityPathBase<HashTag> {
 
     private static final long serialVersionUID = 918158047L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QHashTag hashTag = new QHashTag("hashTag");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");
 
-    public final QPost post;
+    public final NumberPath<Long> tagCount = createNumber("tagCount", Long.class);
 
     public QHashTag(String variable) {
-        this(HashTag.class, forVariable(variable), INITS);
+        super(HashTag.class, forVariable(variable));
     }
 
     public QHashTag(Path<? extends HashTag> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QHashTag(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QHashTag(PathMetadata metadata, PathInits inits) {
-        this(HashTag.class, metadata, inits);
-    }
-
-    public QHashTag(Class<? extends HashTag> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.post = inits.isInitialized("post") ? new QPost(forProperty("post"), inits.get("post")) : null;
+        super(HashTag.class, metadata);
     }
 
 }
