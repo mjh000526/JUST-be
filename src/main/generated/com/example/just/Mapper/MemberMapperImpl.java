@@ -10,25 +10,25 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-06T13:28:25+0900",
-    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 11.0.11 (AdoptOpenJDK)"
+    date = "2024-03-06T15:49:26+0900",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
 public class MemberMapperImpl implements MemberMapper {
 
     @Override
-    public Member toEntity(MemberDto arg0) {
-        if ( arg0 == null ) {
+    public Member toEntity(MemberDto dto) {
+        if ( dto == null ) {
             return null;
         }
 
         Member.MemberBuilder member = Member.builder();
 
-        member.id( arg0.getId() );
-        member.email( arg0.getEmail() );
-        member.provider( arg0.getProvider() );
-        member.provider_id( arg0.getProvider_id() );
-        List<Post> list = arg0.getPosts();
+        member.id( dto.getId() );
+        member.email( dto.getEmail() );
+        member.provider( dto.getProvider() );
+        member.provider_id( dto.getProvider_id() );
+        List<Post> list = dto.getPosts();
         if ( list != null ) {
             member.posts( new ArrayList<Post>( list ) );
         }
@@ -37,18 +37,18 @@ public class MemberMapperImpl implements MemberMapper {
     }
 
     @Override
-    public MemberDto toDto(Member arg0) {
-        if ( arg0 == null ) {
+    public MemberDto toDto(Member entity) {
+        if ( entity == null ) {
             return null;
         }
 
         MemberDto.MemberDtoBuilder memberDto = MemberDto.builder();
 
-        memberDto.id( arg0.getId() );
-        memberDto.email( arg0.getEmail() );
-        memberDto.provider( arg0.getProvider() );
-        memberDto.provider_id( arg0.getProvider_id() );
-        List<Post> list = arg0.getPosts();
+        memberDto.id( entity.getId() );
+        memberDto.email( entity.getEmail() );
+        memberDto.provider( entity.getProvider() );
+        memberDto.provider_id( entity.getProvider_id() );
+        List<Post> list = entity.getPosts();
         if ( list != null ) {
             memberDto.posts( new ArrayList<Post>( list ) );
         }

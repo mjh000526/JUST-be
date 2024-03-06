@@ -2,8 +2,6 @@ package com.example.just.Controller;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
-import com.example.just.Document.PostDocument;
-import com.example.just.Document.PostDocument.PostDocumentBuilder;
 import com.example.just.Service.SearchService;
 import com.example.just.jwt.JwtProvider;
 import io.swagger.annotations.Api;
