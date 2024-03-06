@@ -38,8 +38,8 @@ public class PostDocument {
     @Field(type = FieldType.Text)
     private List<String> postContent;
 
-    @Field(type = FieldType.Text)
-    private List<String> hashTag;
+//    @Field(type = FieldType.Text)
+//    private List<String> hashTag;
 
     @Field(type = FieldType.Long)
     private Long postPicture;
@@ -82,9 +82,9 @@ public class PostDocument {
     public PostDocument(Post post) {
         this.id = post.getPost_id();
         this.postContent = post.getPostContent();
-        this.hashTag = post.getHashTag().stream()
-                .map(HashTag::getName)
-                .collect(Collectors.toList());
+//        this.hashTag = post.getHashTag().stream()
+//                .map(HashTag::getName)
+//                .collect(Collectors.toList());
         this.postPicture = post.getPost_picture();
         this.postCreateTime = post.getPost_create_time();
         this.secret = post.getSecret();

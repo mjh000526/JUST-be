@@ -29,12 +29,6 @@ public class Post {
     @Column(name = "content", length = 300)
     @JsonIgnore
     private List<String> postContent;
-
-    //글 태그
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    @Column(name = "tag")
-    private List<HashTag> hash_tag;
-
     @Column(name = "post_picture")
     private Long post_picture;
 
@@ -51,6 +45,7 @@ public class Post {
     @Column(name = "emoticon")
     private String emoticon;
 
+
     @ManyToMany()
     @JoinTable(
             name = "post_like",
@@ -60,6 +55,16 @@ public class Post {
     @JsonIgnore
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
+
+    @ManyToMany()
+    @JoinTable(
+            name = "hash_tag_map",
+            joinColumns = @JoinColumn(name = "hash_tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    @JsonIgnore
+    @Builder.Default
+    private List<Post> hashTags = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "member_id") //글을쓴 Member_id
@@ -85,7 +90,7 @@ public class Post {
             for (int i = 0; i < postDto.getHash_tag().size(); i++) {
                 String hashTag_name = postDto.getHash_tag().get(i);
                 HashTag hashTag = new HashTag(hashTag_name);
-                addHashTag(hashTag);
+
             }
         }
         this.post_picture = postDto.getPost_picture();
@@ -120,13 +125,6 @@ public class Post {
         }
     }
 
-    public void addHashTag(HashTag hashTag) {
-        if (hash_tag == null) {
-            hash_tag = new ArrayList<>();
-        }
-        hash_tag.add(hashTag);
-        hashTag.setPost(this);
-    }
 
     public void addBlamed() {
         blamedCount++;
@@ -138,6 +136,7 @@ public class Post {
     }
 
     public void changePost(PutPostDto postDto, Member member, Post post) {
+        /*
         this.post_id = post.getPost_id();
         this.member = member;
         this.setPost_create_time(new Date(System.currentTimeMillis()));
@@ -153,15 +152,20 @@ public class Post {
                 addHashTag(hashTag);
             }
         }
+
+         */
     }
 
     public List<HashTag> getHashTag() {
         List<HashTag> array = new ArrayList<>();
+        /*
         if (this.hash_tag != null) {
             for (int i = 0; i < this.hash_tag.size(); i++) {
                 array.add(this.hash_tag.get(i));
             }
         }
+
+         */
         return array;
     }
 }
