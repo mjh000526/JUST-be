@@ -23,16 +23,27 @@ import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 
 import com.example.just.jwt.JwtProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.web.client.RestTemplate;
 
 
 @Service
@@ -95,6 +106,11 @@ public class PostService {
             List<String> tag = gptService.getTag(gptRequestDto);
             postDto.setHash_tag(tag);
         }
+        List<String> content = new ArrayList<>();
+        for(int i = 0; i<postDto.getPost_content().size();i++){
+            content.add(getConvertString(postDto.getPost_content().get(i)));
+        }
+        postDto.setPost_content(content);
         post.writePost(postDto, member);
         Post p = postRepository.save(post);
         postContentESRespository.save(new PostDocument(p));
@@ -123,6 +139,11 @@ public class PostService {
     //    for (int i = 0; i < hashTags.size(); i++) {
       //      hashTagRepository.deleteById(hashTags.get(i).getId());
      //   }
+        List<String> content = new ArrayList<>();
+        for(int i = 0; i<postDto.getPost_content().size();i++){
+            content.add(getConvertString(postDto.getPost_content().get(i)));
+        }
+        postDto.setPost_content(content);
         checkPost.changePost(postDto, member, checkPost);
         postContentESRespository.save(new PostDocument(checkPost));
         postRepository.save(checkPost);
@@ -292,5 +313,38 @@ public class PostService {
         Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
         List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id);
         return getPostDtos;
+    }
+
+    public String getConvertString(String str){
+        RestTemplate restTemplate = new RestTemplate();
+
+        String requestBody = "{\"question\":\"" + str + "\",\"deny_list\":[\"string\"]}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> request = new HttpEntity<>(requestBody,headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "http://203.241.228.51:8000/anonymize/",
+                HttpMethod.POST,
+                request,
+                String.class);
+
+        String responseBody = responseEntity.getBody();
+        String convertStr =parsingJson(responseBody);
+        return convertStr;
+    }
+
+    public String parsingJson(String json){
+        String response;
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject elem = (JSONObject) parser.parse(json);
+            response = elem.get("convertedQuestion").toString();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 }

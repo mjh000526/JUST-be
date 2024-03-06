@@ -56,15 +56,9 @@ public class Post {
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
 
-    @ManyToMany()
-    @JoinTable(
-            name = "hash_tag_map",
-            joinColumns = @JoinColumn(name = "hash_tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    @JsonIgnore
     @Builder.Default
-    private List<Post> hashTags = new ArrayList<>();
+    @ManyToMany(mappedBy = "posts")
+    private List<HashTag> hashTags = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "member_id") //글을쓴 Member_id
@@ -86,13 +80,6 @@ public class Post {
     public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
         List<String> contentList = postDto.getPost_content();
         this.postContent = contentList;
-        if (postDto.getHash_tag() != null) {
-            for (int i = 0; i < postDto.getHash_tag().size(); i++) {
-                String hashTag_name = postDto.getHash_tag().get(i);
-                HashTag hashTag = new HashTag(hashTag_name);
-
-            }
-        }
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.emoticon = "";
