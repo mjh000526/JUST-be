@@ -119,10 +119,10 @@ public class PostService {
         Member member = checkMember(member_id);
         Post checkPost = checkPost(post_id);
 
-        List<HashTag> hashTags = hashTagRepository.findByPost(checkPost);
-        for (int i = 0; i < hashTags.size(); i++) {
-            hashTagRepository.deleteById(hashTags.get(i).getId());
-        }
+       // List<HashTag> hashTags = hashTagRepository.findByPost(checkPost);
+    //    for (int i = 0; i < hashTags.size(); i++) {
+      //      hashTagRepository.deleteById(hashTags.get(i).getId());
+     //   }
         checkPost.changePost(postDto, member, checkPost);
         postContentESRespository.save(new PostDocument(checkPost));
         postRepository.save(checkPost);
