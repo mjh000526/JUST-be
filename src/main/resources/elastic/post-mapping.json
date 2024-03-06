@@ -4,10 +4,6 @@
       "type": "text",
       "analyzer": "korean"
     },
-    "hash_tag": {
-      "type": "text",
-      "analyzer": "korean"
-    },
     "post_picture": {
       "type": "long"
     },

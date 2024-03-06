@@ -38,10 +38,10 @@ public class ResponseGetMemberPostDto {
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
         List<String> names = new ArrayList<>();
-        List<HashTag> hashTags = post.getHash_tag();
-        for (int j = 0; j < hashTags.size(); j++) {
-            names.add(hashTags.get(j).getName());
-        }
+       // List<HashTag> hashTags = post.getHash_tag();
+       // for (int j = 0; j < hashTags.size(); j++) {
+       //     names.add(hashTags.get(j).getName());
+      //  }
         this.hash_tag = names;
         this.comment_size = Long.valueOf(post.getComments().size());
         this.post_picture = post.getPost_picture();
@@ -68,10 +68,10 @@ public class ResponseGetMemberPostDto {
         this.post_content = results.get(i).getPostContent();
         this.post_picture = results.get(i).getPost_picture();
         List<String> names = new ArrayList<>();
-        List<HashTag> hashTags = results.get(i).getHash_tag();
-        for (int j = 0; j < hashTags.size(); j++) {
-            names.add(hashTags.get(j).getName());
-        }
+       // List<HashTag> hashTags = results.get(i).getHash_tag();
+      //  for (int j = 0; j < hashTags.size(); j++) {
+      //      names.add(hashTags.get(j).getName());
+     //   }
         this.hash_tag = names;
         this.post_create_time = results.get(i).getPost_create_time();
         this.blamed_count = Math.toIntExact(results.get(i).getBlamedCount());
