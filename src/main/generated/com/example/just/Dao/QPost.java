@@ -28,7 +28,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final StringPath emoticon = createString("emoticon");
 
-    public final ListPath<Post, QPost> hashTags = this.<Post, QPost>createList("hashTags", Post.class, QPost.class, PathInits.DIRECT2);
+    public final ListPath<HashTagMap, QHashTagMap> hashTagMaps = this.<HashTagMap, QHashTagMap>createList("hashTagMaps", HashTagMap.class, QHashTagMap.class, PathInits.DIRECT2);
 
     public final ListPath<Member, QMember> likedMembers = this.<Member, QMember>createList("likedMembers", Member.class, QMember.class, PathInits.DIRECT2);
 

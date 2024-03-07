@@ -1,6 +1,6 @@
 package com.example.just.Response;
 
-import com.example.just.Dao.HashTag;
+import com.example.just.Dao.HashTagMap;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 import java.util.ArrayList;
@@ -38,10 +38,10 @@ public class ResponseGetMemberPostDto {
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
         List<String> names = new ArrayList<>();
-       // List<HashTag> hashTags = post.getHash_tag();
-       // for (int j = 0; j < hashTags.size(); j++) {
-       //     names.add(hashTags.get(j).getName());
-      //  }
+        // List<HashTag> hashTags = post.getHash_tag();
+        // for (int j = 0; j < hashTags.size(); j++) {
+        //     names.add(hashTags.get(j).getName());
+        //  }
         this.hash_tag = names;
         this.comment_size = Long.valueOf(post.getComments().size());
         this.post_picture = post.getPost_picture();
@@ -58,20 +58,17 @@ public class ResponseGetMemberPostDto {
         }
     }
 
-    public ResponseGetMemberPostDto() {
 
-    }
 
-    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i) {
+    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i,  List<HashTagMap> hashTagMaps) {
 
         this.post_id = results.get(i).getPost_id();
         this.post_content = results.get(i).getPostContent();
         this.post_picture = results.get(i).getPost_picture();
         List<String> names = new ArrayList<>();
-       // List<HashTag> hashTags = results.get(i).getHash_tag();
-      //  for (int j = 0; j < hashTags.size(); j++) {
-      //      names.add(hashTags.get(j).getName());
-     //   }
+        for (int j = 0; j < hashTagMaps.size(); j++) {
+            names.add(hashTagMaps.get(j).getHashTag().getName());
+        }
         this.hash_tag = names;
         this.post_create_time = results.get(i).getPost_create_time();
         this.blamed_count = Math.toIntExact(results.get(i).getBlamedCount());
