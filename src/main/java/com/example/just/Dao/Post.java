@@ -56,22 +56,15 @@ public class Post {
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
 
-    @ManyToMany()
-    @JoinTable(
-            name = "hash_tag_map",
-            joinColumns = @JoinColumn(name = "hash_tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    @JsonIgnore
-    @Builder.Default
-    private List<Post> hashTags = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<HashTagMap> hashTagMaps = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "member_id") //글을쓴 Member_id
     @JsonIgnore
     private Member member;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
     @Column(name = "blamed_count")
     private Long blamedCount;
@@ -86,13 +79,6 @@ public class Post {
     public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
         List<String> contentList = postDto.getPost_content();
         this.postContent = contentList;
-        if (postDto.getHash_tag() != null) {
-            for (int i = 0; i < postDto.getHash_tag().size(); i++) {
-                String hashTag_name = postDto.getHash_tag().get(i);
-                HashTag hashTag = new HashTag(hashTag_name);
-
-            }
-        }
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.emoticon = "";
@@ -136,7 +122,6 @@ public class Post {
     }
 
     public void changePost(PutPostDto postDto, Member member, Post post) {
-        /*
         this.post_id = post.getPost_id();
         this.member = member;
         this.setPost_create_time(new Date(System.currentTimeMillis()));
@@ -144,16 +129,13 @@ public class Post {
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.postContent = postDto.getPost_content();
-        this.hash_tag = null;
-        if (postDto.getHash_tage() != null) {
-            for (int i = 0; i < postDto.getHash_tage().size(); i++) {
-                String hashTag_name = postDto.getHash_tage().get(i);
-                HashTag hashTag = new HashTag(hashTag_name);
-                addHashTag(hashTag);
-            }
+        this.hashTagMaps= new ArrayList<>();
+        for(int i=0; i<postDto.getHash_tage().size(); i++) {
+            HashTagMap hashTagMap = new HashTagMap();
+            hashTagMap.setPost(this);
+            hashTagMap.setHashTag(new HashTag(postDto.getHash_tage().get(i)));
+            this.addHashTagMaps(hashTagMap);
         }
-
-         */
     }
 
     public List<HashTag> getHashTag() {
@@ -167,5 +149,10 @@ public class Post {
 
          */
         return array;
+    }
+
+
+    public void addHashTagMaps(HashTagMap hashTagMap) {
+        this.hashTagMaps.add(hashTagMap);
     }
 }
