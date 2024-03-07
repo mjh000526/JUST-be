@@ -6,6 +6,7 @@ import com.example.just.Repository.BlameRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
+import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,9 @@ public class SearchService {
 
     public ResponseEntity searchPostContent(HttpServletRequest request,String keyword,int page){
         String token = jwtProvider.getAccessToken(request);
+        if(token == null){
+            return new ResponseEntity(new ResponseMessage("로그인 후 검색가능합니다."),null, HttpStatus.BAD_REQUEST);
+        }
         Long id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         List<Blame> blames = blameRepository.findByBlameMemberId(id);
         //유저가 신고한 게시글 id들

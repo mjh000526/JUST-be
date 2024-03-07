@@ -129,8 +129,8 @@ public class Post {
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.postContent = postDto.getPost_content();
-        this.hashTagMaps= new ArrayList<>();
-        for(int i=0; i<postDto.getHash_tage().size(); i++) {
+        this.hashTagMaps = new ArrayList<>();
+        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
             HashTagMap hashTagMap = new HashTagMap();
             hashTagMap.setPost(this);
             hashTagMap.setHashTag(new HashTag(postDto.getHash_tage().get(i)));
