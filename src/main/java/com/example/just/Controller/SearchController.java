@@ -32,6 +32,11 @@ public class SearchController {
 
     @GetMapping("/get/search/post")
     @Operation(summary = "게시글 내용 검색", description = "해당 keyword를 content에 포함하는 게시글 검색\n태그검색구현시 추후 변경 가능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "{\n"
+                    + "  \"message\": \"로그인 후 검색가능합니다.\"\n"
+                    + "}")
+    })
     public ResponseEntity getPosts(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
         return searchService.searchPostContent(request,keyword,page-1);
     }
