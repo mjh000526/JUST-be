@@ -57,7 +57,7 @@ public class CommentController {
                     + "  \"child\": []\n"
                     + "  \"message\": \"입력 완료\"\n"
                     + "}"),
-            @ApiResponse(responseCode = "404", description = "{\n"
+            @ApiResponse(responseCode = "400", description = "{\n"
                     + "  \"comment_id\": \"\",\n"
                     + "  \"comment_create_time\": 0\n"
                     + "  \"comment_create_time\": \"\",\n"
@@ -109,7 +109,7 @@ public class CommentController {
     @ApiOperation(value = "댓글 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "댓글 내용"),
-            @ApiResponse(responseCode = "404",description = "댓글이 존재하지 않습니다.\n게시물이 존재하지 않습니다.")
+            @ApiResponse(responseCode = "400",description = "댓글이 존재하지 않습니다.\n게시물이 존재하지 않습니다.")
     })
     @PutMapping("/put/comment/{post_id}/{comment_id}")
     public ResponseEntity<String> putComment(@PathVariable Long post_id, @PathVariable Long comment_id,
