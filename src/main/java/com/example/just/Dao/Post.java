@@ -56,16 +56,15 @@ public class Post {
     @Builder.Default
     private List<Member> likedMembers = new ArrayList<>();
 
-    @Builder.Default
-    @ManyToMany(mappedBy = "posts")
-    private List<HashTag> hashTags = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<HashTagMap> hashTagMaps = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "member_id") //글을쓴 Member_id
     @JsonIgnore
     private Member member;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
     @Column(name = "blamed_count")
     private Long blamedCount;
@@ -123,7 +122,6 @@ public class Post {
     }
 
     public void changePost(PutPostDto postDto, Member member, Post post) {
-        /*
         this.post_id = post.getPost_id();
         this.member = member;
         this.setPost_create_time(new Date(System.currentTimeMillis()));
@@ -131,16 +129,6 @@ public class Post {
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.postContent = postDto.getPost_content();
-        this.hash_tag = null;
-        if (postDto.getHash_tage() != null) {
-            for (int i = 0; i < postDto.getHash_tage().size(); i++) {
-                String hashTag_name = postDto.getHash_tage().get(i);
-                HashTag hashTag = new HashTag(hashTag_name);
-                addHashTag(hashTag);
-            }
-        }
-
-         */
     }
 
     public List<HashTag> getHashTag() {
@@ -154,5 +142,10 @@ public class Post {
 
          */
         return array;
+    }
+
+
+    public void addHashTagMaps(HashTagMap hashTagMap) {
+        this.hashTagMaps.add(hashTagMap);
     }
 }

@@ -20,11 +20,11 @@ public class QHashTag extends EntityPathBase<HashTag> {
 
     public static final QHashTag hashTag = new QHashTag("hashTag");
 
+    public final ListPath<HashTagMap, QHashTagMap> hashTagMaps = this.<HashTagMap, QHashTagMap>createList("hashTagMaps", HashTagMap.class, QHashTagMap.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");
-
-    public final ListPath<Post, QPost> posts = this.<Post, QPost>createList("posts", Post.class, QPost.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> tagCount = createNumber("tagCount", Long.class);
 
