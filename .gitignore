@@ -7,7 +7,7 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
 /src/test/resources/application.yml
-/src/main/resources/templates/secret/**
+/src/main/resources/templates/secret/.p8
 
 ### STS ###
 .apt_generated
