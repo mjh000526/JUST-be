@@ -40,4 +40,21 @@ public class SearchController {
     public ResponseEntity getPosts(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
         return searchService.searchPostContent(request,keyword,page-1);
     }
+
+    @GetMapping("/get/search/tag")
+    @Operation(summary = "태그로 게시 검색", description = "해당 태그를 가진 게시글 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "{\n"
+                    + "  \"message\": \"로그인 후 검색가능합니다.\"\n"
+                    + "}")
+    })
+    public ResponseEntity getTagPost(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
+        return searchService.searchTagPost(request,keyword,page-1);
+    }
+
+    @GetMapping("/get/search/auto/tag")
+    @Operation(summary = "태그 자동완성", description = "해당 keyword를 포함하는 태그 전체 검색")
+    public ResponseEntity getAutoTag(@RequestParam String keyword) {
+        return searchService.getAutoTag(keyword);
+    }
 }

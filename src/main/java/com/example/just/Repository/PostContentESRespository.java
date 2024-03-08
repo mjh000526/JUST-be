@@ -15,5 +15,6 @@ public interface PostContentESRespository extends ElasticsearchRepository<PostDo
 //    List<PostDocument> findByPostContent_ContentContains(String text);
     List<PostDocument> findByPostContentContaining(String text);
 
+    List<PostDocument> findByHashTagIn(String text);
 
 }

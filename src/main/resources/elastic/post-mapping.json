@@ -1,28 +1,28 @@
 {
   "properties": {
-    "post_content": {
+    "postContent": {
       "type": "text",
       "analyzer": "korean"
     },
-    "post_picture": {
+    "postPicture": {
       "type": "long"
     },
-    "post_create_time": {
+    "postCreateTime": {
       "type": "long"
     },
     "secret": {
       "type": "boolean"
     },
-    "comment_size": {
+    "commentSize": {
       "type": "long"
     },
-    "post_like_size": {
+    "postLikeSize": {
       "type": "long"
     },
-    "blame_count": {
+    "blameCount": {
       "type": "long"
     },
-    "member_id": {
+    "memberId": {
       "type": "long"
     }
   }
