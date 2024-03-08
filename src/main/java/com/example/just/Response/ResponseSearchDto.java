@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class ResponseSearchDto {
 
-    private Long id;
+    private Long post_id;
     private List<String> post_content;
     private List<String> hash_tag;
     private Long post_picture;
@@ -28,7 +28,7 @@ public class ResponseSearchDto {
     }
 
     public ResponseSearchDto(PostDocument postDocument, Long member_id){
-        id = postDocument.getId();
+        post_id = postDocument.getId();
         post_content = postDocument.getPostContent();
         //hash_tag = postDocument.getHashTag();
         post_picture = postDocument.getPostPicture();
