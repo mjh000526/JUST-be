@@ -30,7 +30,7 @@ public class ResponseSearchDto {
     public ResponseSearchDto(PostDocument postDocument, Long member_id){
         post_id = postDocument.getId();
         post_content = postDocument.getPostContent();
-        //hash_tag = postDocument.getHashTag();
+        hash_tag = postDocument.getHashTag();
         post_picture = postDocument.getPostPicture();
         post_create_time = postDocument.getPostCreateTime();
         secret = postDocument.getSecret();
