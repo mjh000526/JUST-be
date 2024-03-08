@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "tagCount": {
+      "type": "long"
+    }
+  }
+}
