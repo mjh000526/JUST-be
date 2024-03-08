@@ -9,12 +9,14 @@ import com.example.just.Dao.Post;
 
 import com.example.just.Dao.QBlame;
 import com.example.just.Dao.QPost;
+import com.example.just.Document.HashTagDocument;
 import com.example.just.Document.PostDocument;
 import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.example.just.Repository.BlameRepository;
 
+import com.example.just.Repository.HashTagESRepository;
 import com.example.just.Repository.HashTagMapRepository;
 import com.example.just.Response.ResponseGetMemberPostDto;
 import com.example.just.Response.ResponseGetPostDto;
@@ -60,6 +62,9 @@ public class PostService {
     private MemberRepository memberRepository;
     @Autowired
     private HashTagRepository hashTagRepository;
+
+    @Autowired
+    private HashTagESRepository hashTagESRepository;
     @Autowired
     private BlameRepository blameRepository;
     @Autowired
@@ -134,11 +139,13 @@ public class PostService {
             if (hashTag == null) {
                 HashTag newHashTag = new HashTag(hashTags.get(i));
                 newHashTag.setTagCount(1L);
-                hashTagRepository.save(newHashTag);
+                newHashTag = hashTagRepository.save(newHashTag);
+                hashTagESRepository.save(new HashTagDocument(newHashTag));
                 hashTagMap = new HashTagMap(newHashTag, p); //객체 그래프 설정
             } else {
                 hashTag.setTagCount(hashTag.getTagCount() + 1);
                 hashTagRepository.save(hashTag);
+                hashTagESRepository.save(new HashTagDocument(hashTag));
                 hashTagMap = new HashTagMap(hashTag, p); //객체 그래프 설정
             }
             hashTagMapRepository.save(hashTagMap);
@@ -198,8 +205,10 @@ public class PostService {
                             hashTag -> {
                                 if (hashTag.getTagCount() != 1) {
                                     hashTag.setTagCount(hashTag.getTagCount() - 1);
+                                    hashTagESRepository.save(new HashTagDocument(hashTag));
                                     hashTagRepository.save(hashTag);
                                 } else {
+                                    hashTagESRepository.deleteById(hashTag.getId());
                                     hashTagRepository.deleteById(hashTag.getId());
                                 }
                             });
