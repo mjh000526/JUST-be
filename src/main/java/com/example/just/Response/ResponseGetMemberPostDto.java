@@ -59,8 +59,7 @@ public class ResponseGetMemberPostDto {
     }
 
 
-
-    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i,  List<HashTagMap> hashTagMaps) {
+    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps) {
 
         this.post_id = results.get(i).getPost_id();
         this.post_content = results.get(i).getPostContent();
