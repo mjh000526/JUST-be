@@ -189,11 +189,9 @@ public class PostService {
         Post p = postRepository.save(checkPost);
         saveHashTag(postDto.getHash_tage(), p);
 
-
-        saveHashTag(postDto.getHash_tage(), p);
         postContentESRespository.save(new PostDocument(checkPost));
 
-        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(checkPost);
+        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
         return responsePutPostDto;
     }
 
