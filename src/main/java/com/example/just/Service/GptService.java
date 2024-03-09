@@ -36,12 +36,10 @@ public class GptService {
         String content = gptResponse.getChoices().get(0).getMessage().getContent();
         String[] splitContent = content.split("#");
 
+        System.out.println("GPT 태그는 : " + content);
         for (String word : splitContent) {
-            if (!word.isEmpty()) {
-                if (message.size() != 2) {
-                    word = word.substring(0, word.length() - 2);
-                }
-                message.add(word);
+            if (!word.trim().isEmpty()) { // 문자열이 공백이 아닌 경우에만 추가
+                message.add(word.trim()); // 해시태그 추가 시 #을 포함하여 추가
             }
         }
         return message;
