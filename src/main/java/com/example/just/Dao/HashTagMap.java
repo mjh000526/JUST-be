@@ -1,5 +1,6 @@
 package com.example.just.Dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,10 +24,12 @@ public class HashTagMap {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIgnore
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "hash_tag_id")
+    @JsonIgnore
     private HashTag hashTag;
 
     public HashTagMap(HashTag newHashTag, Post p) {
