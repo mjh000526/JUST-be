@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -30,7 +31,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Mapping(mappingPath = "elastic/tag-mapping.json")
 //@Setting(settingPath = "elastic/post-setting.json")
-public class HashTagDocument {
+public class HashTagDocument implements Comparable<HashTagDocument>{
 
     @Id
     private Long id;
@@ -45,5 +46,12 @@ public class HashTagDocument {
         id = hashTag.getId();
         name = hashTag.getName();
         tagCount = hashTag.getTagCount();
+    }
+
+    @Override
+    public int compareTo(@NotNull HashTagDocument o) {
+        if(o.tagCount < tagCount) return 1;
+        else if(o.tagCount > tagCount) return -1;
+        else return 0;
     }
 }
