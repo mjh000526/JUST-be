@@ -37,6 +37,7 @@ public class HashTag {
     private Long tagCount;
 
     @OneToMany(mappedBy = "hashTag", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<HashTagMap> hashTagMaps = new ArrayList<>();
 
 
