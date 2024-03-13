@@ -11,6 +11,8 @@ import com.example.just.Repository.PostRepository;
 import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -79,7 +83,16 @@ public class SearchService {
     }
 
     public ResponseEntity getAutoTag(String str){
-        List<HashTagDocument> hashTagDocuments = hashTagESRepository.findByNameContaining(str);
+        List<HashTagDocument> hashTagDocuments = new ArrayList<HashTagDocument>();
+        if(str.equals("") || str.equals(null)){
+            hashTagDocuments = hashTagESRepository.findAll(Sort.by(Direction.DESC,"tagCount"));
+        }else {
+            hashTagDocuments = hashTagESRepository.findByNameContaining(str,Sort.by(Direction.DESC,"tagCount"));
+        }
+        if(hashTagDocuments.equals(null)) {
+            return new ResponseEntity(new ResponseMessage("태그 없음"), null, HttpStatus.BAD_REQUEST);
+        }
+        System.out.println(hashTagDocuments.size());
         return ResponseEntity.ok(hashTagDocuments);
     }
 
