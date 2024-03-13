@@ -54,7 +54,7 @@ public class SearchController {
 
     @GetMapping("/get/search/auto/tag")
     @Operation(summary = "태그 자동완성", description = "해당 keyword를 포함하는 태그 전체 검색\n 자음만으로는 검색불가무조건 모음까지 합친 글자로만 검색가능\n ex) ㅇ -> 검색불가\n   연-> 연애,연구")
-    public ResponseEntity getAutoTag(@RequestParam String keyword) {
+    public ResponseEntity getAutoTag(@RequestParam(required = false, defaultValue = "") String keyword) {
         return searchService.getAutoTag(keyword);
     }
 }
