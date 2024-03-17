@@ -9,8 +9,13 @@ import com.example.just.Dao.Post;
 import com.example.just.Dao.Role;
 import com.example.just.Dto.CommentDto;
 import com.example.just.Dto.PutCommentDto;
+<<<<<<< HEAD
 import com.example.just.Dto.ResponseMyCommentDto;
 import com.example.just.Dto.ResponsePostCommentDto;
+=======
+import com.example.just.Response.ResponseMyCommentDto;
+import com.example.just.Response.ResponsePostCommentDto;
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;

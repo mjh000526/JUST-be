@@ -81,7 +81,11 @@ public class PostService {
     private GptService gptService;
 
     @Autowired
+<<<<<<< HEAD
     PostContentESRespository postContentESRespository;
+=======
+    private PostContentESRespository postContentESRespository;
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
     @Autowired
     private HashTagMapRepository hashTagMapRepository;
 

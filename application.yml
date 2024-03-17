@@ -1,0 +1,78 @@
+gpt :
+  model: gpt-3.5-turbo
+  api:
+    key: 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
+    url: https://api.openai.com/v1/chat/completions
+baseUrl : https://just-s3.s3.ap-northeast-2.amazonaws.com/
+server:
+  port: 9000
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA2PIR5NDYRVE3NDUN
+      secretKey: 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
+      region: ap-northeast-2
+      bucketName: just-s3
+      stack:
+        auto: false
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #Swagger 문제로 추가함 ㅇㅇ
+  jackson:
+    default-property-inclusion: non-null
+    ## # -> #까지 뭔지 알아오기 (해석하고 발표하시길)
+  datasource: ## 뭔지 알아오기
+    hikari:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://13.209.213.191:3306/just?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: 334334334!
+    connection-timeout: 15000 #30초 설정
+    maximum-pool-size: 150 #150개 설정
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 55ec14b78e17e978a4a3b64971060784
+            redirect-uri: http://13.209.213.191:9000/api/kakao/access_token
+            client-authentication-method: POST
+            client-secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5K
+            authorization-grant-type: authorization_code
+            scope:
+              - account_email
+              - profile_nickname
+            client_name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  ## #->해석해오기
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+      ## - >필수로 마스터 해오기
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        use-new-id-generator-mappings: true
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        enable_lazy_load_no_trans: true
+
+server-add: 13.209.213.191
+api-url: https://kauth.kakao.com/oauth/authorize?client_id=55ec14b78e17e978a4a3b64971060784&redirect_uri=http://13.209.213.191:9000/api/kakao/access_token&response_type=code
+
+jwt:
+  header: Authorization
+  secret: QREhvyjJygyPKlqkJtSFc91GUlvBqA5KaijdfijAIfj41jkjiUIJHI3ji123AasdhfuAUSLNJUIGh098587KJMGKN134JBN8
+  token-validity-in-seconds: 86400

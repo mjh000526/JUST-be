@@ -7,7 +7,11 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
 /src/test/resources/application.yml
+<<<<<<< HEAD
 /src/main/resources/templates/secret/AuthKey_2Y9664DW2T.p8
+=======
+/src/main/resources/templates/secret/.p8
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
 
 ### STS ###
 .apt_generated

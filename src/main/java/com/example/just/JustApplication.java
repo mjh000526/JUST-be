@@ -35,4 +35,8 @@ public class JustApplication {
 		SpringApplication.run(JustApplication.class, args);
 	}
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
