@@ -1,11 +1,17 @@
 HELP.md
+<<<<<<< HEAD
 .gradl
 
+=======
+.gradle
+>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
+<<<<<<< HEAD
+<<<<<<<< HEAD:.gitignore
 /src/test/resources/application.yml
 /application.yml
 <<<<<<< HEAD
@@ -14,6 +20,10 @@ build/
 /src/main/resources/templates/secret/.p8
 >>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
 
+========
+>>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6:just/.gitignore
+=======
+>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
 ### STS ###
 .apt_generated
 .classpath
@@ -22,7 +32,10 @@ build/
 .settings
 .springBeans
 .sts4-cache
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
@@ -32,7 +45,10 @@ bin/
 *.iws
 *.iml
 *.ipr
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -45,4 +61,8 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
+<<<<<<< HEAD
 .vscode/
+=======
+.vscode/
+>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
