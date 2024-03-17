@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "postContent": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "postPicture": {
+      "type": "long"
+    },
+    "postCreateTime": {
+      "type": "long"
+    },
+    "secret": {
+      "type": "boolean"
+    },
+    "commentSize": {
+      "type": "long"
+    },
+    "postLikeSize": {
+      "type": "long"
+    },
+    "blameCount": {
+      "type": "long"
+    },
+    "memberId": {
+      "type": "long"
+    }
+  }
+}
