@@ -7,7 +7,7 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
 /src/test/resources/application.yml
-/src/main/resources/templates/secret/.p8
+/src/main/resources/templates/secret/AuthKey_2Y9664DW2T.p8
 
 ### STS ###
 .apt_generated
