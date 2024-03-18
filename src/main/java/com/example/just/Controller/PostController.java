@@ -63,7 +63,7 @@ public class PostController {
         Long member_id = getAccessTokenOfMemberId(request);
         String like = request.getHeader("like");
         try {
-            return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id,like));
+            return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IOException e) {

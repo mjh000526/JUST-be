@@ -13,9 +13,14 @@ import com.example.just.Dto.PutCommentDto;
 import com.example.just.Dto.ResponseMyCommentDto;
 import com.example.just.Dto.ResponsePostCommentDto;
 =======
+<<<<<<< HEAD
+import com.example.just.Dto.ResponseMyCommentDto;
+import com.example.just.Dto.ResponsePostCommentDto;
+=======
 import com.example.just.Response.ResponseMyCommentDto;
 import com.example.just.Response.ResponsePostCommentDto;
 >>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.PostRepository;

@@ -4,6 +4,13 @@ import com.example.just.Dao.Comment;
 import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
+import com.example.just.Repository.HashTagMapRepository;
+import com.example.just.Response.ResponseUpdateHashtagsDto;
+import com.example.just.Repository.CommentRepository;
+import com.example.just.Repository.HashTagRepository;
+import com.example.just.Repository.MemberRepository;
+import com.example.just.Repository.PostRepository;
+import com.example.just.Service.ResponsePost;
 import com.example.just.Repository.*;
 import com.example.just.Response.ResponseUpdateHashtagsDto;
 import com.example.just.Service.*;
@@ -16,8 +23,9 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
+import com.example.just.Service.MemberService;
+import com.example.just.Service.CommentService;
+import com.example.just.Service.PostService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,10 +46,15 @@ public class AdminController {
     private CommentRepository commentRepository;
     @Autowired
     private MemberRepository memberRepository;
+
+
+    @Autowired
+    private PostRepository postRepository;
     @Autowired
     private HashTagRepository hashTagRepository;
     @Autowired
     private HashTagMapRepository hashTagMapRepository;
+
     @Autowired
     private HashTagESRepository hashTagESRepository;
     @Autowired
@@ -102,6 +115,7 @@ public class AdminController {
     }
 
 
+
     @ApiOperation(value = "게시물 리스트 불러옴 posts 페이지에서")
     @Operation(summary = "게시글 리스트", description = "\n admin 페이지-> posts 페이지-> return 하여 post list 출력")
     @GetMapping("/posts")
@@ -141,6 +155,5 @@ public class AdminController {
 
      */
 }
-
 
 
