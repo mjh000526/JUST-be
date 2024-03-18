@@ -1,6 +1,7 @@
 package com.example.just.Config;
 
 import com.example.just.Repository.HashTagESRepository;
+
 import com.example.just.Repository.PostContentESRespository;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.context.annotation.Bean;
