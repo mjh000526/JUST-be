@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface HashTagESRepository extends ElasticsearchRepository<HashTagDocument, Long>,
         CrudRepository<HashTagDocument, Long> {
     List<HashTagDocument> findByNameContaining(String name, Sort sort);
-
     List<HashTagDocument> findAll(Sort sort);
 
 }

@@ -32,7 +32,6 @@ import com.example.just.jwt.JwtProvider;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -159,9 +158,10 @@ public class PostService {
 
 
     //글 삭제
-    public void deletePost(Long post_id) throws NotFoundException {
+    public void deletePost(Long post_id, Long member_id) throws NotFoundException {
         Post post = checkPost(post_id);
-        if (post == null) {
+        Member member = checkMember(member_id);
+        if (post == null || post.getMember() != member) {
             throw new NotFoundException();
         } else {
             // Elasticsearch에서 해당 포스트의 내용 삭제
@@ -306,7 +306,7 @@ public class PostService {
         return ResponseEntity.ok(responsePost);
     }
 
-    public ResponseGetPost searchByCursorMember(String cursor, Long limit, Long member_id, String like)
+    public ResponseGetPost searchByCursorMember(String cursor, Long limit, Long member_id)
             throws NotFoundException, IOException {
         QPost post = QPost.post;
         QBlame blame = QBlame.blame;
@@ -336,30 +336,32 @@ public class PostService {
 
         Random random = new Random();
         int arrayLength = likePostHashTagName.size();
-        int randomIndex = random.nextInt(arrayLength);
-        String randonHashTagName = likePostHashTagName.get(randomIndex);
-        // 요청을 보낼 URL 설정
-        HttpGet request = new HttpGet("http://34.22.67.43:8081/api/similar_words/" + randonHashTagName);
 
-        // 요청 실행 및 응답 수신
-        HttpResponse response = httpClient.execute(request);
-
-        // 응답 코드 확인
-        int statusCode = response.getStatusLine().getStatusCode();
-        System.out.println("Response Code: " + statusCode);
-
-        // 응답 데이터 읽기
-        String responseBody = EntityUtils.toString(response.getEntity());
-        System.out.println("Response: " + responseBody);//Response: [[3], [1], [1], [1]]
-        // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
-        List<Long> postIds = new ArrayList<>();
-        for (int i = 2; i < responseBody.length(); i += 5) {
-            postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
-        }
-        System.out.println(postIds);
+        int randomIndex;
         List<Post> results = new ArrayList<>();
-        if (postIds != null ) {
-            // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
+        if (arrayLength > 0) {
+            randomIndex = random.nextInt(arrayLength);
+            String randonHashTagName = likePostHashTagName.get(randomIndex);
+            // 요청을 보낼 URL 설정
+            HttpGet request = new HttpGet("http://34.22.67.43:8081/api/similar_words/" + randonHashTagName);
+
+            // 요청 실행 및 응답 수신
+            HttpResponse response = httpClient.execute(request);
+
+            // 응답 코드 확인
+            int statusCode = response.getStatusLine().getStatusCode();
+            System.out.println("Response Code: " + statusCode);
+
+            // 응답 데이터 읽기
+            String responseBody = EntityUtils.toString(response.getEntity());
+            System.out.println("Response: " + responseBody);//Response: [[3], [1], [1], [1]]
+            // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
+            List<Long> postIds = new ArrayList<>();
+            for (int i = 2; i < responseBody.length(); i += 5) {
+                postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
+            }
+            System.out.println(postIds);
+
             results = query.select(post)
                     .from(post)
                     .where(post.post_id.notIn(viewedPostIds),
@@ -371,20 +373,22 @@ public class PostService {
                     .limit(limit)
                     .fetch();
         } else {
+            // 예외 처리 또는 기본값 할당
+            randomIndex = -1; // 예시로 -1을 할당했으나, 실제 상황에 맞게 수정해야 함
             results = query.select(post)
                     .from(post)
                     .where(post.post_id.notIn(viewedPostIds),
                             post.post_create_time.isNotNull(),
                             post.post_id.notIn(blames),
-                            post.member.id.notIn(targetMembers),
-                            post.post_id.in(postIds))
+                            post.member.id.notIn(targetMembers))
                     .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                     .limit(limit)
                     .fetch();
         }
+
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
-            throw new NotFoundException();
+            return (ResponseGetPost) getPostDtos;
         } else {
             getPostDtos = createResponseGetMemberPostDto(results, member_id);
             // 가져온 글들의 ID를 저장합니다.
@@ -488,5 +492,17 @@ public class PostService {
                 .fetch();
 
         return hashTags;
+    }
+
+    public void deletePost(Long post_id) throws NotFoundException {
+        Post post = checkPost(post_id);
+        if (post == null) {
+            throw new NotFoundException();
+        } else {
+            // Elasticsearch에서 해당 포스트의 내용 삭제
+            postContentESRespository.deleteById(post_id);
+            deleteHashTag(post);
+            postRepository.deleteById(post_id);
+        }
     }
 }
