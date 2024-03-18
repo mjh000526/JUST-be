@@ -10,35 +10,25 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-<<<<<<< HEAD
-    date = "2024-03-13T13:37:51+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
-=======
-<<<<<<< HEAD
-    date = "2024-03-17T14:02:16+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.21 (Oracle Corporation)"
-=======
-    date = "2024-03-14T18:31:05+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
->>>>>>> 1873eda5ea1d8642f1745319bf607ddf3962b063
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
+    date = "2024-03-17T20:03:33+0900",
+    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
 public class MemberMapperImpl implements MemberMapper {
 
     @Override
-    public Member toEntity(MemberDto dto) {
-        if ( dto == null ) {
+    public Member toEntity(MemberDto arg0) {
+        if ( arg0 == null ) {
             return null;
         }
 
         Member.MemberBuilder member = Member.builder();
 
-        member.id( dto.getId() );
-        member.email( dto.getEmail() );
-        member.provider( dto.getProvider() );
-        member.provider_id( dto.getProvider_id() );
-        List<Post> list = dto.getPosts();
+        member.id( arg0.getId() );
+        member.email( arg0.getEmail() );
+        member.provider( arg0.getProvider() );
+        member.provider_id( arg0.getProvider_id() );
+        List<Post> list = arg0.getPosts();
         if ( list != null ) {
             member.posts( new ArrayList<Post>( list ) );
         }
@@ -47,18 +37,18 @@ public class MemberMapperImpl implements MemberMapper {
     }
 
     @Override
-    public MemberDto toDto(Member entity) {
-        if ( entity == null ) {
+    public MemberDto toDto(Member arg0) {
+        if ( arg0 == null ) {
             return null;
         }
 
         MemberDto.MemberDtoBuilder memberDto = MemberDto.builder();
 
-        memberDto.id( entity.getId() );
-        memberDto.email( entity.getEmail() );
-        memberDto.provider( entity.getProvider() );
-        memberDto.provider_id( entity.getProvider_id() );
-        List<Post> list = entity.getPosts();
+        memberDto.id( arg0.getId() );
+        memberDto.email( arg0.getEmail() );
+        memberDto.provider( arg0.getProvider() );
+        memberDto.provider_id( arg0.getProvider_id() );
+        List<Post> list = arg0.getPosts();
         if ( list != null ) {
             memberDto.posts( new ArrayList<Post>( list ) );
         }

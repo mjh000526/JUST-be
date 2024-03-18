@@ -83,8 +83,8 @@ public class PostDocument {
         this.id = post.getPost_id();
         this.postContent = post.getPostContent();
         this.hashTag = post.getHashTagMaps().stream()
-                        .map(hashTagMap -> hashTagMap.getHashTag().getName())
-                        .collect(Collectors.toList());
+                .map(hashTagMap -> hashTagMap.getHashTag().getName())
+                .collect(Collectors.toList());
         this.postPicture = post.getPost_picture();
         this.postCreateTime = post.getPost_create_time();
         this.secret = post.getSecret();

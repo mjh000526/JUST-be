@@ -81,11 +81,7 @@ public class PostService {
     private GptService gptService;
 
     @Autowired
-<<<<<<< HEAD
     PostContentESRespository postContentESRespository;
-=======
-    private PostContentESRespository postContentESRespository;
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
     @Autowired
     private HashTagMapRepository hashTagMapRepository;
 
@@ -295,7 +291,7 @@ public class PostService {
 
         ResponsePost responsePost;
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
-        if (post.getLikedMembers().contains(member)) {
+        if (member.getLikedPosts().contains(post)) {
             post.removeLike(member);
             postDocument.setPostLikeSize(postDocument.getPostLikeSize() - 1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
@@ -323,7 +319,8 @@ public class PostService {
                 viewedPostIds.add(Long.parseLong(viewedPostId.trim()));
             }
         }
-
+        List<Post> posts = postRepository.findAll();
+        List<String> likePostHashTagName = getLikeHashTag(member_id);
         Optional<Member> member = memberRepository.findById(member_id);
         Member realMember = member.get();
 
@@ -336,21 +333,7 @@ public class PostService {
                 .where(blame.blameMemberId.eq(realMember.getId()))
                 .fetch();
         HttpClient httpClient = HttpClients.createDefault();
-        List<String> likePostHashTagName = new ArrayList<>();
-        System.out.println(like);
-        // 이전에 본 글들의 ID를 가져옵니다.
-        // Base64로 디코딩
-        byte[] decodedBytes = Base64.getDecoder().decode(like);
 
-// UTF-8으로 디코딩된 문자열
-        like = new String(decodedBytes, StandardCharsets.UTF_8);
-        System.out.println(like);
-        if (like != null) {
-            String[] likePostArray = like.split(", ");
-            for (String likePost : likePostArray) {
-                likePostHashTagName.add((likePost.trim()));
-            }
-        }
         Random random = new Random();
         int arrayLength = likePostHashTagName.size();
         int randomIndex = random.nextInt(arrayLength);
@@ -374,17 +357,31 @@ public class PostService {
             postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
         }
         System.out.println(postIds);
-        // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
-        List<Post> results = query.select(post)
-                .from(post)
-                .where(post.post_id.notIn(viewedPostIds),
-                        post.post_create_time.isNotNull(),
-                        post.post_id.notIn(blames),
-                        post.member.id.notIn(targetMembers),
-                        post.post_id.in(postIds))
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(limit)
-                .fetch();
+        List<Post> results = new ArrayList<>();
+        if (postIds != null ) {
+            // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
+            results = query.select(post)
+                    .from(post)
+                    .where(post.post_id.notIn(viewedPostIds),
+                            post.post_create_time.isNotNull(),
+                            post.post_id.notIn(blames),
+                            post.member.id.notIn(targetMembers),
+                            post.post_id.in(postIds))
+                    .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                    .limit(limit)
+                    .fetch();
+        } else {
+            results = query.select(post)
+                    .from(post)
+                    .where(post.post_id.notIn(viewedPostIds),
+                            post.post_create_time.isNotNull(),
+                            post.post_id.notIn(blames),
+                            post.member.id.notIn(targetMembers),
+                            post.post_id.in(postIds))
+                    .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                    .limit(limit)
+                    .fetch();
+        }
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
             throw new NotFoundException();
@@ -454,7 +451,7 @@ public class PostService {
         return response;
     }
 
-    public String getLikeHashTag(Long member_id) {
+    public List<String> getLikeHashTag(Long member_id) {
 
         QHashTagMap hashTagMap = QHashTagMap.hashTagMap;
         QHashTag hashTag = QHashTag.hashTag;
@@ -489,14 +486,7 @@ public class PostService {
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(5)
                 .fetch();
-        String hashTagsString = hashTags.toString();
-        // hashTags.toString()으로부터 UTF-8로 인코딩된 바이트 배열 생성
-        byte[] utf8Bytes = hashTagsString.getBytes(StandardCharsets.UTF_8);
 
-// UTF-8로 인코딩된 바이트 배열을 Base64로 인코딩하여 문자열로 변환
-        String encodeHashTag = Base64.getEncoder().encodeToString(utf8Bytes);
-        System.out.println(hashTags);
-
-        return encodeHashTag;
+        return hashTags;
     }
 }
