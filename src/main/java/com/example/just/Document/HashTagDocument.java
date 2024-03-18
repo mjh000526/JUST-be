@@ -29,8 +29,8 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Mapping(mappingPath = "elastic/tag-mapping.json")
-@Setting(settingPath = "elastic/post-setting.json")
+//@Mapping(mappingPath = "elastic/tag-mapping.json")
+//@Setting(settingPath = "elastic/post-setting.json")
 public class HashTagDocument implements Comparable<HashTagDocument>{
 
     @Id

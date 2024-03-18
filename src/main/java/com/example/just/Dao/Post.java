@@ -107,6 +107,7 @@ public class Post {
     public void removeLike(Member member) {
         if (likedMembers.contains(member)) {
             member.getLikedPosts().remove(this);
+            this.likedMembers.remove(member);
             post_like--;
         }
     }

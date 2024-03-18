@@ -34,5 +34,4 @@ public class JustApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JustApplication.class, args);
 	}
-
 }

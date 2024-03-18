@@ -28,7 +28,7 @@ public class GptDto {
             , int presencePenalty) {
         this.model = model;
         this.messages = new ArrayList<>();
-        this.messages.add(new Message("user", prompt+"\n 위 글에 대한 해시태그 3개만 만들어줘. 명사로만"));
+        this.messages.add(new Message("user", prompt+"\n 위 글에 대한 해시태그 3개만 만들어줘. 3글자 이상 명사로만"));
         this.temperature = temperature;
         this.maxTokens = maxTokens;
         this.topP = topP;

@@ -4,7 +4,15 @@ import static org.mockito.Mockito.when;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
+<<<<<<< HEAD
 import com.example.just.Dto.ResponseMemberDto;
+=======
+<<<<<<< HEAD
+import com.example.just.Dto.ResponseMemberDto;
+=======
+import com.example.just.Response.ResponseMemberDto;
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Service.KakaoService;
 import com.example.just.jwt.JwtFilter;
