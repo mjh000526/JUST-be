@@ -13,8 +13,16 @@ build/
 <<<<<<< HEAD
 <<<<<<<< HEAD:.gitignore
 /src/test/resources/application.yml
+<<<<<<< HEAD
+<<<<<<< HEAD
+/src/main/resources/templates/secret/AuthKey_2Y9664DW2T.p8
+=======
+/src/main/resources/templates/secret/.p8
+>>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
+=======
 /application.yml
 <<<<<<< HEAD
+>>>>>>> 5855445d7bc8ef3f27e9adfe6798588403df3aac
 
 =======
 /src/main/resources/templates/secret/.p8
