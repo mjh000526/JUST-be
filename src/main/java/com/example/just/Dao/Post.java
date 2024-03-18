@@ -100,6 +100,7 @@ public class Post {
     public void addLike(Member member) {
         if (!likedMembers.contains(member)) {
             member.getLikedPosts().add(this);//좋아한 글 List에 해당 글의 객체 추가
+            this.likedMembers.add(member);
             post_like++;
         }
     }
@@ -107,6 +108,7 @@ public class Post {
     public void removeLike(Member member) {
         if (likedMembers.contains(member)) {
             member.getLikedPosts().remove(this);
+            this.likedMembers.remove(member);
             post_like--;
         }
     }
