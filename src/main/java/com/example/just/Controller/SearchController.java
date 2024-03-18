@@ -33,13 +33,8 @@ public class SearchController {
     @GetMapping("/get/search/post")
     @Operation(summary = "게시글 내용 검색", description = "해당 keyword를 content에 포함하는 게시글 검색\n태그검색구현시 추후 변경 가능")
     @ApiResponses(value = {
-<<<<<<< HEAD
-            @ApiResponse(responseCode = "400", description = "{\n"
-                    + "  \"message\": \"로그인 후 검색가능합니다.\"\n"
-=======
             @ApiResponse(responseCode = "404", description = "{\n"
                     + "  \"message\": \"로그인 후 검색가능합니다.\", \"페이지를 초과하엿습니다.\"\n"
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
                     + "}")
     })
     public ResponseEntity getPosts(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
@@ -49,13 +44,8 @@ public class SearchController {
     @GetMapping("/get/search/tag")
     @Operation(summary = "태그로 게시 검색", description = "해당 태그와 일치하는 값을 가진 게시글 검색\n")
     @ApiResponses(value = {
-<<<<<<< HEAD
-            @ApiResponse(responseCode = "400", description = "{\n"
-                    + "  \"message\": \"로그인 후 검색가능합니다.\"\n"
-=======
             @ApiResponse(responseCode = "404", description = "{\n"
                     + "  \"message\": \"로그인 후 검색가능합니다.\", \"페이지를 초과하엿습니다.\"\n"
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
                     + "}")
     })
     public ResponseEntity getTagPost(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
@@ -64,10 +54,6 @@ public class SearchController {
 
     @GetMapping("/get/search/auto/tag")
     @Operation(summary = "태그 자동완성", description = "해당 keyword를 포함하는 태그 전체 검색\n 자음만으로는 검색불가무조건 모음까지 합친 글자로만 검색가능\n ex) ㅇ -> 검색불가\n   연-> 연애,연구")
-<<<<<<< HEAD
-    public ResponseEntity getAutoTag(@RequestParam(required = false, defaultValue = "") String keyword) {
-        return searchService.getAutoTag(keyword);
-=======
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "{\n"
                     + "  \"message\": \"태그가 존재하지 않습니다.\", \"페이지를 초과하엿습니다.\"\n"
@@ -75,6 +61,5 @@ public class SearchController {
     })
     public ResponseEntity getAutoTag(@RequestParam(required = false, defaultValue = "") String keyword,@RequestParam int page) {
         return searchService.getAutoTag(keyword,page-1);
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
     }
 }

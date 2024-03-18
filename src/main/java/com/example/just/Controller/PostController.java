@@ -148,4 +148,3 @@ public class PostController {
         return member_id;
     }
 }
-
