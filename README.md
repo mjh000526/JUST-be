@@ -1,8 +1,8 @@
 # JUST - 익명 고민 상담
 
-<<<<<<< HEAD
+
 ## 프로젝트 목적
-=======
+
 
 # Just Mobile App
 
