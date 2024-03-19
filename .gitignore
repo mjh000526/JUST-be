@@ -3,13 +3,23 @@ HELP.md
 .gradl
 
 =======
+<<<<<<< HEAD
+.gradl
+
+=======
 .gradle
 >>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
+<<<<<<< HEAD
+/src/test/resources/application.yml
+/src/main/resources/templates/secret/.p8
+
+=======
 <<<<<<< HEAD
 <<<<<<<< HEAD:.gitignore
 /src/test/resources/application.yml
@@ -32,6 +42,7 @@ build/
 >>>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6:just/.gitignore
 =======
 >>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 ### STS ###
 .apt_generated
 .classpath
@@ -43,7 +54,11 @@ build/
 <<<<<<< HEAD
 
 =======
+<<<<<<< HEAD
+
+=======
 >>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
@@ -56,7 +71,11 @@ bin/
 <<<<<<< HEAD
 
 =======
+<<<<<<< HEAD
+
+=======
 >>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -72,5 +91,9 @@ out/
 <<<<<<< HEAD
 .vscode/
 =======
+<<<<<<< HEAD
+.vscode/
+=======
 .vscode/
 >>>>>>> 0ba3d96e28582a106923c0002d0de00d86636cc6
+>>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
