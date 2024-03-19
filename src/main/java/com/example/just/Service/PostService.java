@@ -180,25 +180,29 @@ public class PostService {
         Long post_id = postDto.getPost_id();
         Member member = checkMember(member_id);
         Post checkPost = checkPost(post_id);
-        List<HashTagMap> hashTagMaps = checkPost.getHashTagMaps();
+        if (checkPost.getMember().getId().equals(member_id)) {
+            List<HashTagMap> hashTagMaps = checkPost.getHashTagMaps();
 
-        deleteHashTag(checkPost);
+            deleteHashTag(checkPost);
 
-        List<String> content = new ArrayList<>();
-        for (int i = 0; i < postDto.getPost_content().size(); i++) {
-            content.add(getConvertString(postDto.getPost_content().get(i)));
+            List<String> content = new ArrayList<>();
+            for (int i = 0; i < postDto.getPost_content().size(); i++) {
+                content.add(getConvertString(postDto.getPost_content().get(i)));
+            }
+            postDto.setPost_content(content);
+
+            checkPost.changePost(postDto, member, checkPost);
+
+            Post p = postRepository.save(checkPost);
+            saveHashTag(postDto.getHash_tage(), p);
+
+            postContentESRespository.save(new PostDocument(checkPost));
+
+            ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
+            return responsePutPostDto;
+        } else {
+            throw new NotFoundException();
         }
-        postDto.setPost_content(content);
-
-        checkPost.changePost(postDto, member, checkPost);
-
-        Post p = postRepository.save(checkPost);
-        saveHashTag(postDto.getHash_tage(), p);
-
-        postContentESRespository.save(new PostDocument(checkPost));
-
-        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
-        return responsePutPostDto;
     }
 
     private void deleteHashTag(Post post) {
@@ -361,27 +365,38 @@ public class PostService {
             // 응답 코드 확인
             int statusCode = response.getStatusLine().getStatusCode();
             System.out.println("Response Code: " + statusCode);
+            if (statusCode == 200) {
 
-            // 응답 데이터 읽기
-            String responseBody = EntityUtils.toString(response.getEntity());
-            System.out.println("Response: " + responseBody);//Response: [[3], [1], [1], [1]]
-            // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
-            List<Long> postIds = new ArrayList<>();
-            for (int i = 2; i < responseBody.length(); i += 5) {
-                postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
+                // 응답 데이터 읽기
+                String responseBody = EntityUtils.toString(response.getEntity());
+
+                // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
+                List<Long> postIds = new ArrayList<>();
+                for (int i = 2; i < responseBody.length(); i += 5) {
+                    postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
+                }
+
+                results = query.select(post)
+                        .from(post)
+                        .where(post.post_id.notIn(viewedPostIds),
+                                post.post_create_time.isNotNull(),
+                                post.post_id.notIn(blames),
+                                post.member.id.notIn(targetMembers),
+                                post.post_id.in(postIds))
+                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                        .limit(limit)
+                        .fetch();
+            } else {
+                results = query.select(post)
+                        .from(post)
+                        .where(post.post_id.notIn(viewedPostIds),
+                                post.post_create_time.isNotNull(),
+                                post.post_id.notIn(blames),
+                                post.member.id.notIn(targetMembers))
+                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                        .limit(limit)
+                        .fetch();
             }
-            System.out.println(postIds);
-
-            results = query.select(post)
-                    .from(post)
-                    .where(post.post_id.notIn(viewedPostIds),
-                            post.post_create_time.isNotNull(),
-                            post.post_id.notIn(blames),
-                            post.member.id.notIn(targetMembers),
-                            post.post_id.in(postIds))
-                    .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                    .limit(limit)
-                    .fetch();
         } else {
 
             results = query.select(post)
@@ -468,10 +483,10 @@ public class PostService {
         QHashTagMap hashTagMap = QHashTagMap.hashTagMap;
         QHashTag hashTag = QHashTag.hashTag;
         Member member = checkMember(member_id);
-        //회웡니 쓴글 다 가져오기
-        // List<PostLike> postLikes = postLikeRepository.findByMemberId(member_id);
-        //회웡니 쓴글 다 가져오기
+
+        //회웡니 쓴 글 다 가져오기
         List<Post> posts = member.getPosts();
+
         //회원이 좋아요 한글의 해시태그 ID 가져오기
         List<Long> hashTagMapsOfLike = query.select(hashTagMap.id)
                 .from(hashTagMap)
@@ -492,7 +507,7 @@ public class PostService {
             hashTagMaps.add(hashTagMapsOfLike.get(i));
         }
 
-        //해시태그맵의 ID랑 겹치는거 뽑아오기
+        //좋아요 한 글 쓴 글의 해시태그맵의 ID랑 겹치는거 뽑아오기
         List<String> hashTags = query.select(hashTag.name)
                 .from(hashTag)
                 .where(hashTag.id.in(hashTagMaps))
