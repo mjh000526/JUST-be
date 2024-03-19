@@ -94,7 +94,6 @@ public class Post {
         this.secret = secret;
         this.emoticon = emoticon;
         this.member = member;
-        this.member.updateMember(this);
     }
 
     public void addLike(Member member) {
