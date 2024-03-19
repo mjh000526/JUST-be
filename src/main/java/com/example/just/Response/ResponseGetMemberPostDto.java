@@ -48,19 +48,14 @@ public class ResponseGetMemberPostDto {
         this.post_like_size = post.getPost_like();
         this.blamed_count = Math.toIntExact(post.getBlamedCount());
         this.like = false;
-        for (int i = 0; i < post.getLikedMembers().size(); i++) {
-            System.out.println(post.getLikedMembers().get(i).getId());
-            if (post.getLikedMembers().get(i).getId() == member_id) {
-
-                this.like = true;
-                break;
-            }
+        if (member.getLikedPosts().contains(post)) {
+            this.like = true;
         }
     }
 
 
-    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps) {
-
+    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps,
+                                    Member member) {
         this.post_id = results.get(i).getPost_id();
         this.post_content = results.get(i).getPostContent();
         this.post_picture = results.get(i).getPost_picture();
@@ -81,6 +76,10 @@ public class ResponseGetMemberPostDto {
                 this.mine = false;
             }
         }
-
+        if (member.getLikedPosts().stream().anyMatch(post -> post.getPost_id().equals(results.get(i).getPost_id()))) {
+            this.like = true;
+        } else {
+            this.like = false;
+        }
     }
 }
