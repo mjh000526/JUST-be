@@ -45,7 +45,6 @@ public class PostController {
     @Operation(summary = "자기의 게시글을 조회하는 API", description = "<big> 자신의 게시글을 조회한다</big>")
     @GetMapping("/get/mypost")
     public ResponseEntity<Object> getMyPosts(HttpServletRequest request) throws NotFoundException {
-
         Long member_id = getAccessTokenOfMemberId(request);
         try {
             return ResponseEntity.ok(postService.getMyPost(member_id));
@@ -61,9 +60,8 @@ public class PostController {
     public ResponseEntity<Object> getMemberPosts(@RequestParam Long request_page, HttpServletRequest request) {
         String cursor = request.getHeader("viewed");
         Long member_id = getAccessTokenOfMemberId(request);
-        String like = request.getHeader("like");
         try {
-            return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id,like));
+            return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IOException e) {
@@ -92,9 +90,11 @@ public class PostController {
     @Operation(summary = "게시글 삭제 api", description = "\n 글이 삭제되면 value : 삭제 완료"
             + "\n 글이 없으면 value : 글이 없습니다.")
     @DeleteMapping("/delete/post")
-    public ResponseEntity<String> deletePost(@RequestParam Long post_id) throws NotFoundException {
+    public ResponseEntity<String> deletePost(@RequestParam Long post_id, HttpServletRequest request)
+            throws NotFoundException {
+        Long member_id = getAccessTokenOfMemberId(request);
         try {
-            postService.deletePost(post_id);
+            postService.deletePost(post_id, member_id);
             return ResponseEntity.ok("삭제 완료");
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();

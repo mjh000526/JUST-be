@@ -9,6 +9,7 @@ import com.example.just.Response.ResponseUpdateHashtagsDto;
 import com.example.just.Service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -115,11 +116,14 @@ public class AdminController {
     @ApiOperation(value = "포스트페이지에서 포스트 삭제 ")
     @Operation(summary = "게시글 삭제", description = "\n post_id 헤더로 받고 데이터베이스 비교 후 회원 삭제")
     @DeleteMapping("/posts/{post_id}")
-    public ResponsePost deletePost(@PathVariable Long post_id) throws NotFoundException {
+    public ResponsePost deletePost(@PathVariable Long post_id, HttpServletRequest request) throws NotFoundException {
+
         postService.deletePost(post_id);
         ResponsePost responsePost = new ResponsePost(post_id, "삭제 완료");
         return responsePost;
     }
+
+
 
     @ApiOperation(value = "포스트페이지 해시태그 수정 ")
     @Operation(summary = "해시태그 수정", description = "\n hashtag_id 헤더로 받고 내용을 수정하면 새로운 해시태그를 생성하여 저장 ex) id_101 -> id_104로")
