@@ -383,8 +383,7 @@ public class PostService {
                     .limit(limit)
                     .fetch();
         } else {
-            // 예외 처리 또는 기본값 할당
-            randomIndex = -1; // 예시로 -1을 할당했으나, 실제 상황에 맞게 수정해야 함
+
             results = query.select(post)
                     .from(post)
                     .where(post.post_id.notIn(viewedPostIds),
