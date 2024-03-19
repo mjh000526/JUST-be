@@ -46,8 +46,8 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
-    private NotificationService notificationService;
+//    @Autowired
+//    private NotificationService notificationService;
 
     @Autowired
     private JwtProvider jwtProvider;
