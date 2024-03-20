@@ -230,7 +230,7 @@ public class PostService {
     public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) throws NotFoundException { //글 조
         QPost post = QPost.post;
         QBlame blame = QBlame.blame;
-        Member member = checkMember(member_id);
+
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
         if (cursor != null) {
@@ -250,7 +250,7 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, member);
+            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, null);
             return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
