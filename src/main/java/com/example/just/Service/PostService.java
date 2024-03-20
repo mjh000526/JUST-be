@@ -194,7 +194,7 @@ public class PostService {
             checkPost.changePost(postDto, member, checkPost);
 
             Post p = postRepository.save(checkPost);
-            saveHashTag(postDto.getHash_tage(), p);
+            saveHashTag(postDto.getHash_tag(), p);
 
             postContentESRespository.save(new PostDocument(checkPost));
 
