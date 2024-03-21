@@ -165,7 +165,7 @@ public class PostService {
     public void deletePost(Long post_id, Long member_id) throws NotFoundException {
         Post post = checkPost(post_id);
         Member member = checkMember(member_id);
-        if (post == null || post.getMember() != member) {
+        if (post == null || post.getMember().getId() != member_id) {
             throw new NotFoundException();
         } else {
             // Elasticsearch에서 해당 포스트의 내용 삭제
