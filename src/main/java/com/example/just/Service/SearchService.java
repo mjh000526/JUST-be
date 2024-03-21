@@ -12,7 +12,6 @@ import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,6 +64,9 @@ public class SearchService {
                 .collect(Collectors.toList());
 
         List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+        if(searchList.isEmpty()){
+            return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
+        }
 
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
@@ -92,7 +94,7 @@ public class SearchService {
         }else {
             hashTagDocuments = hashTagESRepository.findByNameContaining(str,Sort.by(Direction.DESC,"tagCount"));
         }
-        if(hashTagDocuments.equals(null)) {
+        if(hashTagDocuments.isEmpty()) {
             return new ResponseEntity(new ResponseMessage("태그가 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
         }
         PageRequest pageRequest = PageRequest.of(page,10);
@@ -122,7 +124,9 @@ public class SearchService {
                 .collect(Collectors.toList());
 
         List<PostDocument> searchList = postContentESRespository.findByHashTagIn(tag);
-
+        if(searchList.isEmpty()){
+            return new ResponseEntity(new ResponseMessage("해당 태그을 가진 게시글이 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
+        }
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
                 .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
