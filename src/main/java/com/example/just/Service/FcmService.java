@@ -4,6 +4,12 @@ import com.example.just.Dto.FCMMessageDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import okhttp3.MediaType;
@@ -15,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,8 +39,11 @@ public class FcmService {
     //fcm토큰받기
     private String getAccessToken() throws IOException{
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("src/main/resources/key/just-firebase-key.json").getInputStream())
+                .fromStream(new ClassPathResource("key/just-firebase-key.json").getInputStream())
                 .createScoped(Arrays.asList("https://www.googleapi.com/auth/cloud-platform"));
+        System.out.println(googleCredentials.getQuotaProjectId());
+        System.out.println(googleCredentials);
+        System.out.println(googleCredentials.getAuthenticationType());
         googleCredentials.refreshIfExpired();
 
         return googleCredentials.getAccessToken().getTokenValue();
@@ -65,7 +76,7 @@ public class FcmService {
         return objectMapper.writeValueAsString(fcmMessage);
     }
 
-    public void sendMessageTo(String targetToken,String title,String body,String id,String isEnd)
+    public ResponseEntity sendMessageTo(String targetToken, String title, String body, String id, String isEnd)
             throws IOException {
         String message = makeMessage(targetToken,title,body,id,isEnd);
 
@@ -81,7 +92,17 @@ public class FcmService {
 
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
-        return;
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 
+    public ResponseEntity testMessage(String token) throws FirebaseMessagingException {
+        String result = FirebaseMessaging.getInstance().send(Message.builder()
+                .setNotification(Notification.builder()
+                        .setTitle("title")
+                        .setBody("body")
+                        .build())
+                .setToken(token)
+                .build());
+        return new ResponseEntity(result,HttpStatus.OK);
     }
 }

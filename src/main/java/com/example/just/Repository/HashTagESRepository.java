@@ -8,9 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HashTagESRepository extends ElasticsearchRepository<HashTagDocument,Long>,
-        CrudRepository<HashTagDocument,Long> {
-    List<HashTagDocument> findByNameContaining(String name,Sort sort);
+public interface HashTagESRepository extends ElasticsearchRepository<HashTagDocument, Long>,
+        CrudRepository<HashTagDocument, Long> {
+    List<HashTagDocument> findByNameContaining(String name, Sort sort);
     List<HashTagDocument> findAll(Sort sort);
 
 }

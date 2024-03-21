@@ -25,7 +25,7 @@ public class PutPostDto {
 
     private List<String> post_content;    //글 내용
 
-    private List<String> hash_tage;    //글 태그/글 태그
+    private List<String> hash_tag;    //글 태그/글 태그
 
     private Long post_picture;
 

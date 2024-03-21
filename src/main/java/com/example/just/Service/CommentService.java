@@ -61,7 +61,7 @@ public class CommentService {
         if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
             parentComment = commentRepository.findById(commentDto.getParent_comment_id())
                     .orElseThrow(() -> new NullPointerException("부모 댓글이 존재하지 않습니다."));
-            if(parentComment.getParent() != null){
+            if (parentComment.getParent() != null) {
                 throw new RuntimeException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
             }
         }
@@ -113,7 +113,7 @@ public class CommentService {
         if (post != null && post.getComments() != null) {
             comments = post.getComments().stream()
                     .filter(comment -> comment.getParent() == null)
-                    .map(comment -> new ResponseCommentDto(comment, member_id,""))
+                    .map(comment -> new ResponseCommentDto(comment, member_id, ""))
                     .collect(Collectors.toList());
         }
 
@@ -137,32 +137,43 @@ public class CommentService {
         return new ResponsePostCommentDtoBefore(post.getPostContent(), comments);
     }
 
-    public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
+    public ResponseEntity<String> deleteComment(Long postId, Long commentId, Long member_id) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
-        comment.setChildren(null);
-        PostDocument postDocument = postContentESRespository.findById(postId).get();
-        postDocument.setCommentSize(postDocument.getCommentSize() - 1);
-        postContentESRespository.save(postDocument);
-        commentRepository.deleteById(commentId);
-        return ResponseEntity.ok("ok");
+        if (comment.getMember().getId() == member_id) {
+            comment.setChildren(null);
+            PostDocument postDocument = postContentESRespository.findById(postId).get();
+            postDocument.setCommentSize(postDocument.getCommentSize() - 1);
+            postContentESRespository.save(postDocument);
+            commentRepository.deleteById(commentId);
+            return ResponseEntity.ok("ok");
+        } else {
+            return ResponseEntity.status(403).body("권한이 없습니다.");
+        }
     }
 
     public ResponseEntity<String> putComment(Long postId, Long commentId,
-                                             PutCommentDto commentDto) {
+                                             PutCommentDto commentDto, Long member_id) {
         Comment comment = commentRepository.findById(commentId).get();
-        if(comment == null) ResponseEntity.status(404).body("댓글이 존재하지 않습니다.");
+        if (comment == null) {
+            ResponseEntity.status(404).body("댓글이 존재하지 않습니다.");
+        }
 
         Post post = postRepository.findById(postId).get();
-        if(post == null) ResponseEntity.status(404).body("게시물이 존재하지 않습니다.");
+        if (post == null) {
+            ResponseEntity.status(404).body("게시물이 존재하지 않습니다.");
+        }
+        if (comment.getMember().getId() == member_id) {
+            comment.setComment_content(commentDto.getComment_content());
+            // 업데이트된 댓글을 저장합니다.
+            commentRepository.save(comment);
 
-        comment.setComment_content(commentDto.getComment_content());
-        // 업데이트된 댓글을 저장합니다.
-        commentRepository.save(comment);
-
-        return ResponseEntity.ok(comment.getComment_content());
+            return ResponseEntity.ok(comment.getComment_content());
+        } else {
+            return ResponseEntity.status(403).body("권한이 없습니다.");
+        }
     }
 
     public ResponseEntity<String> blameComment(Long postId, Long commentId) {
@@ -217,5 +228,3 @@ public class CommentService {
         return commentRepository.findAll();
     }
 }
-
-
