@@ -165,7 +165,7 @@ public class PostService {
     public void deletePost(Long post_id, Long member_id) throws NotFoundException {
         Post post = checkPost(post_id);
         Member member = checkMember(member_id);
-        if (post == null || post.getMember() != member) {
+        if (post == null || post.getMember().getId() != member_id) {
             throw new NotFoundException();
         } else {
             // Elasticsearch에서 해당 포스트의 내용 삭제
@@ -230,7 +230,7 @@ public class PostService {
     public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) throws NotFoundException { //글 조
         QPost post = QPost.post;
         QBlame blame = QBlame.blame;
-        Member member = checkMember(member_id);
+
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
         if (cursor != null) {
@@ -250,7 +250,7 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, member);
+            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, null);
             return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
