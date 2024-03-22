@@ -45,7 +45,7 @@ public class KakaoService {
         try{
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
-            userbyEmail = userRepository.findByEmail(user.getEmail());
+            userbyEmail = userRepository.findByEmail(user.getProvider_id()+"@kakao.com");
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 return new ResponseEntity<>("/api/kakao/signup", HttpStatus.OK);
@@ -88,7 +88,7 @@ public class KakaoService {
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 userbyEmail = Member.builder()
-                        .email(user.getEmail())
+                        .email(user.getProvider_id()+"@kakao.com")
                         .provider(user.getProvider())
                         .provider_id(user.getProvider_id())
                         .authority(Role.ROLE_USER)

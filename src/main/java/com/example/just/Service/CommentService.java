@@ -79,7 +79,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         Comment comment = new Comment();
-        comment.setComment_content(commentDto.getComment_content());
+        comment.setComment_content(commentDto.getComment_content().strip());
         comment.setPost(post);
         comment.setMember(member);
         comment.setParent(parentComment);
