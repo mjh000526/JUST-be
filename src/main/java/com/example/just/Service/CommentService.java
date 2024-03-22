@@ -12,6 +12,7 @@ import com.example.just.Repository.PostRepository;
 import com.example.just.Response.ResponseCommentDtoBefore;
 import com.example.just.Response.ResponseMyCommentDto;
 import com.example.just.Response.ResponsePostCommentDtoBefore;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import com.example.just.Response.ResponsePostCommentDto;
 import com.example.just.Response.ResponseCommentDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,12 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private FcmService fcmService;
+
+    @Value("${fcm.token}")
+    String fcmToken;
+
 //    @Autowired
 //    private NotificationService notificationService;
 
@@ -55,7 +63,7 @@ public class CommentService {
     @Autowired
     PostContentESRespository postContentESRespository;
 
-    public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
+    public Comment createComment(Long postId, Long member_id, CommentDto commentDto) throws FirebaseMessagingException {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
         if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
@@ -87,12 +95,14 @@ public class CommentService {
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
 //            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
+            fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요!",parentComment.getMember().getFcmToken());
 
-        } else if (parentComment == null) {
+        } else if (parentComment == null) { //아닐경우는 부모댓글
             PostDocument postDocument = postContentESRespository.findById(postId).get();
             postDocument.setCommentSize(postDocument.getCommentSize() + 1);
             postContentESRespository.save(postDocument);
 //            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
+            fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요!",receiver.get().getFcmToken());
         }
 
         return commentRepository.save(comment);

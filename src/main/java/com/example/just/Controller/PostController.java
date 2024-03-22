@@ -4,6 +4,7 @@ import com.example.just.Dto.*;
 import com.example.just.Service.FcmService;
 import com.example.just.Service.PostService;
 import com.example.just.jwt.JwtProvider;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -158,9 +159,9 @@ public class PostController {
 
     @ApiOperation(value = "알림 리턴")
     @GetMapping("/get/notification")
-    public ResponseEntity getMessage() throws IOException {
+    public void getMessage() throws FirebaseMessagingException {
 
         System.out.println(fcmToken);
-        return fcmService.sendMessageTo(fcmToken,"title","body","id","isEnd");
+        fcmService.sendMessageByToken("title","body",fcmToken);
     }
 }

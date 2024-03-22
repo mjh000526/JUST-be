@@ -38,7 +38,7 @@ public class KakaoService {
     private String address;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
-    public ResponseEntity loginKakao(String token) throws IOException{
+    public ResponseEntity loginKakao(String token,String fcmToken) throws IOException{
         String accessToken = null;
         String refreshToken = null;
         Member userbyEmail = null;
@@ -65,6 +65,7 @@ public class KakaoService {
                 .nickname(userbyEmail.getNickname())
                 .blameCount(userbyEmail.getBlameCount())
                 .blamedCount(userbyEmail.getBlamedCount())
+                .fcmToken(fcmToken)
                 .refreshToken(refreshToken)
                 .build();
         userRepository.save(userbyEmail);
@@ -76,7 +77,7 @@ public class KakaoService {
     }
 
     //카카오 토큰으로 회원가입
-    public ResponseEntity signUpKakao(String token, String nickname){
+    public ResponseEntity signUpKakao(String token, String fcmToken, String nickname){
         String accesstoken = null;
         String refreshtoken = null;
         Member userbyEmail = null;
@@ -92,6 +93,7 @@ public class KakaoService {
                         .provider_id(user.getProvider_id())
                         .authority(Role.ROLE_USER)
                         .nickname(nickname)
+                        .fcmToken(fcmToken)
                         .blameCount(0)
                         .blamedCount(0)
                         .build();
