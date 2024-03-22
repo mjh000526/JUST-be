@@ -7,6 +7,7 @@ import com.example.just.Response.ResponsePostCommentDto;
 import com.example.just.Response.ResponsePostCommentDtoBefore;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +27,7 @@ public class CommentController {
 
     @Autowired
     private JwtProvider jwtProvider;
+
 
     private String errorMassage = "{\n"
             + "  \"comment_id\": \"\",\n"
@@ -71,7 +73,7 @@ public class CommentController {
     @PostMapping("/post/{post_id}/comments")
     public ResponseEntity<ResponseCommentDto> createComment(@PathVariable Long post_id,
                                                             @RequestBody CommentDto comment_dto,
-                                                            HttpServletRequest req) {
+                                                            HttpServletRequest req) throws FirebaseMessagingException {
         Comment comment = null;
         Long member_id = null;
         try {
