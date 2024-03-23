@@ -41,7 +41,7 @@ public class AppleService {
     @Autowired
     private JwtProvider jwtProvider;
 
-    public ResponseEntity loginApple(String id){
+    public ResponseEntity loginApple(String id,String fcmToken){
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
         Member user = userRepository.findByEmail(apple_email);
         if(user == null){
@@ -52,6 +52,7 @@ public class AppleService {
         String accesstoken = jwtProvider.createaccessToken(user);
         String refreshtoken = jwtProvider.createRefreshToken(user);
         user.setRefreshToken(refreshtoken);
+        user.setFcmToken(fcmToken);
         userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
@@ -60,7 +61,7 @@ public class AppleService {
         return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
 
-    public ResponseEntity signUpApple(String id,String nickname){
+    public ResponseEntity signUpApple(String id,String fcmToken, String nickname){
         String apple_email = this.userIdFromApple(id)+ "@apple.com";
         Member user = userRepository.findByEmail(apple_email);
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -72,6 +73,7 @@ public class AppleService {
                     .provider_id(this.userIdFromApple(id))//apple고유 id
                     .nickname(nickname)
                     .authority(Role.ROLE_USER)
+                    .fcmToken(fcmToken)
                     .blameCount(0)
                     .blamedCount(0)
                     .build();

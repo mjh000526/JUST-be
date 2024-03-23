@@ -1,32 +1,61 @@
 package com.example.just.Controller;
 
 import com.example.just.Service.NotificationService;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
-import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class NotificationController {
-    private final NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
-    @ApiOperation(value = "알림", notes = "<big>알림 통신 연결</big>lastEventID는 값을 넣지않고, 헤더에 토큰만 있으면 됨\n" +
-            "not_type : comment(댓글달림),postLike(게시글에 좋아요), commentLike(댓글좋아요), bigComment(대댓글달림)로 어떤 종류인지 판단, <big>String타입</big>\n" +
-            "not_post_id : 알림의 target 게시글 id, <big>int</big> \n" +
-            "not_datetime : 알람이온 시간(일단 필요해서 넣었음), <big>DateTime</big>\n" +
-            "receiver : 수신자(게시글 작성자인 본인을 말함)id, <big>int</big>\n" +
-            "senderId : 송신자id, <big>int</big>")
-    @GetMapping(value = "/noti", produces = "text/event-stream")
-    @ResponseStatus(HttpStatus.OK)
-    public SseEmitter subscribe(HttpServletRequest request, @RequestHeader(value = "Last_Event-ID",required = false,defaultValue = "") String lastEventId){
+    @Operation(summary = "알림 조회", description = "헤더에 있는 값으로 판별\n")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{\n"
+                    + "  \"not_id\": \"\",\n"
+                    + "  \"not_type\": 0\n"
+                    + "  \"not_datetime\": \"\",\n"
+                    + "  \"not_is_read\": 0\n"
+                    + "  \"receiver_id\": 0\n"
+                    + "  \"sender_id\": true\n"
+                    + "}"),
+            @ApiResponse(responseCode = "404", description = "{\n"
+                    + "  \"message\": \"페이지를 초과하였습니다.\"\n"
+                    + "}")
+    })
+    @GetMapping("/notifications")
+    public ResponseEntity getNotificationList(HttpServletRequest request,int page){
+        return notificationService.getNotificationList(request,page-1);
+    }
 
-        return notificationService.subscribe(request,lastEventId);
-
+    @Operation(summary = "알림 읽음 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{\n"
+                    + "  \"not_id\": \"\",\n"
+                    + "  \"not_type\": 0\n"
+                    + "  \"not_datetime\": \"\",\n"
+                    + "  \"not_is_read\": 0\n"
+                    + "  \"receiver_id\": 0\n"
+                    + "  \"sender_id\": true\n"
+                    + "}"),
+            @ApiResponse(responseCode = "404", description = "{\n"
+                    + "  \"message\": \"사용자의 알림이 아닙니다.\"\n"
+                    + "}")
+    })
+    @PutMapping("/check/notifications")
+    public ResponseEntity getNotificationList(HttpServletRequest request,@RequestParam Long not_id){
+        return notificationService.checkNotification(request,not_id);
     }
 }
