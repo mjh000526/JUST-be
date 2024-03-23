@@ -4,15 +4,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Role;
-<<<<<<< HEAD
-import com.example.just.Dto.ResponseMemberDto;
-=======
-<<<<<<< HEAD
-import com.example.just.Dto.ResponseMemberDto;
-=======
 import com.example.just.Response.ResponseMemberDto;
->>>>>>> aea347125278b8318ff91f76045a9a2d7fb0c828
->>>>>>> 8601bc98eebe8c6d385e6609da4ad3cfa1aa969f
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Service.KakaoService;
 import com.example.just.jwt.JwtFilter;
@@ -80,7 +72,7 @@ public class KakaoTest {
         when(memberRepository.save(Mockito.any())).thenReturn(SignUpRequest());
 
         //when
-        ResponseEntity<ResponseMemberDto> member = kakaoService.signUpKakao(accessToken, nickName);
+        ResponseEntity<ResponseMemberDto> member = kakaoService.signUpKakao(accessToken, "",nickName);
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -96,10 +88,10 @@ public class KakaoTest {
 //        when(jwtProvider.createRefreshToken(Mockito.any())).thenReturn("mockedRefreshToken");
         when(memberRepository.findByEmail(Mockito.any())).thenReturn(SignUpRequest());
         when(memberRepository.save(Mockito.any())).thenReturn(SignUpRequest());
-        kakaoService.signUpKakao(accessToken, "테스트닉네임");
+        kakaoService.signUpKakao(accessToken, "","테스트닉네임");
 
         //when
-        ResponseEntity<ResponseMemberDto> member = kakaoService.loginKakao(accessToken);
+        ResponseEntity<ResponseMemberDto> member = kakaoService.loginKakao(accessToken,"");
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -114,7 +106,7 @@ public class KakaoTest {
         when(memberRepository.findByEmail(Mockito.any())).thenReturn(null);
 
         //when
-        ResponseEntity<String> member = kakaoService.loginKakao(accessToken);
+        ResponseEntity<String> member = kakaoService.loginKakao(accessToken,"");
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -129,7 +121,7 @@ public class KakaoTest {
 
         //then
         Assertions.assertThrows(NullPointerException.class, () -> {
-            kakaoService.loginKakao(invalidToken);
+            kakaoService.loginKakao(invalidToken,"");
         });
     }
 
