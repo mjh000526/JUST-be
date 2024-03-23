@@ -32,6 +32,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath email = createString("email");
 
+    public final StringPath fcmToken = createString("fcmToken");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final ListPath<Comment, QComment> likedComments = this.<Comment, QComment>createList("likedComments", Comment.class, QComment.class, PathInits.DIRECT2);
@@ -39,8 +41,6 @@ public class QMember extends EntityPathBase<Member> {
     public final ListPath<Post, QPost> likedPosts = this.<Post, QPost>createList("likedPosts", Post.class, QPost.class, PathInits.DIRECT2);
 
     public final StringPath nickname = createString("nickname");
-
-    public final ListPath<Notification, QNotification> notifications = this.<Notification, QNotification>createList("notifications", Notification.class, QNotification.class, PathInits.DIRECT2);
 
     public final ListPath<Post, QPost> posts = this.<Post, QPost>createList("posts", Post.class, QPost.class, PathInits.DIRECT2);
 

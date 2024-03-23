@@ -26,27 +26,27 @@ public class MemberContorller {
 
     @PostMapping("/kakao/login")
     @ApiOperation(value = "카카오 로그인 api", notes = "액세스토큰만 넘기기, 회원가입이 안되어있으면 /api/kakao/signup를 string로 리턴함")
-    public ResponseEntity loginKakao(@RequestParam String access_token) throws IOException{
-        return kakaoService.loginKakao(access_token);
+    public ResponseEntity loginKakao(@RequestParam String access_token,@RequestParam String fcmToken) throws IOException{
+        return kakaoService.loginKakao(access_token,fcmToken);
     }
 
     @PostMapping("/kakao/signup")
     @ApiOperation(value = "카카오 회원가입 api", notes = "닉네임이랑 액세스토큰 같이 넘기기")
-    public ResponseEntity signUpKakao(@RequestParam String access_token,@RequestParam String nickname){
-        return kakaoService.signUpKakao(access_token,nickname);
+    public ResponseEntity signUpKakao(@RequestParam String access_token,@RequestParam String fcmToken,@RequestParam String nickname){
+        return kakaoService.signUpKakao(access_token,fcmToken,nickname);
     }
 
     @PostMapping("/apple/login")
     @ApiOperation(value = "애플 로그인 api", notes = "identify token값, 회원가입이 안되어있으면 /api/apple/signup를 string로 리턴함")
-    public ResponseEntity loginApple(@RequestParam String id_token){
-        return appleService.loginApple(id_token);
+    public ResponseEntity loginApple(@RequestParam String id_token,@RequestParam String fcmToken){
+        return appleService.loginApple(id_token,fcmToken);
     }
 
     @PostMapping("/apple/signup")
     @ApiOperation(value = "애플 회원가입 api", notes = "identify token값 닉네임 값을 파라미터로 줘야함 null이어도 보내줘야함")
     public ResponseEntity signUpApple(@RequestParam String id_token,
-                                      @RequestParam String nickname){
-        return appleService.signUpApple(id_token,nickname);
+                                      @RequestParam String nickname,@RequestParam String fcmToken){
+        return appleService.signUpApple(id_token,fcmToken,nickname);
     }
 
     @PostMapping("/change/nickName")
