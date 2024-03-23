@@ -6,9 +6,9 @@ import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.NotificationRepository;
 import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseNotification;
-import com.example.just.Response.ResponseSearchDto;
+
 import com.example.just.jwt.JwtProvider;
-import com.google.api.Http;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
