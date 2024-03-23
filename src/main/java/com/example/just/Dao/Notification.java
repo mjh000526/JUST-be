@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,27 +18,27 @@ import java.util.List;
 @Table(name = "notification")
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification implements Serializable {
+public class Notification{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notId;
 
-    @Column(name = "not_type")  //알림 타입
+    @Column(name = "not_object_id")   //알림 내용
+    private Long notObjectId;
+
+    @Column(name = "not_type")
     private String notType;
 
-    @Column(name = "not_post_id")   //알림 내용
-    private Long notPostId;
-
     @Column(name = "not_datetime")  //알림 발생 시일
+    @CreationTimestamp
     private Date notDatetime;
-//
-//    @Column(name = "not_read_datetime") //알림 읽은 시간
-//    private Date not_read_dateTime;
 
     @Column(nullable = false)
     private Boolean notIsRead; //알림 읽음 여부
+
     @ManyToOne
     @JoinColumn(name = "id")
     @OnDelete(action = OnDeleteAction.CASCADE) //알림을 받을 member
