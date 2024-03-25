@@ -83,7 +83,7 @@ public class CommentController {
 
         } catch (NullPointerException e) {
             return ResponseEntity.status(404).body(new ResponseCommentDto("해당 부모 댓글 없음"));
-        } catch (RuntimeException e) {
+        } catch (IllegalAccessException e) {
             return ResponseEntity.status(404).body(new ResponseCommentDto("대댓글에는 대댓글 작성 불가"));
         }
         return ResponseEntity.ok(new ResponseCommentDto(comment, member_id, "입력 완료"));

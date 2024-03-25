@@ -2,8 +2,10 @@ package com.example.just.Service;
 
 import com.example.just.Dao.Notification;
 import com.example.just.Dto.Message;
+import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.NotificationRepository;
+import com.example.just.Repository.PostRepository;
 import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseNotification;
 import com.example.just.Response.ResponseSearchDto;
@@ -32,12 +34,25 @@ public class NotificationService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
     public ResponseEntity getNotificationList(HttpServletRequest request,int page){
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         List<Notification> notifications = notificationRepository.findAllByReceiver(memberRepository.findById(member_id).get());
         List<ResponseNotification> result = notifications.stream()
-                .map(noti -> new ResponseNotification(noti))
+                .map(noti -> {
+                    Object object;
+                    if(noti.getNotType().equals("post")){
+                        object =
+                    }
+                    noti.get
+                    return new ResponseNotification(noti);
+                })
                 .collect(Collectors.toList());
 
         PageRequest pageRequest = PageRequest.of(page,10);
