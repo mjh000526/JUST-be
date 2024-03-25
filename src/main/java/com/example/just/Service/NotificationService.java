@@ -12,9 +12,9 @@ import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseNotiCommentDto;
 import com.example.just.Response.ResponseNotiPostDto;
 import com.example.just.Response.ResponseNotification;
-import com.example.just.Response.ResponseSearchDto;
+
 import com.example.just.jwt.JwtProvider;
-import com.google.api.Http;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
