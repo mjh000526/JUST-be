@@ -21,7 +21,7 @@ public class ResponseNotification {
 
     private Long not_id;
 
-    private Long not_object_id;
+    private Object object;
 
     private String not_type;
 
@@ -33,9 +33,9 @@ public class ResponseNotification {
 
     private Long sender_id;
 
-    public ResponseNotification(Notification notification){
+    public ResponseNotification(Notification notification,Object object){
         not_id = notification.getNotId();
-        not_object_id = notification.getNotObjectId();
+        this.object = object;
         not_type = notification.getNotType();
         not_datetime = notification.getNotDatetime();
         not_is_read = notification.getNotIsRead();
