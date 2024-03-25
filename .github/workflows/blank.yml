@@ -50,9 +50,11 @@ jobs:
       - name: Copy Firebase
         env:
           FIREBASE: ${{ secrets.FIREBASE }}
-          FIREBASE_DIR: src/main/resources
+          FIREBASE_DIR: src/main/resources/key
           FIREBASE_DIR_FILE_NAME: just-firebase-key.json
-        run: echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
+        run: |
+          mkdir -p $FIREBASE_DIR  # -p 플래그는 이미 존재하는 경우 경고를 피하고 재귀적으로 폴더를 만듭니다.
+          echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
 
       # (3) Gradle build (Test 제외)
       - name: Build with Gradle
