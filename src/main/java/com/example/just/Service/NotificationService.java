@@ -1,12 +1,16 @@
 package com.example.just.Service;
 
+import com.example.just.Dao.Comment;
 import com.example.just.Dao.Notification;
+import com.example.just.Dao.Post;
 import com.example.just.Dto.Message;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
 import com.example.just.Repository.NotificationRepository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.Response.ResponseMessage;
+import com.example.just.Response.ResponseNotiCommentDto;
+import com.example.just.Response.ResponseNotiPostDto;
 import com.example.just.Response.ResponseNotification;
 import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
@@ -46,12 +50,14 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findAllByReceiver(memberRepository.findById(member_id).get());
         List<ResponseNotification> result = notifications.stream()
                 .map(noti -> {
-                    Object object;
                     if(noti.getNotType().equals("post")){
-                        object =
+                        Post post = postRepository.findById(noti.getNotObjectId()).get();
+                        return new ResponseNotification(noti,new ResponseNotiPostDto(post));
                     }
-                    noti.get
-                    return new ResponseNotification(noti);
+                    else {
+                        Comment comment = commentRepository.findById(noti.getNotObjectId()).get();
+                        return new ResponseNotification(noti,new ResponseNotiCommentDto(comment));
+                    }
                 })
                 .collect(Collectors.toList());
 
@@ -75,6 +81,25 @@ public class NotificationService {
         }
         notification.setNotIsRead(true);
         notificationRepository.save(notification);
-        return new ResponseEntity(new ResponseNotification(notification), HttpStatus.OK);
+        if(notification.getNotType().equals("post")){
+            Post post = postRepository.findById(notification.getNotObjectId()).get();
+            return new ResponseEntity(new ResponseNotification(notification,new ResponseNotiPostDto(post)),HttpStatus.OK);
+        }
+        else{
+            Comment comment = commentRepository.findById(notification.getNotObjectId()).get();
+            return new ResponseEntity(new ResponseNotification(notification,new ResponseNotiCommentDto(comment)),HttpStatus.OK);
+        }
+
+    }
+
+    public ResponseEntity allCheckNotification(HttpServletRequest request){
+        String token = jwtProvider.getAccessToken(request);
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+        List<Notification> notifications = notificationRepository.findAllByReceiver(memberRepository.findById(member_id).get());
+        for (Notification notification : notifications) {
+            notification.setNotIsRead(true);
+        }
+        notificationRepository.saveAll(notifications);
+        return new ResponseEntity(new ResponseMessage("읽음 처리 완료"),HttpStatus.OK);
     }
 }
