@@ -55,7 +55,18 @@ public class NotificationController {
                     + "}")
     })
     @PutMapping("/check/notifications")
-    public ResponseEntity getNotificationList(HttpServletRequest request,@RequestParam Long not_id){
+    public ResponseEntity checkNotification(HttpServletRequest request,@RequestParam Long not_id){
         return notificationService.checkNotification(request,not_id);
+    }
+
+    @Operation(summary = "알림 전체 읽음")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{\n"
+                    + "  \"message\": \"읽음 처리 완료\",\n"
+                    + "}"),
+    })
+    @PutMapping("/check/all/notifications")
+    public ResponseEntity checkAllNotification(HttpServletRequest request){
+        return notificationService.allCheckNotification(request);
     }
 }
