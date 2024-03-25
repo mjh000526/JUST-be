@@ -50,7 +50,7 @@ jobs:
       - name: Copy Firebase
         env:
           FIREBASE: ${{ secrets.FIREBASE }}
-          FIREBASE_DIR: src/main/resources/key
+          FIREBASE_DIR: src/main/resources
           FIREBASE_DIR_FILE_NAME: just-firebase-key.json
         run: echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
 
