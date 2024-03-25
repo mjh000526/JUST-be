@@ -68,14 +68,15 @@ public class CommentService {
     @Autowired
     PostContentESRespository postContentESRespository;
 
-    public Comment createComment(Long postId, Long member_id, CommentDto commentDto) throws FirebaseMessagingException {
+    public Comment createComment(Long postId, Long member_id, CommentDto commentDto)
+            throws FirebaseMessagingException, IllegalAccessException {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
         if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
             parentComment = commentRepository.findById(commentDto.getParent_comment_id())
                     .orElseThrow(() -> new NullPointerException("부모 댓글이 존재하지 않습니다."));
             if (parentComment.getParent() != null) {
-                throw new RuntimeException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
+                throw new IllegalAccessException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
             }
         }
 
