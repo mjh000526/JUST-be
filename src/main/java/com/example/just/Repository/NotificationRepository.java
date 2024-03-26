@@ -16,5 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
 
     List<Notification> findAllByReceiver(Member member);
 
+    void deleteAllByNotObjectIdAndNotType(Long notObjectId,String notType);
+
 
 }
