@@ -109,7 +109,7 @@ public class CommentService {
                         .senderId(member_id)
                         .build()
                 );
-                fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요!",parentComment.getMember().getFcmToken());
+                fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",parentComment.getMember().getFcmToken());
             }
         } else if (parentComment == null) { //아닐경우는 부모댓글
             PostDocument postDocument = postContentESRespository.findById(postId).get();
@@ -125,7 +125,7 @@ public class CommentService {
                         .senderId(member_id)
                         .build()
                 );
-                fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요!",receiver.get().getFcmToken());
+                fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",receiver.get().getFcmToken());
             }
         }
 
