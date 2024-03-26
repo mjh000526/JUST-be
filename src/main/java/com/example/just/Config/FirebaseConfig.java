@@ -23,7 +23,7 @@ public class FirebaseConfig {
         System.out.println("컨피그는실행됨");
         try {
             FileInputStream serviceAccount =
-                    new FileInputStream("key/just-firebase-key.json");
+                    new FileInputStream(serviceAccountFilePath);
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
