@@ -43,7 +43,7 @@ jobs:
       - name: Copy Firebase
         env:
           FIREBASE: ${{ secrets.FIREBASE }}
-          FIREBASE_DIR: /home/ubuntu/app/src/main/resources/key
+          FIREBASE_DIR: src/main/resources/key
           FIREBASE_DIR_FILE_NAME: just-firebase-key.json
         run: |
           mkdir -p $FIREBASE_DIR
