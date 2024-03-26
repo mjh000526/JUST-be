@@ -30,7 +30,7 @@ public class FirebaseConfig {
             FirebaseApp.initializeApp(options);
             System.out.println("firebase 실행 : " + options);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
