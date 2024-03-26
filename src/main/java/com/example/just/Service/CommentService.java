@@ -182,6 +182,7 @@ public class CommentService {
             postDocument.setCommentSize(postDocument.getCommentSize() - 1);
             postContentESRespository.save(postDocument);
             commentRepository.deleteById(commentId);
+            notificationRepository.deleteAllByNotObjectIdAndNotType(commentId,"comment");
             return ResponseEntity.ok("ok");
         } else {
             return ResponseEntity.status(403).body("권한이 없습니다.");
