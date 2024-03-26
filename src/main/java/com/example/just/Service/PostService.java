@@ -21,6 +21,7 @@ import com.example.just.Repository.BlameRepository;
 
 import com.example.just.Repository.HashTagESRepository;
 import com.example.just.Repository.HashTagMapRepository;
+import com.example.just.Repository.NotificationRepository;
 import com.example.just.Repository.PostLikeRepository;
 import com.example.just.Response.ResponseGetMemberPostDto;
 import com.example.just.Response.ResponsePutPostDto;
@@ -71,6 +72,9 @@ public class PostService {
 
     @Autowired
     private HashTagESRepository hashTagESRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
     @Autowired
     private BlameRepository blameRepository;
     @Autowired
@@ -527,6 +531,7 @@ public class PostService {
             postContentESRespository.deleteById(post_id);
             deleteHashTag(post);
             postRepository.deleteById(post_id);
+            notificationRepository.deleteAllByNotObjectIdAndNotType(post_id,"post");
         }
     }
 }
