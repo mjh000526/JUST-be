@@ -20,6 +20,7 @@ public class FirebaseConfig {
     private String projectId;
     @PostConstruct
     public void init(){
+        System.out.println("컨피그는실행됨");
         try {
             FileInputStream serviceAccount =
                     new FileInputStream(serviceAccountFilePath);
