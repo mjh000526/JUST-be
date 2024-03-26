@@ -27,6 +27,7 @@ public class FirebaseConfig {
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
             FirebaseApp.initializeApp(options);
+            System.out.println("firebase 실행 : " + options);
         } catch (Exception e) {
             e.printStackTrace();
         }
