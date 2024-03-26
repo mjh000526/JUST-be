@@ -84,7 +84,7 @@ public class KakaoService {
         try{
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
-            userbyEmail = userRepository.findByEmail(user.getEmail());
+            userbyEmail = userRepository.findByEmail(user.getProvider_id()+"@kakao.com");
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 userbyEmail = Member.builder()
@@ -144,7 +144,6 @@ public class KakaoService {
             JsonParser parser = new JsonParser();
             JsonElement elem = parser.parse(result);
             id = elem.getAsJsonObject().get("id").getAsString();
-            email = elem.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             user = MemberDto.builder().provider_id(id).email(email).provider("kakao").build();
             br.close();
         }catch (IOException e){

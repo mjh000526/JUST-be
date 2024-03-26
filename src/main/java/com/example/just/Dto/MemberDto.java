@@ -22,9 +22,9 @@ public class MemberDto {
 
     private Timestamp create_time;
 
-    private String email;
-
     private String provider;
+
+    private String email;
 
     private Role role;
     private String provider_id;
