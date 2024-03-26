@@ -30,6 +30,16 @@ jobs: #작업을 정의
         with:
           java-version: '11'
           distribution: 'temurin'
+
+      - name: Copy Firebase
+        env:
+          FIREBASE: ${{ secrets.FIREBASE }}
+          FIREBASE_DIR: src/main/resources/key
+          FIREBASE_DIR_FILE_NAME: just-firebase-key.json
+        run: |
+          mkdir -p $FIREBASE_DIR
+          echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
+
       - name: Copy Secret
         env:
           OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
