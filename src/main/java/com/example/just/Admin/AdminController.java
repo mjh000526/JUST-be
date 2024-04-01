@@ -4,11 +4,19 @@ import com.example.just.Dao.Comment;
 import com.example.just.Dao.HashTag;
 import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
+import com.example.just.Repository.HashTagMapRepository;
+import com.example.just.Response.ResponseUpdateHashtagsDto;
+import com.example.just.Repository.CommentRepository;
+import com.example.just.Repository.HashTagRepository;
+import com.example.just.Repository.MemberRepository;
+import com.example.just.Repository.PostRepository;
+import com.example.just.Service.ResponsePost;
 import com.example.just.Repository.*;
 import com.example.just.Response.ResponseUpdateHashtagsDto;
 import com.example.just.Service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,8 +24,9 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
+import com.example.just.Service.MemberService;
+import com.example.just.Service.CommentService;
+import com.example.just.Service.PostService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,10 +47,15 @@ public class AdminController {
     private CommentRepository commentRepository;
     @Autowired
     private MemberRepository memberRepository;
+
+
+    @Autowired
+    private PostRepository postRepository;
     @Autowired
     private HashTagRepository hashTagRepository;
     @Autowired
     private HashTagMapRepository hashTagMapRepository;
+
     @Autowired
     private HashTagESRepository hashTagESRepository;
     @Autowired
@@ -102,6 +116,7 @@ public class AdminController {
     }
 
 
+
     @ApiOperation(value = "게시물 리스트 불러옴 posts 페이지에서")
     @Operation(summary = "게시글 리스트", description = "\n admin 페이지-> posts 페이지-> return 하여 post list 출력")
     @GetMapping("/posts")
@@ -115,11 +130,14 @@ public class AdminController {
     @ApiOperation(value = "포스트페이지에서 포스트 삭제 ")
     @Operation(summary = "게시글 삭제", description = "\n post_id 헤더로 받고 데이터베이스 비교 후 회원 삭제")
     @DeleteMapping("/posts/{post_id}")
-    public ResponsePost deletePost(@PathVariable Long post_id) throws NotFoundException {
+    public ResponsePost deletePost(@PathVariable Long post_id, HttpServletRequest request) throws NotFoundException {
+
         postService.deletePost(post_id);
         ResponsePost responsePost = new ResponsePost(post_id, "삭제 완료");
         return responsePost;
     }
+
+
 
     @ApiOperation(value = "포스트페이지 해시태그 수정 ")
     @Operation(summary = "해시태그 수정", description = "\n hashtag_id 헤더로 받고 내용을 수정하면 새로운 해시태그를 생성하여 저장 ex) id_101 -> id_104로")
@@ -141,7 +159,5 @@ public class AdminController {
 
      */
 }
-
-
 
 

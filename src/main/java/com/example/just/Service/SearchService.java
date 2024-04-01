@@ -12,7 +12,6 @@ import com.example.just.Response.ResponseMessage;
 import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,6 +64,9 @@ public class SearchService {
                 .collect(Collectors.toList());
 
         List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+        if(searchList.isEmpty()){
+            return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
+        }
 
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
@@ -77,23 +79,32 @@ public class SearchService {
         PageRequest pageRequest = PageRequest.of(page,10);
         result.sort(Comparator.comparing(ResponseSearchDto::getPost_create_time).reversed());
         int start = (int) pageRequest.getOffset();
+        if (start >= result.size()) {
+            return new ResponseEntity(new ResponseMessage("페이지를 초과하엿습니다."),null,HttpStatus.BAD_REQUEST);
+        }
         int end = Math.min((start + pageRequest.getPageSize()),result.size());
         Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
         return ResponseEntity.ok(postPage);
     }
 
-    public ResponseEntity getAutoTag(String str){
+    public ResponseEntity getAutoTag(String str,int page){
         List<HashTagDocument> hashTagDocuments = new ArrayList<HashTagDocument>();
         if(str.equals("") || str.equals(null)){
             hashTagDocuments = hashTagESRepository.findAll(Sort.by(Direction.DESC,"tagCount"));
         }else {
             hashTagDocuments = hashTagESRepository.findByNameContaining(str,Sort.by(Direction.DESC,"tagCount"));
         }
-        if(hashTagDocuments.equals(null)) {
-            return new ResponseEntity(new ResponseMessage("태그 없음"), null, HttpStatus.BAD_REQUEST);
+        if(hashTagDocuments.isEmpty()) {
+            return new ResponseEntity(new ResponseMessage("태그가 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
         }
-        System.out.println(hashTagDocuments.size());
-        return ResponseEntity.ok(hashTagDocuments);
+        PageRequest pageRequest = PageRequest.of(page,10);
+        int start = (int) pageRequest.getOffset();
+        if (start >= hashTagDocuments.size()) {
+            return new ResponseEntity(new ResponseMessage("페이지를 초과하엿습니다."),null,HttpStatus.BAD_REQUEST);
+        }
+        int end = Math.min((start + pageRequest.getPageSize()),hashTagDocuments.size());
+        Page<HashTagDocument> postPage = new PageImpl<>(hashTagDocuments.subList(start,end), pageRequest, hashTagDocuments.size());
+        return ResponseEntity.ok(postPage);
     }
 
     public ResponseEntity searchTagPost(HttpServletRequest request,String tag,int page){
@@ -113,7 +124,9 @@ public class SearchService {
                 .collect(Collectors.toList());
 
         List<PostDocument> searchList = postContentESRespository.findByHashTagIn(tag);
-
+        if(searchList.isEmpty()){
+            return new ResponseEntity(new ResponseMessage("해당 태그을 가진 게시글이 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
+        }
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
                 .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
@@ -126,6 +139,9 @@ public class SearchService {
         PageRequest pageRequest = PageRequest.of(page,10);
         result.sort(Comparator.comparing(ResponseSearchDto::getPost_create_time).reversed());//최신순 조회
         int start = (int) pageRequest.getOffset();
+        if (start >= result.size()) {
+            return new ResponseEntity(new ResponseMessage("페이지를 초과하엿습니다."),null,HttpStatus.BAD_REQUEST);
+        }
         int end = Math.min((start + pageRequest.getPageSize()),result.size());
         Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
         return ResponseEntity.ok(postPage);

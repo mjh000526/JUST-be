@@ -1,7 +1,6 @@
 package com.example.just.Document;
 
 import com.example.just.Dao.Comment;
-import com.example.just.Dao.Notification;
 import com.example.just.Dao.Post;
 import com.example.just.Dao.Role;
 import java.util.ArrayList;
@@ -60,8 +59,6 @@ public class MemberDocument {
     @Field(type = FieldType.Nested)
     private List<Comment> likedComments = new ArrayList<>();
 
-    @Field(type = FieldType.Nested)
-    private List<Notification> notifications;
 }
 
 

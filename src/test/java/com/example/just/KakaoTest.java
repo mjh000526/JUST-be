@@ -72,7 +72,7 @@ public class KakaoTest {
         when(memberRepository.save(Mockito.any())).thenReturn(SignUpRequest());
 
         //when
-        ResponseEntity<ResponseMemberDto> member = kakaoService.signUpKakao(accessToken, nickName);
+        ResponseEntity<ResponseMemberDto> member = kakaoService.signUpKakao(accessToken, "",nickName);
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -88,10 +88,10 @@ public class KakaoTest {
 //        when(jwtProvider.createRefreshToken(Mockito.any())).thenReturn("mockedRefreshToken");
         when(memberRepository.findByEmail(Mockito.any())).thenReturn(SignUpRequest());
         when(memberRepository.save(Mockito.any())).thenReturn(SignUpRequest());
-        kakaoService.signUpKakao(accessToken, "테스트닉네임");
+        kakaoService.signUpKakao(accessToken, "","테스트닉네임");
 
         //when
-        ResponseEntity<ResponseMemberDto> member = kakaoService.loginKakao(accessToken);
+        ResponseEntity<ResponseMemberDto> member = kakaoService.loginKakao(accessToken,"");
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -106,7 +106,7 @@ public class KakaoTest {
         when(memberRepository.findByEmail(Mockito.any())).thenReturn(null);
 
         //when
-        ResponseEntity<String> member = kakaoService.loginKakao(accessToken);
+        ResponseEntity<String> member = kakaoService.loginKakao(accessToken,"");
 
         //then
         Assertions.assertEquals(member.getStatusCode(), HttpStatus.OK);
@@ -121,7 +121,7 @@ public class KakaoTest {
 
         //then
         Assertions.assertThrows(NullPointerException.class, () -> {
-            kakaoService.loginKakao(invalidToken);
+            kakaoService.loginKakao(invalidToken,"");
         });
     }
 

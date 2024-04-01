@@ -28,12 +28,12 @@ public class MemberTestController {
     @PostMapping("/kakao/testsign")
     @ApiOperation(value = "카카오 토큰으로 회원가입")
     public ResponseEntity signUpKakao(@RequestParam String access_token){
-        return ks.signUpKakao(access_token,"테스트용");
+        return ks.signUpKakao(access_token,"","테스트용");
     }
 
     @PostMapping("/kakao/testlogin")
     @ApiOperation(value = "카카오 토큰으로 로그인")
     public ResponseEntity loginKakao(@RequestParam String access_token) throws IOException{
-        return ks.loginKakao(access_token);
+        return ks.loginKakao(access_token,"");
     }
 }

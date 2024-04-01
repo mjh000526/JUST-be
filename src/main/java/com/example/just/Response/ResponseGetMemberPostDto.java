@@ -37,30 +37,28 @@ public class ResponseGetMemberPostDto {
         this.post_content = post.getPostContent();
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
+        List<HashTagMap> hashTagMaps = post.getHashTagMaps();
         List<String> names = new ArrayList<>();
-        // List<HashTag> hashTags = post.getHash_tag();
-        // for (int j = 0; j < hashTags.size(); j++) {
-        //     names.add(hashTags.get(j).getName());
-        //  }
+        for (int i = 0; i < hashTagMaps.size(); i++) {
+            names.add(hashTagMaps.get(i).getHashTag().getName());
+        }
         this.hash_tag = names;
         this.comment_size = Long.valueOf(post.getComments().size());
         this.post_picture = post.getPost_picture();
         this.post_like_size = post.getPost_like();
         this.blamed_count = Math.toIntExact(post.getBlamedCount());
         this.like = false;
-        for (int i = 0; i < post.getLikedMembers().size(); i++) {
-            System.out.println(post.getLikedMembers().get(i).getId());
-            if (post.getLikedMembers().get(i).getId() == member_id) {
-
-                this.like = true;
-                break;
-            }
+        if (member.getLikedPosts().stream()
+                .anyMatch(post2 -> post2.getPost_id().equals(post.getPost_id()))) {
+            this.like = true;
+        } else {
+            this.like = false;
         }
     }
 
 
-    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps) {
-
+    public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps,
+                                    Member member) {
         this.post_id = results.get(i).getPost_id();
         this.post_content = results.get(i).getPostContent();
         this.post_picture = results.get(i).getPost_picture();
@@ -81,6 +79,14 @@ public class ResponseGetMemberPostDto {
                 this.mine = false;
             }
         }
-
+        this.like = false;
+        if (member != null) {
+            if (member.getLikedPosts().stream()
+                    .anyMatch(post -> post.getPost_id().equals(results.get(i).getPost_id()))) {
+                this.like = true;
+            } else {
+                this.like = false;
+            }
+        }
     }
 }

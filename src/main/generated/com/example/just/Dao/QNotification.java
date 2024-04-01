@@ -28,7 +28,7 @@ public class QNotification extends EntityPathBase<Notification> {
 
     public final BooleanPath notIsRead = createBoolean("notIsRead");
 
-    public final NumberPath<Long> notPostId = createNumber("notPostId", Long.class);
+    public final NumberPath<Long> notObjectId = createNumber("notObjectId", Long.class);
 
     public final StringPath notType = createString("notType");
 

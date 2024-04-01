@@ -2,16 +2,19 @@ package com.example.just.Service;
 
 import com.example.just.Dao.Comment;
 import com.example.just.Dao.Member;
+import com.example.just.Dao.Notification;
 import com.example.just.Dao.Post;
 import com.example.just.Document.PostDocument;
 import com.example.just.Dto.*;
 import com.example.just.Repository.CommentRepository;
 import com.example.just.Repository.MemberRepository;
+import com.example.just.Repository.NotificationRepository;
 import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 import com.example.just.Response.ResponseCommentDtoBefore;
 import com.example.just.Response.ResponseMyCommentDto;
 import com.example.just.Response.ResponsePostCommentDtoBefore;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +30,7 @@ import com.example.just.Response.ResponsePostCommentDto;
 import com.example.just.Response.ResponseCommentDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,7 +51,16 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     @Autowired
-    private NotificationService notificationService;
+    private FcmService fcmService;
+
+    @Autowired
+    private NotificationRepository  notificationRepository;
+
+    @Value("${fcm.token}")
+    String fcmToken;
+
+//    @Autowired
+//    private NotificationService notificationService;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -55,14 +68,15 @@ public class CommentService {
     @Autowired
     PostContentESRespository postContentESRespository;
 
-    public Comment createComment(Long postId, Long member_id, CommentDto commentDto) {
+    public Comment createComment(Long postId, Long member_id, CommentDto commentDto)
+            throws FirebaseMessagingException, IllegalAccessException {
         // 부모 댓글이 있는 경우, 해당 부모 댓글을 가져옴
         Comment parentComment = null;
         if (commentDto.getParent_comment_id() != null && commentDto.getParent_comment_id() != 0) {
             parentComment = commentRepository.findById(commentDto.getParent_comment_id())
                     .orElseThrow(() -> new NullPointerException("부모 댓글이 존재하지 않습니다."));
-            if(parentComment.getParent() != null){
-                throw new RuntimeException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
+            if (parentComment.getParent() != null) {
+                throw new IllegalAccessException("해당 댓글에는 대댓글을 작성할 수 없습니다.");
             }
         }
 
@@ -71,7 +85,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         Comment comment = new Comment();
-        comment.setComment_content(commentDto.getComment_content());
+        comment.setComment_content(commentDto.getComment_content().strip());
         comment.setPost(post);
         comment.setMember(member);
         comment.setParent(parentComment);
@@ -86,13 +100,33 @@ public class CommentService {
         // 부모 댓글이 있을 경우, 자식 댓글로 추가
         if (parentComment != null) {
             parentComment.getChildren().add(comment);
-//            notificationService.send(receiver.get(), "bigComment", parentComment.getComment_id(), member_id);
-
-        } else if (parentComment == null) {
+            if(parentComment.getMember().getId() != member_id){
+                notificationRepository.save(Notification.builder()
+                        .notObjectId(parentComment.getComment_id())
+                        .notType("comment")
+                        .notIsRead(false)
+                        .receiver(parentComment.getMember())
+                        .senderId(member_id)
+                        .build()
+                );
+                fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",parentComment.getMember().getFcmToken());
+            }
+        } else if (parentComment == null) { //아닐경우는 부모댓글
             PostDocument postDocument = postContentESRespository.findById(postId).get();
             postDocument.setCommentSize(postDocument.getCommentSize() + 1);
             postContentESRespository.save(postDocument);
-//            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
+            Member noti_member = memberRepository.findById(postDocument.getMemberId()).get();
+            if(noti_member.getId() != member_id){
+                notificationRepository.save(Notification.builder()
+                        .notObjectId(postDocument.getId())
+                        .notType("post")
+                        .notIsRead(false)
+                        .receiver(noti_member)
+                        .senderId(member_id)
+                        .build()
+                );
+                fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",receiver.get().getFcmToken());
+            }
         }
 
         return commentRepository.save(comment);
@@ -113,7 +147,7 @@ public class CommentService {
         if (post != null && post.getComments() != null) {
             comments = post.getComments().stream()
                     .filter(comment -> comment.getParent() == null)
-                    .map(comment -> new ResponseCommentDto(comment, member_id,""))
+                    .map(comment -> new ResponseCommentDto(comment, member_id, ""))
                     .collect(Collectors.toList());
         }
 
@@ -137,32 +171,44 @@ public class CommentService {
         return new ResponsePostCommentDtoBefore(post.getPostContent(), comments);
     }
 
-    public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
+    public ResponseEntity<String> deleteComment(Long postId, Long commentId, Long member_id) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 존재하지 않습니다."));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
-        comment.setChildren(null);
-        PostDocument postDocument = postContentESRespository.findById(postId).get();
-        postDocument.setCommentSize(postDocument.getCommentSize() - 1);
-        postContentESRespository.save(postDocument);
-        commentRepository.deleteById(commentId);
-        return ResponseEntity.ok("ok");
+        if (comment.getMember().getId() == member_id) {
+            comment.setChildren(null);
+            PostDocument postDocument = postContentESRespository.findById(postId).get();
+            postDocument.setCommentSize(postDocument.getCommentSize() - 1);
+            postContentESRespository.save(postDocument);
+            commentRepository.deleteById(commentId);
+            notificationRepository.deleteAllByNotObjectIdAndNotType(commentId,"comment");
+            return ResponseEntity.ok("ok");
+        } else {
+            return ResponseEntity.status(403).body("권한이 없습니다.");
+        }
     }
 
     public ResponseEntity<String> putComment(Long postId, Long commentId,
-                                             PutCommentDto commentDto) {
+                                             PutCommentDto commentDto, Long member_id) {
         Comment comment = commentRepository.findById(commentId).get();
-        if(comment == null) ResponseEntity.status(404).body("댓글이 존재하지 않습니다.");
+        if (comment == null) {
+            ResponseEntity.status(404).body("댓글이 존재하지 않습니다.");
+        }
 
         Post post = postRepository.findById(postId).get();
-        if(post == null) ResponseEntity.status(404).body("게시물이 존재하지 않습니다.");
+        if (post == null) {
+            ResponseEntity.status(404).body("게시물이 존재하지 않습니다.");
+        }
+        if (comment.getMember().getId() == member_id) {
+            comment.setComment_content(commentDto.getComment_content());
+            // 업데이트된 댓글을 저장합니다.
+            commentRepository.save(comment);
 
-        comment.setComment_content(commentDto.getComment_content());
-        // 업데이트된 댓글을 저장합니다.
-        commentRepository.save(comment);
-
-        return ResponseEntity.ok(comment.getComment_content());
+            return ResponseEntity.ok(comment.getComment_content());
+        } else {
+            return ResponseEntity.status(403).body("권한이 없습니다.");
+        }
     }
 
     public ResponseEntity<String> blameComment(Long postId, Long commentId) {
@@ -217,4 +263,3 @@ public class CommentService {
         return commentRepository.findAll();
     }
 }
-

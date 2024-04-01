@@ -94,7 +94,6 @@ public class Post {
         this.secret = secret;
         this.emoticon = emoticon;
         this.member = member;
-        this.member.updateMember(this);
     }
 
     public void addLike(Member member) {
@@ -107,6 +106,7 @@ public class Post {
     public void removeLike(Member member) {
         if (likedMembers.contains(member)) {
             member.getLikedPosts().remove(this);
+            this.likedMembers.remove(member);
             post_like--;
         }
     }
@@ -130,10 +130,10 @@ public class Post {
         this.secret = postDto.getSecret();
         this.postContent = postDto.getPost_content();
         this.hashTagMaps = new ArrayList<>();
-        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
+        for (int i = 0; i < postDto.getHash_tag().size(); i++) { //여기 문제
             HashTagMap hashTagMap = new HashTagMap();
             hashTagMap.setPost(this);
-            hashTagMap.setHashTag(new HashTag(postDto.getHash_tage().get(i)));
+            hashTagMap.setHashTag(new HashTag(postDto.getHash_tag().get(i)));
             this.addHashTagMaps(hashTagMap);
         }
     }

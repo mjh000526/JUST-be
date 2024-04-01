@@ -44,6 +44,9 @@
       @Column(name = "refresh_token")
       private String refreshToken;
 
+      @Column(name = "fcm_token")
+      private String fcmToken;
+
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
       @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,  orphanRemoval=true)
       @JsonIgnore
@@ -70,11 +73,6 @@
           blameCount++;
       }
 
-      @OneToMany(mappedBy = "receiver")   //알림
-      private List<Notification> notifications;
-      public void updateMember(final Post post) {
-          posts.add(post);
-      }
 
 
       public Member(Member member) {
@@ -89,7 +87,6 @@
           this.blameCount = member.getBlameCount();
           this.posts = member.getPosts();
           this.likedPosts = member.getLikedPosts();
-          this.notifications = member.getNotifications();
       }
   }
 

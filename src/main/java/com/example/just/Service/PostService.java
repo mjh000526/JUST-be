@@ -7,7 +7,10 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 
 
+import com.example.just.Dao.PostLike;
 import com.example.just.Dao.QBlame;
+import com.example.just.Dao.QHashTag;
+import com.example.just.Dao.QHashTagMap;
 import com.example.just.Dao.QPost;
 import com.example.just.Document.HashTagDocument;
 import com.example.just.Document.PostDocument;
@@ -18,8 +21,9 @@ import com.example.just.Repository.BlameRepository;
 
 import com.example.just.Repository.HashTagESRepository;
 import com.example.just.Repository.HashTagMapRepository;
+import com.example.just.Repository.NotificationRepository;
+import com.example.just.Repository.PostLikeRepository;
 import com.example.just.Response.ResponseGetMemberPostDto;
-import com.example.just.Response.ResponseGetPostDto;
 import com.example.just.Response.ResponsePutPostDto;
 import com.example.just.Mapper.PostMapper;
 import com.example.just.Repository.HashTagRepository;
@@ -28,10 +32,14 @@ import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 
 import com.example.just.jwt.JwtProvider;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.io.IOException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -40,7 +48,6 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,6 +72,9 @@ public class PostService {
 
     @Autowired
     private HashTagESRepository hashTagESRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
     @Autowired
     private BlameRepository blameRepository;
     @Autowired
@@ -74,6 +84,8 @@ public class PostService {
     private JwtProvider jwtProvider;
     @Autowired
     private GptService gptService;
+    @Autowired
+    private PostLikeRepository postLikeRepository;
 
     @Autowired
     PostContentESRespository postContentESRespository;
@@ -117,7 +129,7 @@ public class PostService {
             postDto.setHash_tag(tag);
         }
         List<String> content = new ArrayList<>();
-        for(int i = 0; i<postDto.getPost_content().size();i++){
+        for (int i = 0; i < postDto.getPost_content().size(); i++) {
             content.add(getConvertString(postDto.getPost_content().get(i)));
         }
         postDto.setPost_content(content);
@@ -154,9 +166,10 @@ public class PostService {
 
 
     //글 삭제
-    public void deletePost(Long post_id) throws NotFoundException {
+    public void deletePost(Long post_id, Long member_id) throws NotFoundException {
         Post post = checkPost(post_id);
-        if (post == null) {
+        Member member = checkMember(member_id);
+        if (post == null || post.getMember().getId() != member_id) {
             throw new NotFoundException();
         } else {
             // Elasticsearch에서 해당 포스트의 내용 삭제
@@ -171,28 +184,29 @@ public class PostService {
         Long post_id = postDto.getPost_id();
         Member member = checkMember(member_id);
         Post checkPost = checkPost(post_id);
-        List<HashTagMap> hashTagMaps = checkPost.getHashTagMaps();
+        if (checkPost.getMember().getId().equals(member_id)) {
+            List<HashTagMap> hashTagMaps = checkPost.getHashTagMaps();
 
+            deleteHashTag(checkPost);
 
-        deleteHashTag(checkPost);
+            List<String> content = new ArrayList<>();
+            for (int i = 0; i < postDto.getPost_content().size(); i++) {
+                content.add(getConvertString(postDto.getPost_content().get(i)));
+            }
+            postDto.setPost_content(content);
 
+            checkPost.changePost(postDto, member, checkPost);
 
-        List<String> content = new ArrayList<>();
-        for(int i = 0; i<postDto.getPost_content().size();i++){
-            content.add(getConvertString(postDto.getPost_content().get(i)));
+            Post p = postRepository.save(checkPost);
+            saveHashTag(postDto.getHash_tag(), p);
+
+            postContentESRespository.save(new PostDocument(checkPost));
+
+            ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
+            return responsePutPostDto;
+        } else {
+            throw new NotFoundException();
         }
-        postDto.setPost_content(content);
-
-        checkPost.changePost(postDto, member, checkPost);
-
-
-        Post p = postRepository.save(checkPost);
-        saveHashTag(postDto.getHash_tage(), p);
-
-        postContentESRespository.save(new PostDocument(checkPost));
-
-        ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
-        return responsePutPostDto;
     }
 
     private void deleteHashTag(Post post) {
@@ -220,6 +234,7 @@ public class PostService {
     public ResponseGetPost searchByCursor(String cursor, Long limit, Long member_id) throws NotFoundException { //글 조
         QPost post = QPost.post;
         QBlame blame = QBlame.blame;
+
         Set<Long> viewedPostIds = new HashSet<>();
         // 이전에 본 글들의 ID를 가져옵니다.
         if (cursor != null) {
@@ -239,7 +254,7 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id);
+            List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, null);
             return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
@@ -257,12 +272,13 @@ public class PostService {
         return responseGetPost;
     }
 
-    private List<ResponseGetMemberPostDto> createResponseGetMemberPostDto(List<Post> results, Long member_id) {
+    private List<ResponseGetMemberPostDto> createResponseGetMemberPostDto(List<Post> results, Long member_id,
+                                                                          Member member) {
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
             List<HashTagMap> hashTagMaps = results.get(i).getHashTagMaps();
             ResponseGetMemberPostDto responseGetMemberPostDto = new ResponseGetMemberPostDto(results, member_id, i,
-                    hashTagMaps);
+                    hashTagMaps, member);
             getPostDtos.add(responseGetMemberPostDto);
         }
         return getPostDtos;
@@ -286,25 +302,31 @@ public class PostService {
 
         Post post = checkPost(post_id);
         Member member = checkMember(member_id);
+        PostLike postLike = postLikeRepository.findByPostAndMember(post, member);
 
         ResponsePost responsePost;
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
-        if (post.getLikedMembers().contains(member)) {
-            post.removeLike(member);
+
+        if (postLike != null) {
+            post.setPost_like(post.getPost_like() - 1);
+            postLikeRepository.deleteById(postLike.getId());
             postDocument.setPostLikeSize(postDocument.getPostLikeSize() - 1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
-            post.addLike(member);
+            post.setPost_like(post.getPost_like() + 1);
+            postLikeRepository.save(new PostLike(post, member));
             postDocument.setPostLikeSize(postDocument.getPostLikeSize() + 1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
+
         postContentESRespository.save(postDocument);
         Post savePost = postRepository.save(post);
 
         return ResponseEntity.ok(responsePost);
     }
 
-    public ResponseGetPost searchByCursorMember(String cursor, Long limit, Long member_id) throws NotFoundException {
+    public ResponseGetPost searchByCursorMember(String cursor, Long limit, Long member_id)
+            throws NotFoundException, IOException {
         QPost post = QPost.post;
         QBlame blame = QBlame.blame;
         Set<Long> viewedPostIds = new HashSet<>();
@@ -316,43 +338,96 @@ public class PostService {
                 viewedPostIds.add(Long.parseLong(viewedPostId.trim()));
             }
         }
-
-        Optional<Member> member = memberRepository.findById(member_id);
-        Member realMember = member.get();
+        List<Post> posts = postRepository.findAll();
+        List<String> likePostHashTagName = getLikeHashTag(member_id);
+        Member member = checkMember(member_id);
 
         List<Long> blames = query.select(blame.targetPostId)
                 .from(blame)
-                .where(blame.blameMemberId.eq(realMember.getId()))
+                .where(blame.blameMemberId.eq(member.getId()))
                 .fetch();
         List<Long> targetMembers = query.select(blame.targetMemberId)
                 .from(blame)
-                .where(blame.blameMemberId.eq(realMember.getId()))
+                .where(blame.blameMemberId.eq(member.getId()))
                 .fetch();
-        // 중복된 글을 제외하고 랜덤으로 limit+1개의 글을 가져옵니다.
-        List<Post> results = query.select(post)
-                .from(post)
-                .where(post.post_id.notIn(viewedPostIds),
-                        post.post_create_time.isNotNull(),
-                        post.post_id.notIn(blames),
-                        post.member.id.notIn(targetMembers))
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(limit)
-                .fetch();
+        HttpClient httpClient = HttpClients.createDefault();
+
+        Random random = new Random();
+        int arrayLength = likePostHashTagName.size();
+
+        int randomIndex;
+        List<Post> results = new ArrayList<>();
+        if (arrayLength > 0) {
+            randomIndex = random.nextInt(arrayLength);
+            String randonHashTagName = likePostHashTagName.get(randomIndex);
+            // 요청을 보낼 URL 설정
+            HttpGet request = new HttpGet("http://34.22.67.43:8081/api/similar_words/" + randonHashTagName);
+
+            // 요청 실행 및 응답 수신
+            HttpResponse response = httpClient.execute(request);
+
+            // 응답 코드 확인
+            int statusCode = response.getStatusLine().getStatusCode();
+            System.out.println("Response Code: " + statusCode);
+            if (statusCode == 200) {
+
+                // 응답 데이터 읽기
+                String responseBody = EntityUtils.toString(response.getEntity());
+
+                // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
+                List<Long> postIds = new ArrayList<>();
+                for (int i = 2; i < responseBody.length(); i += 5) {
+                    postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
+                }
+
+                results = query.select(post)
+                        .from(post)
+                        .where(post.post_id.notIn(viewedPostIds),
+                                post.post_create_time.isNotNull(),
+                                post.post_id.notIn(blames),
+                                post.member.id.notIn(targetMembers),
+                                post.post_id.in(postIds))
+                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                        .limit(limit)
+                        .fetch();
+            } else {
+                results = query.select(post)
+                        .from(post)
+                        .where(post.post_id.notIn(viewedPostIds),
+                                post.post_create_time.isNotNull(),
+                                post.post_id.notIn(blames),
+                                post.member.id.notIn(targetMembers))
+                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                        .limit(limit)
+                        .fetch();
+            }
+        } else {
+
+            results = query.select(post)
+                    .from(post)
+                    .where(post.post_id.notIn(viewedPostIds),
+                            post.post_create_time.isNotNull(),
+                            post.post_id.notIn(blames),
+                            post.member.id.notIn(targetMembers))
+                    .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                    .limit(limit)
+                    .fetch();
+        }
+
         List<ResponseGetMemberPostDto> getPostDtos = new ArrayList<>();
         if (results.size() == 0) {
-            throw new NotFoundException();
+            return (ResponseGetPost) getPostDtos;
         } else {
-            getPostDtos = createResponseGetMemberPostDto(results, member_id);
+            getPostDtos = createResponseGetMemberPostDto(results, member_id, member);
             // 가져온 글들의 ID를 저장합니다.
             return resultPostIds(viewedPostIds, results, getPostDtos);
         }
     }
 
     public List<ResponseGetMemberPostDto> getMyPost(Long member_id) throws NotFoundException {
-        Optional<Member> member = memberRepository.findById(member_id);
-        Member realMember = member.get();
+        Member member = checkMember(member_id);
 
-        List<Post> results = realMember.getPosts();
+        List<Post> results = member.getPosts();
         // results를 최신 순으로 정렬
         Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
 
@@ -360,7 +435,7 @@ public class PostService {
         if (results.size() == 0) {
             throw new NotFoundException();
         } else {
-            getPostDtos = createResponseGetMemberPostDto(results, member_id);
+            getPostDtos = createResponseGetMemberPostDto(results, member_id, member);
         }
         return getPostDtos;
     }
@@ -370,11 +445,11 @@ public class PostService {
         List<Post> results = member.getLikedPosts();
         // results를 최신 순으로 정렬
         Collections.sort(results, Comparator.comparing(Post::getPost_create_time).reversed());
-        List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id);
+        List<ResponseGetMemberPostDto> getPostDtos = createResponseGetMemberPostDto(results, member_id, member);
         return getPostDtos;
     }
 
-    public String getConvertString(String str){
+    public String getConvertString(String str) {
         RestTemplate restTemplate = new RestTemplate();
 
         String requestBody = "{\"question\":\"" + str + "\",\"deny_list\":[\"string\"]}";
@@ -382,7 +457,7 @@ public class PostService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        HttpEntity<String> request = new HttpEntity<>(requestBody,headers);
+        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "http://203.241.228.51:8000/anonymize/",
@@ -391,11 +466,11 @@ public class PostService {
                 String.class);
 
         String responseBody = responseEntity.getBody();
-        String convertStr =parsingJson(responseBody);
+        String convertStr = parsingJson(responseBody);
         return convertStr;
     }
 
-    public String parsingJson(String json){
+    public String parsingJson(String json) {
         String response;
         try {
             JSONParser parser = new JSONParser();
@@ -405,5 +480,58 @@ public class PostService {
             throw new RuntimeException(e);
         }
         return response;
+    }
+
+    public List<String> getLikeHashTag(Long member_id) {
+
+        QHashTagMap hashTagMap = QHashTagMap.hashTagMap;
+        QHashTag hashTag = QHashTag.hashTag;
+        Member member = checkMember(member_id);
+
+        //회웡니 쓴 글 다 가져오기
+        List<Post> posts = member.getPosts();
+
+        //회원이 좋아요 한글의 해시태그 ID 가져오기
+        List<Long> hashTagMapsOfLike = query.select(hashTagMap.id)
+                .from(hashTagMap)
+                .where(hashTagMap.post.in(member.getLikedPosts()))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(5)
+                .fetch();
+
+        //회원이 쓴글의 해시태그 ID 가져오기
+        List<Long> hashTagMaps = query.select(hashTagMap.id)
+                .from(hashTagMap)
+                .where(hashTagMap.post.in(posts))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(5)
+                .fetch();
+
+        for (int i = 0; i < hashTagMapsOfLike.size(); i++) {
+            hashTagMaps.add(hashTagMapsOfLike.get(i));
+        }
+
+        //좋아요 한 글 쓴 글의 해시태그맵의 ID랑 겹치는거 뽑아오기
+        List<String> hashTags = query.select(hashTag.name)
+                .from(hashTag)
+                .where(hashTag.id.in(hashTagMaps))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(5)
+                .fetch();
+
+        return hashTags;
+    }
+
+    public void deletePost(Long post_id) throws NotFoundException {
+        Post post = checkPost(post_id);
+        if (post == null) {
+            throw new NotFoundException();
+        } else {
+            // Elasticsearch에서 해당 포스트의 내용 삭제
+            postContentESRespository.deleteById(post_id);
+            deleteHashTag(post);
+            postRepository.deleteById(post_id);
+            notificationRepository.deleteAllByNotObjectIdAndNotType(post_id,"post");
+        }
     }
 }

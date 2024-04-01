@@ -38,14 +38,14 @@ public class KakaoService {
     private String address;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
-    public ResponseEntity loginKakao(String token) throws IOException{
+    public ResponseEntity loginKakao(String token,String fcmToken) throws IOException{
         String accessToken = null;
         String refreshToken = null;
         Member userbyEmail = null;
         try{
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
-            userbyEmail = userRepository.findByEmail(user.getEmail());
+            userbyEmail = userRepository.findByEmail(user.getProvider_id()+"@kakao.com");
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 return new ResponseEntity<>("/api/kakao/signup", HttpStatus.OK);
@@ -65,6 +65,7 @@ public class KakaoService {
                 .nickname(userbyEmail.getNickname())
                 .blameCount(userbyEmail.getBlameCount())
                 .blamedCount(userbyEmail.getBlamedCount())
+                .fcmToken(fcmToken)
                 .refreshToken(refreshToken)
                 .build();
         userRepository.save(userbyEmail);
@@ -76,22 +77,23 @@ public class KakaoService {
     }
 
     //카카오 토큰으로 회원가입
-    public ResponseEntity signUpKakao(String token, String nickname){
+    public ResponseEntity signUpKakao(String token, String fcmToken, String nickname){
         String accesstoken = null;
         String refreshtoken = null;
         Member userbyEmail = null;
         try{
             //카카오토큰으로
             MemberDto user = getKakaoUser(token);
-            userbyEmail = userRepository.findByEmail(user.getEmail());
+            userbyEmail = userRepository.findByEmail(user.getProvider_id()+"@kakao.com");
             //DB에 없는 사용자라면 회원가입 처리
             if(userbyEmail == null){
                 userbyEmail = Member.builder()
-                        .email(user.getEmail())
+                        .email(user.getProvider_id()+"@kakao.com")
                         .provider(user.getProvider())
                         .provider_id(user.getProvider_id())
                         .authority(Role.ROLE_USER)
                         .nickname(nickname)
+                        .fcmToken(fcmToken)
                         .blameCount(0)
                         .blamedCount(0)
                         .build();
@@ -142,7 +144,6 @@ public class KakaoService {
             JsonParser parser = new JsonParser();
             JsonElement elem = parser.parse(result);
             id = elem.getAsJsonObject().get("id").getAsString();
-            email = elem.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             user = MemberDto.builder().provider_id(id).email(email).provider("kakao").build();
             br.close();
         }catch (IOException e){

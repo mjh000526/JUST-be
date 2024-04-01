@@ -1,5 +1,14 @@
 # JUST - 익명 고민 상담
 
+<<<<<<< HEAD
+=======
+
+## 프로젝트 목적
+
+
+# Just Mobile App
+
+>>>>>>> 6205e0b86177c2cbefdab8cb409d76914c2aba7d
 <p align="center">
 주변 사람에게는 말 못할 고민을 털어 놓을 수 있는 공간, Just  <br>
 
