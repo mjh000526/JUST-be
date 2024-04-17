@@ -45,6 +45,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +63,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class PostService {
     private final EntityManager em;
+
+    @Value("${server-add}")
+    private String server_address;
 
     private final JPAQueryFactory query;
     @Autowired
@@ -449,27 +453,29 @@ public class PostService {
     public List<String> getConvertString(List<String> str) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String requestBody = "{\"content\": [\"준호랑 윌슨은 이제 수업가야돼\", \"박세명 교수님의 C++을 배우러가야지\", \"준호에 만날까\"]}";
+        String requestBody = "{\"content\": [";
 
         for(int i=0;i<str.size();i++){
             requestBody += "\"" + str.get(i)+"\"";
-            if(i==str.size()-1){
+            if(i==str.size()){
                 requestBody += ", ";
             }
         }
         requestBody += "]}";
+        System.out.println("http://"+server_address+":8081/api/ner/post");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-
+        JSONObject parameter = new JSONObject();
+        parameter.put("content",str);
+        HttpEntity<String> request = new HttpEntity<>(parameter.toJSONString(), headers);
+        System.out.println(parameter.toJSONString());
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "http://13.209.213.191:8081/api/ner/post",
-                HttpMethod.GET,
+                "http://"+server_address+":8081/api/ner/post",
+                HttpMethod.POST,
                 request,
                 String.class);
         String responseBody = responseEntity.getBody();
+        System.out.println("여긴됨");
         return parsingJson(responseBody);
     }
 
@@ -483,6 +489,7 @@ public class PostService {
             for (Object obj : jsonArray) {
                 denyList.add((String) obj);
             }
+            System.out.println("여기가안되겠지");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
