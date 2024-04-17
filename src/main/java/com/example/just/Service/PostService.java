@@ -40,6 +40,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -128,10 +129,9 @@ public class PostService {
             List<String> tag = gptService.getTag(gptRequestDto);
             postDto.setHash_tag(tag);
         }
-        List<String> content = new ArrayList<>();
-        for (int i = 0; i < postDto.getPost_content().size(); i++) {
-            content.add(getConvertString(postDto.getPost_content().get(i)));
-        }
+
+        List<String> content = getConvertString(postDto.getPost_content());
+
         postDto.setPost_content(content);
         post.writePost(postDto, member);
         Post p = postRepository.save(post);
@@ -189,10 +189,7 @@ public class PostService {
 
             deleteHashTag(checkPost);
 
-            List<String> content = new ArrayList<>();
-            for (int i = 0; i < postDto.getPost_content().size(); i++) {
-                content.add(getConvertString(postDto.getPost_content().get(i)));
-            }
+            List<String> content = getConvertString(postDto.getPost_content());
             postDto.setPost_content(content);
 
             checkPost.changePost(postDto, member, checkPost);
@@ -449,10 +446,18 @@ public class PostService {
         return getPostDtos;
     }
 
-    public String getConvertString(String str) {
+    public List<String> getConvertString(List<String> str) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String requestBody = "{\"question\":\"" + str + "\",\"deny_list\":[\"string\"]}";
+        String requestBody = "{\"content\": [\"준호랑 윌슨은 이제 수업가야돼\", \"박세명 교수님의 C++을 배우러가야지\", \"준호에 만날까\"]}";
+
+        for(int i=0;i<str.size();i++){
+            requestBody += "\"" + str.get(i)+"\"";
+            if(i==str.size()-1){
+                requestBody += ", ";
+            }
+        }
+        requestBody += "]}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -460,26 +465,28 @@ public class PostService {
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "http://203.241.228.51:8000/anonymize/",
-                HttpMethod.POST,
+                "http://13.209.213.191:8081/api/ner/post",
+                HttpMethod.GET,
                 request,
                 String.class);
-
         String responseBody = responseEntity.getBody();
-        String convertStr = parsingJson(responseBody);
-        return convertStr;
+        return parsingJson(responseBody);
     }
 
-    public String parsingJson(String json) {
-        String response;
+    public List<String> parsingJson(String json) {
+        JSONArray jsonArray;
+        List<String> denyList = new ArrayList<>();
         try {
             JSONParser parser = new JSONParser();
             JSONObject elem = (JSONObject) parser.parse(json);
-            response = elem.get("convertedQuestion").toString();
+            jsonArray = (JSONArray) elem.get("deny_list");
+            for (Object obj : jsonArray) {
+                denyList.add((String) obj);
+            }
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        return response;
+        return denyList;
     }
 
     public List<String> getLikeHashTag(Long member_id) {

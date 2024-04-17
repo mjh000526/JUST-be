@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-26T15:05:18+0900",
+    date = "2024-04-16T15:07:56+0900",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.2.jar, environment: Java 11.0.11 (AdoptOpenJDK)"
 )
 @Component
@@ -45,8 +45,8 @@ public class MemberMapperImpl implements MemberMapper {
         MemberDto.MemberDtoBuilder memberDto = MemberDto.builder();
 
         memberDto.id( entity.getId() );
-        memberDto.email( entity.getEmail() );
         memberDto.provider( entity.getProvider() );
+        memberDto.email( entity.getEmail() );
         memberDto.provider_id( entity.getProvider_id() );
         List<Post> list = entity.getPosts();
         if ( list != null ) {
