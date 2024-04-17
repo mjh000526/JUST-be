@@ -56,7 +56,7 @@ jobs:
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
-<<<<<<< HEAD
+
       - name: Copy Firebase
         env:
           FIREBASE: ${{ secrets.FIREBASE }}
@@ -65,9 +65,7 @@ jobs:
         run: |
           mkdir -p $FIREBASE_DIR
           echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
-=======
 
->>>>>>> e9a56d2626592379e2dc3103552f204dd6e7547e
 
       # (3) Gradle build (Test 제외)
       - name: Build with Gradle
