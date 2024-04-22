@@ -32,6 +32,5 @@ public class FirebaseConfig {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        //
     }
 }
