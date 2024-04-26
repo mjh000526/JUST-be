@@ -71,7 +71,7 @@ jobs: #작업을 정의
         # 5. Docker Hub 이미지 푸시
         - name: docker Hub push
           run: docker push 13.209.213.191:5000/${{ secrets.DOCKERHUB_USERNAME }}/just
-
+  #
     run-docker-image-on-ec2:
       # build-docker-image (위)과정이 완료되어야 실행됩니다.
       needs: build-docker-image
