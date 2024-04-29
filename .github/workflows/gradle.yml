@@ -66,7 +66,7 @@ jobs: #작업을 정의
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
         - name : docker tag
-          run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/just localhost:5000/${{ secrets.DOCKERHUB_USERNAME }}/just:latest
+          run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/just ${{ secrets.DOCKERHUB_USERNAME }}/just:latest
 
         # 5. Docker Hub 이미지 푸시
         - name: docker Hub push
