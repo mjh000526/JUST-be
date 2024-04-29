@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ResponseNotiPostDto {
+public class ResponseNotiPostDto {//게시글에 대한 알림 응답에 대한 데이터 포맷
     private Long post_id;
 
     private List<String> post_content;

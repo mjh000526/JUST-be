@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @Data
 @Setter
-public class Post {
+public class Post { //DB 게시글 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;

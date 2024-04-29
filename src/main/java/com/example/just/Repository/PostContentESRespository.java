@@ -14,8 +14,11 @@ public interface PostContentESRespository extends ElasticsearchRepository<PostDo
         CrudRepository<PostDocument,Long> {
 //    List<PostDocument> findByPostContent_ContentContains(String text);
     //    List<PostDocument> findByPostContent_ContentContains(String text);
+
+    //해당 text문자열을 하나라도 포함하는 게시글 전제조회(ELK)
     List<PostDocument> findByPostContentContaining(String text);
 
+    //해당 text와 일치하는 태그값을 가지는 Post값 전체 조회(ELK)
     List<PostDocument> findByHashTagIn(String text);
 
 }

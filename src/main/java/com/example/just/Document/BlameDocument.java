@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Getter
 @NoArgsConstructor
-public class BlameDocument {
+public class BlameDocument { //ELK에 동기화할 신고 테이블
     @Id
     private Long blameId;
     @Field(type = FieldType.Long)

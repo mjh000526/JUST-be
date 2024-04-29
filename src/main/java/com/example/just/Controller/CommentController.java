@@ -28,17 +28,6 @@ public class CommentController {
     @Autowired
     private JwtProvider jwtProvider;
 
-
-    private String errorMassage = "{\n"
-            + "  \"comment_id\": \"\",\n"
-            + "  \"comment_create_time\": 0\n"
-            + "  \"comment_create_time\": \"\",\n"
-            + "  \"comment_like\": 0\n"
-            + "  \"comment_dislike\": 0\n"
-            + "  \"blamed_count\": true\n"
-            + "  \"child\": []\n"
-            + "  \"message\": \"";
-
     @Operation(summary = "댓글 작성 api", description = "parentCommentId는 부모 댓글의 아이디\n"
             + "{\n"
             + "  \"comment_content\": \"안녕\",\n"
@@ -157,19 +146,6 @@ public class CommentController {
             return new ResponseEntity<>("로그인 이후 이용해야 합니다.", HttpStatus.BAD_REQUEST);
         }
         return commentService.getMyComment(member_id);
-    }
-
-    private String errorMassage(String error) {
-        return "{\n"
-                + "  \"comment_id\": \"\",\n"
-                + "  \"comment_create_time\": 0\n"
-                + "  \"comment_create_time\": \"\",\n"
-                + "  \"comment_like\": 0\n"
-                + "  \"comment_dislike\": 0\n"
-                + "  \"blamed_count\": true\n"
-                + "  \"child\": []\n"
-                + "  \"message\": \"성공\"\n"
-                + "}";
     }
 
     private Long getAccessTokenOfMemberId(HttpServletRequest request) {

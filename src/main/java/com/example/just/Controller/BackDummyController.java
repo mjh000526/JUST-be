@@ -24,12 +24,14 @@ public class BackDummyController {
     @Autowired
     KakaoService kakaoService;
 
+    //백단에서 회원가입을 테스트하기 위한 url
     @PostMapping("/post/member")
     @ApiOperation(value = "회원가입 테스트용", notes = "테스트용으로 사용")
     public ResponseEntity<BasicResponse> join(@RequestBody MemberDto member_dto) {
         return memberService.join(member_dto);
     }
 
+    //회원정보를 조회하기 위한 url
     @GetMapping("/info")
     public ResponseEntity getInfo() throws IOException {
         return kakaoService.info();

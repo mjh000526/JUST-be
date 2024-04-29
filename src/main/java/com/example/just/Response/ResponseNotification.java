@@ -17,7 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
-public class ResponseNotification {
+public class ResponseNotification {//알림 요청에 대해 응답할 데이터 포맷
 
     private Long not_id;
 

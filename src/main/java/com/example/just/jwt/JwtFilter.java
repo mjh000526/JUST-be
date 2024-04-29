@@ -30,6 +30,7 @@ public class JwtFilter extends GenericFilterBean {
         this.jwtProvider = jwtProvider;
     }
 
+    //api의 요청에 대하여 헤더에 있는 토큰을 검사하는 필터
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -59,6 +60,7 @@ public class JwtFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
+    //헤더에 있는 토큰 추출
     private String resolveToken(HttpServletRequest request){
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith("Bearer ")){

@@ -17,7 +17,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDto {
+public class MemberDto { //로그인 및 회원가입에 사용될 format
     private Long id; //회원 아이디
 
     private Timestamp create_time;

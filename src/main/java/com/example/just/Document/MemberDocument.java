@@ -15,7 +15,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Getter
 @NoArgsConstructor
-public class MemberDocument {
+public class MemberDocument { //ELK에 동기화할 회원 테이블
     @Id
     private Long id;
 

@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification{
+public class Notification{ //DB 알림 정보 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notId;

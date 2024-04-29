@@ -13,14 +13,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FirebaseConfig {
 
+    //파이어베이스 암호키 파일
     @Value("${fcm.key-file}")
     private String serviceAccountFilePath;
 
+    //파이어베이스 프로젝트 아이디
     @Value("${fcm.project-id}")
     private String projectId;
+
+    //프로젝트가 실행될 때 최초 한번 파이어베이스와 연결
     @PostConstruct
     public void init(){
-        System.out.println("컨피그는실행됨");
         try {
             FileInputStream serviceAccount =
                     new FileInputStream(serviceAccountFilePath);
@@ -28,7 +31,6 @@ public class FirebaseConfig {
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
             FirebaseApp.initializeApp(options);
-            System.out.println("firebase 실행 : " + options);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

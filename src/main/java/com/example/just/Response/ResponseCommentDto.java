@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ResponseCommentDto {
+public class ResponseCommentDto {//클라이언트에 응답할 댓글 포맷
     private Long comment_id;
     private String comment_content;
     private Date comment_create_time;

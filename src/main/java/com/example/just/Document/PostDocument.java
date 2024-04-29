@@ -31,7 +31,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Mapping(mappingPath = "elastic/post-mapping.json")
 @Setting(settingPath = "elastic/post-setting.json")
-public class PostDocument {
+public class PostDocument { ////ELK에 동기화할 게시글 테이블
     @Id
     private Long id;
 

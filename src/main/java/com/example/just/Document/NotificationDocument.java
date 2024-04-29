@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Getter
 @NoArgsConstructor
-public class NotificationDocument {
+public class NotificationDocument { //ELK에 동기화할 알림 테이블
 
     @Id
     private Long notId;

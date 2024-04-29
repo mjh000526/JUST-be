@@ -28,7 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NotificationService {
+public class NotificationService {//알림 관련 서비스
     @Autowired
     private NotificationRepository notificationRepository;
 
@@ -44,23 +44,33 @@ public class NotificationService {
     @Autowired
     private PostRepository postRepository;
 
+    //알림 목록 조회
     public ResponseEntity getNotificationList(HttpServletRequest request,int page){
+
+        //헤더의 토큰으로 클라이언트 id 추출
         String token = jwtProvider.getAccessToken(request);
-        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+
+        //해당 id로 수신된 알림 리스트 조회
         List<Notification> notifications = notificationRepository.findAllByReceiver(memberRepository.findById(member_id).get());
+
+        //ResponseNotification 포맷에 맞게 변환
         List<ResponseNotification> result = notifications.stream()
                 .map(noti -> {
+                    //게시글에 대한 알림일 경우 ResponseNotiPostDto 포맷으로 변환
                     if(noti.getNotType().equals("post")){
                         Post post = postRepository.findById(noti.getNotObjectId()).get();
                         return new ResponseNotification(noti,new ResponseNotiPostDto(post));
                     }
                     else {
+                        //댓글에 대한 알림일 경우 ResponseNotiCommentDto 포맷으로 변환
                         Comment comment = commentRepository.findById(noti.getNotObjectId()).get();
                         return new ResponseNotification(noti,new ResponseNotiCommentDto(comment));
                     }
                 })
                 .collect(Collectors.toList());
 
+        //알림 리스트 페이지네이션
         PageRequest pageRequest = PageRequest.of(page,10);
         result.sort(Comparator.comparing(ResponseNotification::getNot_datetime).reversed());//최신순 조회
         int start = (int) pageRequest.getOffset();
@@ -72,30 +82,41 @@ public class NotificationService {
         return ResponseEntity.ok(postPage);
     }
 
+    //알림 읽음 여부
     public ResponseEntity checkNotification(HttpServletRequest request,Long noti_id){
+        //헤더의 토큰으로부터 id값추출
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+        //noti_id를 가진 데이터 조회
         Notification notification = notificationRepository.findById(noti_id).get();
+        //조회한 알림의 회원가 요청한 회원이 불일치할 경우
         if(notification.getReceiver().getId() != member_id){
             return new ResponseEntity(new ResponseMessage("사용자의 알림이 아닙니다."),HttpStatus.BAD_REQUEST);
         }
+        //조회한 데이터의 읾음여부값 변경
         notification.setNotIsRead(true);
         notificationRepository.save(notification);
+        //게시글에 대한 알림일 경우 ResponseNotiPostDto 포맷으로 변환
         if(notification.getNotType().equals("post")){
             Post post = postRepository.findById(notification.getNotObjectId()).get();
             return new ResponseEntity(new ResponseNotification(notification,new ResponseNotiPostDto(post)),HttpStatus.OK);
         }
         else{
+            //댓글에 대한 알림일 경우 ResponseNotiPostDto 포맷으로 변환
             Comment comment = commentRepository.findById(notification.getNotObjectId()).get();
             return new ResponseEntity(new ResponseNotification(notification,new ResponseNotiCommentDto(comment)),HttpStatus.OK);
         }
 
     }
 
+    //모두 읽음 처리
     public ResponseEntity allCheckNotification(HttpServletRequest request){
+        //헤더의 토큰으로부터 id값추출
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token));
+        //해당 회원 아이디로 수신된 알림 전체 조회
         List<Notification> notifications = notificationRepository.findAllByReceiver(memberRepository.findById(member_id).get());
+        //조회된 알림들의 읽음여부를 모두 true로 변경
         for (Notification notification : notifications) {
             notification.setNotIsRead(true);
         }

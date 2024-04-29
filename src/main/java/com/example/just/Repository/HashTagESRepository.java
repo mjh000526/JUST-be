@@ -10,7 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HashTagESRepository extends ElasticsearchRepository<HashTagDocument, Long>,
         CrudRepository<HashTagDocument, Long> {
+
+    //해당 name을 포함하는 태그 조회(ELK)
     List<HashTagDocument> findByNameContaining(String name, Sort sort);
+
+    //모든 태그 조회(ELK)
     List<HashTagDocument> findAll(Sort sort);
 
 }

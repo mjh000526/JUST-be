@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseNotiCommentDto {
+public class ResponseNotiCommentDto { //댓글에 대한 알림에 응답할 포맷
 
     private Long comment_id;
 

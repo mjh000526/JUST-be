@@ -16,7 +16,7 @@
   @Setter
   @AllArgsConstructor
   @NoArgsConstructor
-  public class Member {
+  public class Member { //DB 회원 정보 테이블
       @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
       private Long id;
 

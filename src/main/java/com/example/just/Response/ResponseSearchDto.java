@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseSearchDto {
+public class ResponseSearchDto {//검색 내용에 대해 응답하기 위한 데이터포맷
 
     private Long post_id;
     private List<String> post_content;

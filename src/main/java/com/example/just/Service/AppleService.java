@@ -34,18 +34,18 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class AppleService {
+public class AppleService {//애플 로그인 기능 서비스
     @Autowired
     private MemberRepository userRepository;
 
     @Autowired
     private JwtProvider jwtProvider;
 
+    //애플 로그인 서비스
     public ResponseEntity loginApple(String id,String fcmToken){
-        String apple_email = this.userIdFromApple(id)+ "@apple.com";
-        Member user = userRepository.findByEmail(apple_email);
-        if(user == null){
-            System.out.println("아이디없음");
+        String apple_email = this.userIdFromApple(id)+ "@apple.com";//apple 토큰값으로 찾은 회원고유 id
+        Member user = userRepository.findByEmail(apple_email);//해당 이메일값으로 회원 정보 조회
+        if(user == null){//회원가입하지 않은 회원일 시 예외처리
             return new ResponseEntity<>("/api/apple/signup", HttpStatus.OK);
         }
         //jwt토큰생성
@@ -53,21 +53,24 @@ public class AppleService {
         String refreshtoken = jwtProvider.createRefreshToken(user);
         user.setRefreshToken(refreshtoken);
         user.setFcmToken(fcmToken);
-        userRepository.save(user);
+        userRepository.save(user); //refresh토큰 재발급 후 update
         HttpHeaders httpHeaders = new HttpHeaders();
+        //응답헤더에 토큰 적재
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
         httpHeaders.add("refresh_token",refreshtoken);
+        //회원 정보를 응답포맷에 맞게 변환
         ResponseMemberDto responseMemberDto = new ResponseMemberDto(user.getEmail(),user.getNickname());
         return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
 
     public ResponseEntity signUpApple(String id,String fcmToken, String nickname){
-        String apple_email = this.userIdFromApple(id)+ "@apple.com";
-        Member user = userRepository.findByEmail(apple_email);
+        String apple_email = this.userIdFromApple(id)+ "@apple.com";//애플 토큰으로 인증 후 이메일 생성
+        Member user = userRepository.findByEmail(apple_email);//해당 이메일로 회원정보 조회
         HttpHeaders httpHeaders = new HttpHeaders();
+        //클라이언트가 닉네임을 적지 않을 경우 예외처리
         if(nickname == null ) return new ResponseEntity<>("닉네임을 입력해 주세요", HttpStatus.OK);
-        else if(user == null){
-            user = Member.builder()
+        else if(user == null){//디비에 회원정보가 없을 시
+            user = Member.builder()//클라이언트의 데이터를 기반으로 회원객체생성
                     .email(this.userIdFromApple(id)+ "@apple.com") //id토큰으로 email제작
                     .provider("apple")
                     .provider_id(this.userIdFromApple(id))//apple고유 id
@@ -77,6 +80,7 @@ public class AppleService {
                     .blameCount(0)
                     .blamedCount(0)
                     .build();
+            //신규저장 create
             user = userRepository.save(user);
 
             //jwt토큰생성
@@ -85,9 +89,11 @@ public class AppleService {
             user.setRefreshToken(refreshtoken);
             userRepository.save(user);
 
+            //응답헤더에 토큰 적재
             httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accesstoken);
             httpHeaders.add("refresh_token",refreshtoken);
         }
+        //응답포맷에 맞게 변환 후 응답
         ResponseMemberDto responseMemberDto = new ResponseMemberDto(user.getEmail(),user.getNickname());
         return ResponseEntity.ok().headers(httpHeaders).body(responseMemberDto);
     }
@@ -96,6 +102,7 @@ public class AppleService {
     public String userIdFromApple(String idToken) {
         StringBuffer result = new StringBuffer();
         try {
+            //애플의 인증서버에 http통신을 연결하여 해당 id토큰의 정보로 인증요청
             URL url = new URL("https://appleid.apple.com/auth/keys");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -109,6 +116,7 @@ public class AppleService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        //url에 요청하고 받은 response를 json형식으로 변환
         JsonParser parser = new JsonParser();
         JsonObject keys = (JsonObject) parser.parse(result.toString());
         JsonArray keyArray = (JsonArray) keys.get("keys");
@@ -144,6 +152,7 @@ public class AppleService {
         return userId;
     }
 
+    //애플에서 제공하는 공개키값 디코딩
     public  PublicKey getPublicKey(JsonObject object){
         String nStr = object.get("n").toString();
         String eStr = object.get("e").toString();

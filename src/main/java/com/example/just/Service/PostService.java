@@ -475,7 +475,6 @@ public class PostService {
                 request,
                 String.class);
         String responseBody = responseEntity.getBody();
-        System.out.println("여긴됨");
         return parsingJson(responseBody);
     }
 
@@ -489,7 +488,7 @@ public class PostService {
             for (Object obj : jsonArray) {
                 denyList.add((String) obj);
             }
-            System.out.println("여기가안되겠지");
+
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

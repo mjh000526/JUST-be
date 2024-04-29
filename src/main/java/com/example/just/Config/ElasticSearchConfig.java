@@ -16,6 +16,8 @@ import org.springframework.data.elasticsearch.repository.config.EnableReactiveEl
 @Configuration
 @EnableReactiveElasticsearchRepositories(basePackageClasses = {PostContentESRespository.class, HashTagESRepository.class})
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
+
+    //서버에 있는 ELK연결 설정
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
@@ -24,11 +26,13 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
         return RestClients.create(clientConfiguration).rest();
     }
 
+    //ELK에 연결하는 설정 Bean등록
     @Bean
     public ElasticsearchOperations elasticsearchOperations(){
         return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 
+    //ELK연결 템플릿 Bean등록
     @Bean
     public ElasticsearchRestTemplate elasticsearchRestTemplate() {
         return new ElasticsearchRestTemplate(elasticsearchClient());

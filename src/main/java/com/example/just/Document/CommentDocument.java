@@ -15,7 +15,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Getter
 @NoArgsConstructor
-public class CommentDocument {
+public class CommentDocument {//ELK에 동기화할 댓글 테이블
     @Id
     private Long comment_id;    //댓글 아이디
 

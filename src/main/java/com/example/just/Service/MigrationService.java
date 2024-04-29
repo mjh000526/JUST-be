@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MigrationService {
+public class MigrationService {//ELK와 mysql 동기화 서비스
 
     @Autowired
     private PostRepository postRepository;
@@ -29,15 +29,22 @@ public class MigrationService {
     private HashTagESRepository hashTagESRepository;
 
     public void migrationDB(){
+        //게시글 테이블 전체 조회
         List<Post> dbPosts = postRepository.findAll();
+
+        //게시글 리스트를 ELK 포맷으로 변환
         List<PostDocument> postDocuments = dbPosts.stream()
                 .map(PostDocument::new)
                 .collect(Collectors.toList());
+        //ELK에 게시글 전체 저장
         postContentESRespository.saveAll(postDocuments);
+        //태그 테이블 전체 조회
         List<HashTag> dbTag = hashTagRepository.findAll();
+        //태그 리스트를 ELK 포맷으로 변환
         List<HashTagDocument> hashTagDocuments = dbTag.stream()
                 .map(HashTagDocument::new)
                 .collect(Collectors.toList());
+        //ELK에 태그 전체 저장
         hashTagESRepository.saveAll(hashTagDocuments);
     }
 }

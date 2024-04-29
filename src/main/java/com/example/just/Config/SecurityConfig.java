@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**"
     };
 
+    //jwt 인스턴스 등록
     public SecurityConfig(
             JwtProvider jwtProvider,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
@@ -50,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
+    //jwt암호 인코더
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -61,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //return (web -> web.ignoring().antMatchers("/test"));
     }
 
+    //클라이언트측 접근을 허가하는 cors 설정
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -78,6 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    //각 api 요청에 대한 클라이언트의 권한 확인 및 허가
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ResponseBlameList {
+public class ResponseBlameList {//클라이언트에 응답할 신고 리스트 포맷
 
     private int blameCount;
 

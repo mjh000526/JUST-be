@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostLike {
+public class PostLike { // DB 게시글 좋아요 이력 테이블
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

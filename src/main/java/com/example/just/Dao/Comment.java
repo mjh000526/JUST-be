@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "comment")
 @Getter
 @Setter
-public class Comment {
+public class Comment { //DB 댓글 테이블
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

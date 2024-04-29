@@ -38,6 +38,7 @@ public class JwtProvider implements InitializingBean {
     @Autowired
     private MemberRepository memberRepository;
 
+    //토큰 디코더 등록
     @Override
     public void afterPropertiesSet() throws Exception {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -58,6 +59,7 @@ public class JwtProvider implements InitializingBean {
                 .compact();
     }
 
+    //재발급토큰 생성
     public String createRefreshToken(Member member){
         return Jwts.builder()
                 .signWith(key,SignatureAlgorithm.HS512)
@@ -65,6 +67,7 @@ public class JwtProvider implements InitializingBean {
                 .setExpiration(new Date(System.currentTimeMillis() + refresh_token_time))
                 .compact();
     }
+    //토큰 유효시간 검사
     public boolean existsRefreshToken(String refreshtoken){
         return memberRepository.existsByRefreshToken(refreshtoken);
     }
@@ -93,6 +96,7 @@ public class JwtProvider implements InitializingBean {
         return null;
     }
 
+    //재발급 토큰값 헤더로부터 추출
     public String getRefreshToken(HttpServletRequest request){
         if(request.getHeader("refresh_token")!=null){
             return request.getHeader("refresh_token");
@@ -100,6 +104,7 @@ public class JwtProvider implements InitializingBean {
         return null;
     }
 
+    //회원 테이블에 있는 재발급토큰값 검사
     public Member getMemberFromRefreshToken(String refreshToken){
         return memberRepository.findByRefreshToken(refreshToken).get();
 

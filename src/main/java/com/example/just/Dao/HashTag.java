@@ -24,7 +24,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class HashTag {
+public class HashTag { //DB 태그 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="hash_tag_id")

@@ -18,6 +18,7 @@ public class BlameController {
     @Autowired
     private BlameService blameService;
 
+    //
     @ApiOperation(value = "회원 신고 API" )
     @PostMapping(value = "/blame/{type_index}/member/{target_member_id}")
     @ApiResponses(value = {
