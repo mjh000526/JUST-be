@@ -29,15 +29,15 @@ public class Notification{ //DB 알림 정보 테이블
     @Column(name = "not_object_id")   //알림 내용
     private Long notObjectId;
 
-    @Column(name = "not_type")
+    @Column(name = "not_type")  //알림 종류
     private String notType;
 
     @Column(name = "not_datetime")  //알림 발생 시일
     @CreationTimestamp
     private Date notDatetime;
 
-    @Column(nullable = false)
-    private Boolean notIsRead; //알림 읽음 여부
+    @Column(nullable = false)   //알림 읽음 여부
+    private Boolean notIsRead;
 
     @ManyToOne
     @JoinColumn(name = "id")

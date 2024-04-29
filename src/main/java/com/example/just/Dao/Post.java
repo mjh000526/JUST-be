@@ -28,19 +28,20 @@ public class Post { //DB 게시글 테이블
     @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "content", length = 300)
     @JsonIgnore
-    private List<String> postContent;
+    private List<String> postContent;   //게시글 내용
+
     @Column(name = "post_picture")
-    private Long post_picture;
+    private Long post_picture;  //게시글 배경 사진 번호
 
     @CreationTimestamp
-    @Column(name = "post_create_time")  //글 생성 시간
-    private Date post_create_time;
+    @Column(name = "post_create_time")
+    private Date post_create_time;  //글 생성 시간
 
     @Column(name = "post_like")
-    private Long post_like;
+    private Long post_like; //좋아요 받은 갯수
 
     @Column(name = "secret")
-    private boolean secret;
+    private boolean secret; //비밀글 여부
 
     @Column(name = "emoticon")
     private String emoticon;
@@ -54,20 +55,21 @@ public class Post { //DB 게시글 테이블
     )
     @JsonIgnore
     @Builder.Default
-    private List<Member> likedMembers = new ArrayList<>();
+    private List<Member> likedMembers = new ArrayList<>();  //좋아요를 누른 회원 리스트
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<HashTagMap> hashTagMaps = new ArrayList<>();
+    private List<HashTagMap> hashTagMaps = new ArrayList<>();//태그 N:M테이블
 
     @ManyToOne()
-    @JoinColumn(name = "member_id") //글을쓴 Member_id
+    @JoinColumn(name = "member_id")
     @JsonIgnore
-    private Member member;
+    private Member member;  //글을쓴 Member_id
 
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>(); //게시글에 작성된 댓글 리스트
+
     @Column(name = "blamed_count")
-    private Long blamedCount;
+    private Long blamedCount;   //신고받은 횟수
 
 
     @PrePersist

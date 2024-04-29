@@ -25,12 +25,12 @@ public class HashTagMap { //DB 글과 태그와의 N:M을 위한 매핑테이블
     @ManyToOne
     @JoinColumn(name = "post_id")
     @JsonIgnore
-    private Post post;
+    private Post post;//게시글id
 
     @ManyToOne
     @JoinColumn(name = "hash_tag_id")
     @JsonIgnore
-    private HashTag hashTag;
+    private HashTag hashTag;//태그id
 
     public HashTagMap(HashTag newHashTag, Post p) {
         this.hashTag = newHashTag;

@@ -62,7 +62,7 @@ public class Comment { //DB 댓글 테이블
             inverseJoinColumns = @JoinColumn(name = "member_id")
     )
     @JsonIgnore
-    private List<Member> likedMembers = new ArrayList<>();
+    private List<Member> likedMembers = new ArrayList<>(); //좋아요를 누른 회원
     public void addBlamed(){
         blamedCount++;
     }
