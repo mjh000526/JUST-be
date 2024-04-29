@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-public class AmazonS3Config {
+public class AmazonS3Config { // Amazon S3 설정
 
     @Value("${cloud.aws.credentials.accessKey}")
-    public String accessKey;
+    public String accessKey; // AWS Access Key
     @Value("${cloud.aws.credentials.secretKey}")
-    public String secretKey;
+    public String secretKey; // AWS Secret Key
     @Value("${cloud.aws.credentials.region}")
-    public String region;
+    public String region; // AWS Region
 
 
 }
