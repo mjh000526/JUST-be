@@ -74,17 +74,21 @@ public class JwtProvider implements InitializingBean {
 
     //auth객체 반환
     public Authentication getAuthentication(String token){
+        //문자열 기반 토큰객체 claim 생성
         Claims claims = Jwts
                 .parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        //claim으로 인증정보 배열
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
+        //토큰에 포함된 인증 정보를 user 객체로 생성
         User principal = new User(claims.getSubject(), claims.getAudience(), authorities);
+        //user객체로 암호인증토큰 객체생성
         return new UsernamePasswordAuthenticationToken(principal,token,authorities);
     }
     //토큰값 가져오기

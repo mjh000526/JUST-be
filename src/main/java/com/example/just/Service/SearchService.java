@@ -72,7 +72,8 @@ public class SearchService { //검색(ELK) 관련 서비스
         List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
         //검색한 키워드를 포함하는 게시글이 없을 경우
         if(searchList.isEmpty()){
-            return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."), null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."),
+                    null, HttpStatus.BAD_REQUEST);
         }
 
         //조회된 게시글 리스트에서 클라이언트가 신고한 게시글이나 회원에 대한 데이터 삭제
@@ -119,7 +120,8 @@ public class SearchService { //검색(ELK) 관련 서비스
             return new ResponseEntity(new ResponseMessage("페이지를 초과하엿습니다."),null,HttpStatus.BAD_REQUEST);
         }
         int end = Math.min((start + pageRequest.getPageSize()),hashTagDocuments.size());
-        Page<HashTagDocument> postPage = new PageImpl<>(hashTagDocuments.subList(start,end), pageRequest, hashTagDocuments.size());
+        Page<HashTagDocument> postPage = new PageImpl<>(hashTagDocuments.subList(start,end),
+                pageRequest, hashTagDocuments.size());
         return ResponseEntity.ok(postPage);
     }
 

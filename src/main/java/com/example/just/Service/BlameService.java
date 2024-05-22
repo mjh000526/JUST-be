@@ -43,11 +43,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);//신고 처리 정보 저장
         //신고받은 회원의 id가 존재하지 않을 경우
         if(!memberRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 회원이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 회원이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //클라이언트가 신고받은 회원을 이미 신고한 전적이 있는 경우
         else if(blameRepository.existsByBlameMemberIdAndTargetMemberId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 회원입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 회원입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //신고 받은 사람의 정보 조회
         member = memberRepository.findById(target_id).get();
@@ -75,11 +77,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);
         //타겟 게시글의 정보가 DB에 존재하지 않을 경우
         if(!postRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 게시글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 게시글이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //해당 회원이 타겟 게시글을 신고한 전적이 있는 경우
         else if(blameRepository.existsByBlameMemberIdAndTargetPostId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 게시글입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 게시글입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //신고 객체 생성
         Blame blame = Blame.builder()
@@ -102,11 +106,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);
         //타겟 댓글의 정보가 DB에 존재하지 않을 경우
         if(!commentRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고할 댓글이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //클라이언트가 타겟 댓글을 이미 신고한 전적이 있는 경우
         else if(blameRepository.existsByBlameMemberIdAndTargetCommentId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 댓글입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"이미 신고한 댓글입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //신고 객체 생성
         Blame blame = Blame.builder()
@@ -129,11 +135,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);
         //타겟 회원이 존재하지 않을 경우
         if(!memberRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"회원이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"회원이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 회원에 대한 신고 전적이 없을 경우
         else if(!blameRepository.existsByBlameMemberIdAndTargetMemberId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 회원입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 회원입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 회원 신고 이력 조회 및 삭제
         Blame blame = blameRepository.findByBlameMemberIdAndTargetMemberId(id,target_id).get();
@@ -150,11 +158,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);
         //타겟 게시글의 정보가 DB에 존재하지 않을 경우
         if(!postRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"게시글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"게시글이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 게시글에 대한 신고 전적이 없을 경우
         else if(!blameRepository.existsByBlameMemberIdAndTargetPostId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 게시글입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 게시글입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 게시글에 대한 신고 전적 조회 및 삭제
         Blame blame = blameRepository.findByBlameMemberIdAndTargetPostId(id,target_id).get();
@@ -171,11 +181,13 @@ public class  BlameService { //신고 관련 기능 서비스
         memberRepository.save(member);
         //타겟 댓글에 대한 정보가 DB에 존재하지 않을 경우
         if(!commentRepository.findById(target_id).isPresent()) {
-            return new ResponseEntity<>(new ResponseBlameDto(null,"댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"댓글이 존재하지 않습니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 댓글에 대한 신고 전적이 없을 경우
         else if(!blameRepository.existsByBlameMemberIdAndTargetCommentId(id,target_id)){
-            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 댓글입니다."),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBlameDto(null,"신고하지 않은 댓글입니다."),
+                    HttpStatus.NOT_FOUND);
         }
         //타겟 댓글에 대한 신고 전적 조회 및 삭제
         Blame blame = blameRepository.findByBlameMemberIdAndTargetCommentId(id,target_id).get();

@@ -129,12 +129,13 @@ public class AppleService {//애플 로그인 기능 서비스
         JsonElement kid = ((JsonObject) parser.parse(header)).get("kid");
         JsonElement alg = ((JsonObject) parser.parse(header)).get("alg");
 
-        //element
+        //애플에서 주는 여러개의 인증키값을 반복하며 대조
         JsonObject avaliableObject = null;
         for (int i = 0; i < keyArray.size(); i++) {
             JsonObject appleObject = (JsonObject) keyArray.get(i);
             JsonElement appleKid = appleObject.get("kid");
             JsonElement appleAlg = appleObject.get("alg");
+            //일치할 경우 인증객체 할당 후 탈출
             if (Objects.equals(appleKid, kid) && Objects.equals(appleAlg, alg)) {
                 avaliableObject = appleObject;
                 break;

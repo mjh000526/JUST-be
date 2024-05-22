@@ -115,7 +115,8 @@ public class CommentService {
                         .build()
                 );
                 //부모댓글의 작성자에게 알림 전송
-                fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",parentComment.getMember().getFcmToken());
+                fcmService.sendMessageByToken("댓글 알림","누군가가 댓글에 대댓글을 작성했어요! \""
+                        + commentDto.getComment_content() + "\"",parentComment.getMember().getFcmToken());
             }
         } else if (parentComment == null) { //아닐경우는 부모댓글
             PostDocument postDocument = postContentESRespository.findById(postId).get();
@@ -135,7 +136,8 @@ public class CommentService {
                         .build()
                 );
                 //게시글의 작성자에게 알림 발송
-                fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요! \"" + commentDto.getComment_content() + "\"",receiver.get().getFcmToken());
+                fcmService.sendMessageByToken("댓글 알림","누군가가 게시글에 댓글을 작성했어요! \""
+                        + commentDto.getComment_content() + "\"",receiver.get().getFcmToken());
             }
         }
         //댓글 테이블에 저장

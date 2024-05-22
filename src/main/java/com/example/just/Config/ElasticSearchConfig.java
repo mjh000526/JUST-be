@@ -4,6 +4,7 @@ import com.example.just.Repository.HashTagESRepository;
 
 import com.example.just.Repository.PostContentESRespository;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
@@ -17,11 +18,14 @@ import org.springframework.data.elasticsearch.repository.config.EnableReactiveEl
 @EnableReactiveElasticsearchRepositories(basePackageClasses = {PostContentESRespository.class, HashTagESRepository.class})
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
 
+    @Value("${server-add}")
+    private String serverAdd;
+
     //서버에 있는 ELK연결 설정
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo("34.22.67.43:9200")
+                .connectedTo(serverAdd + ":9200")
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }
