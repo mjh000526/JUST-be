@@ -25,7 +25,7 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(serverAdd + ":9200")
+                .connectedTo("localhost:9200")
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }
