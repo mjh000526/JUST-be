@@ -362,7 +362,7 @@ public class PostService { // 게시글 관련 기능 서비스
             randomIndex = random.nextInt(arrayLength);
             String randonHashTagName = likePostHashTagName.get(randomIndex);
             // 요청을 보낼 URL 설정
-            HttpGet request = new HttpGet("http://34.22.67.43:8081/api/similar_words/" + randonHashTagName);
+            HttpGet request = new HttpGet("http://127.0.0.1:8081/api/similar_words/" + randonHashTagName);
 
             // 요청 실행 및 응답 수신
             HttpResponse response = httpClient.execute(request);
