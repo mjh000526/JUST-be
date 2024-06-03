@@ -470,7 +470,7 @@ public class PostService { // 게시글 관련 기능 서비스
         System.out.println(parameter.toJSONString());
         ResponseEntity<String> responseEntity = restTemplate.exchange(
 //                "http://"+server_address+":8081/api/ner/post",
-                "127.0.0.1:8081/api/ner/post",
+                "http://127.0.0.1:8081/api/ner/post",
                 HttpMethod.POST,
                 request,
                 String.class);
