@@ -362,7 +362,7 @@ public class PostService { // 게시글 관련 기능 서비스
             randomIndex = random.nextInt(arrayLength);
             String randonHashTagName = likePostHashTagName.get(randomIndex);
             // 요청을 보낼 URL 설정
-            HttpGet request = new HttpGet("http://34.22.67.43:8081/api/similar_words/" + randonHashTagName);
+            HttpGet request = new HttpGet("http://127.0.0.1:8081/api/similar_words/" + randonHashTagName);
 
             // 요청 실행 및 응답 수신
             HttpResponse response = httpClient.execute(request);
@@ -370,28 +370,28 @@ public class PostService { // 게시글 관련 기능 서비스
             // 응답 코드 확인
             int statusCode = response.getStatusLine().getStatusCode();
             System.out.println("Response Code: " + statusCode);
-            if (statusCode == 200) {
-
-                // 응답 데이터 읽기
-                String responseBody = EntityUtils.toString(response.getEntity());
-
-                // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
-                List<Long> postIds = new ArrayList<>();
-                for (int i = 2; i < responseBody.length(); i += 5) {
-                    postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
-                }
-
-                results = query.select(post)
-                        .from(post)
-                        .where(post.post_id.notIn(viewedPostIds), // 이전에 본 글들의 ID를 제외합니다.
-                                post.post_create_time.isNotNull(), // 글 작성 시간이 NULL이 아닌 글들만 가져옵니다.
-                                post.post_id.notIn(blames), // 신고한 글들의 ID를 제외합니다.
-                                post.member.id.notIn(targetMembers),// 신고당한 회원들의 ID를 제외합니다.
-                                post.post_id.in(postIds)) // 추천 시스템으로 가져온 글들의 ID만 가져옵니다.
-                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc()) // 랜덤으로 정렬합니다.
-                        .limit(limit)
-                        .fetch();
-            } else {
+//            if (statusCode == 200) {
+//
+//                // 응답 데이터 읽기
+//                String responseBody = EntityUtils.toString(response.getEntity());
+//
+//                // 여기서 Python Server의 추천 시스템으로 Post_id들을 가져온다.
+//                List<Long> postIds = new ArrayList<>();
+//                for (int i = 2; i < responseBody.length(); i += 5) {
+//                    postIds.add(Long.parseLong(responseBody.substring(i, i + 1)));
+//                }
+//
+//                results = query.select(post)
+//                        .from(post)
+//                        .where(post.post_id.notIn(viewedPostIds), // 이전에 본 글들의 ID를 제외합니다.
+//                                post.post_create_time.isNotNull(), // 글 작성 시간이 NULL이 아닌 글들만 가져옵니다.
+//                                post.post_id.notIn(blames), // 신고한 글들의 ID를 제외합니다.
+//                                post.member.id.notIn(targetMembers),// 신고당한 회원들의 ID를 제외합니다.
+//                                post.post_id.in(postIds)) // 추천 시스템으로 가져온 글들의 ID만 가져옵니다.
+//                        .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc()) // 랜덤으로 정렬합니다.
+//                        .limit(limit)
+//                        .fetch();
+//            } else {
                 results = query.select(post)
                         .from(post)
                         .where(post.post_id.notIn(viewedPostIds), // 이전에 본 글들의 ID를 제외합니다.
@@ -401,7 +401,7 @@ public class PostService { // 게시글 관련 기능 서비스
                         .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                         .limit(limit)
                         .fetch();
-            }
+
         } else {
 
             results = query.select(post)
