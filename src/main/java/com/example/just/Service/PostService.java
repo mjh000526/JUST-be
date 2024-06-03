@@ -462,7 +462,6 @@ public class PostService { // 게시글 관련 기능 서비스
             }
         }
         requestBody += "]}";
-        System.out.println("http://"+server_address+":8081/api/ner/post");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject parameter = new JSONObject();
@@ -470,7 +469,8 @@ public class PostService { // 게시글 관련 기능 서비스
         HttpEntity<String> request = new HttpEntity<>(parameter.toJSONString(), headers);
         System.out.println(parameter.toJSONString());
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "http://"+server_address+":8081/api/ner/post",
+//                "http://"+server_address+":8081/api/ner/post",
+                "127.0.0.1:8081/api/ner/post",
                 HttpMethod.POST,
                 request,
                 String.class);
