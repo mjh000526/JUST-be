@@ -13,7 +13,7 @@ import java.util.List;
 public interface PostContentESRespository extends ElasticsearchRepository<PostDocument,Long>,
         CrudRepository<PostDocument,Long> {
 //    List<PostDocument> findByPostContent_ContentContains(String text);
-    //    List<PostDocument> findByPostContent_ContentContains(String text);
+//        List<PostDocument> findByPostContent_ContentContains(String text);
 
     //해당 text문자열을 하나라도 포함하는 게시글 전제조회(ELK)
     List<PostDocument> findByPostContentContaining(String text);

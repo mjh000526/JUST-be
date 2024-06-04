@@ -15,13 +15,19 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.management.Query;
 import javax.servlet.http.HttpServletRequest;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,6 +53,12 @@ public class SearchService { //검색(ELK) 관련 서비스
     @Autowired
     MemberRepository memberRepository;
 
+    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    public SearchService(ElasticsearchRestTemplate elasticsearchRestTemplate) {
+        this.elasticsearchRestTemplate = elasticsearchRestTemplate;
+    }
+
 
     //게시글 내용 검색
     public ResponseEntity searchPostContent(HttpServletRequest request,String keyword,int page){
@@ -69,7 +81,16 @@ public class SearchService { //검색(ELK) 관련 서비스
                 .collect(Collectors.toList());
 
         //검색한 키워드를 내용에 포함하는 게시글 리스트 조회
-        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+//        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.wildcardQuery("postContent", "*"+keyword+"*"))
+//                .withQuery(QueryBuilders.matchQuery("postContent", keyword))
+                .build();
+
+        SearchHits<PostDocument> searchHits = elasticsearchRestTemplate.search(query, PostDocument.class);
+
+        List<PostDocument> searchList = new ArrayList<>();
+        searchHits.forEach(searchHit -> searchList.add(searchHit.getContent()));
         //검색한 키워드를 포함하는 게시글이 없을 경우
         if(searchList.isEmpty()){
             return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."),
