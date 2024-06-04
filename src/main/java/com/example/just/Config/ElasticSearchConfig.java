@@ -18,14 +18,14 @@ import org.springframework.data.elasticsearch.repository.config.EnableReactiveEl
 @EnableReactiveElasticsearchRepositories(basePackageClasses = {PostContentESRespository.class, HashTagESRepository.class})
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
 
-    @Value("${server-add}")
+    @Value("${elastic-server}")
     private String serverAdd;
 
     //서버에 있는 ELK연결 설정
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo("127.0.0.1:9200")
+                .connectedTo("http://"+serverAdd+":9200")
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }
