@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -62,23 +63,6 @@ public class PostDocument { ////ELK에 동기화할 게시글 테이블
     @Field(type = FieldType.Long)
     private Long memberId;
 
-
-
-//    //글 태그
-//    @Field(name = "hash_tag", type = FieldType.Nested)
-//    private List<HashTag> hash_tag;
-//
-//
-//    @Field(type = FieldType.Nested)
-//    private List<Member> likedMembers = new ArrayList<>();
-//
-//    @Field(type = FieldType.Object)
-//    private Member member;
-//
-//    @Field(type = FieldType.Nested)
-//    private List<Comment> comments;
-
-
     public PostDocument(Post post) {
         this.id = post.getPost_id();
         this.postContent = post.getPostContent();
@@ -92,9 +76,18 @@ public class PostDocument { ////ELK에 동기화할 게시글 테이블
         this.postLikeSize = post.getPost_like();
         this.blamedCount = post.getBlamedCount();
         this.memberId = post.getMember().getId();
-//        this.hash_tag = post.getHash_tag();
-//        this.likedMembers = post.getLikedMembers();
-//        this.member = post.getMember();
-//        this.comments = post.getComments();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostDocument that = (PostDocument) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

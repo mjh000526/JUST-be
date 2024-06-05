@@ -2,8 +2,7 @@
   "analysis": {
     "tokenizer": {
       "nori_tokenizer": {
-        "type": "nori_tokenizer",
-        "decompound_mode": "mixed"
+        "type": "nori_tokenizer"
       }
     },
     "analyzer": {

@@ -13,10 +13,13 @@ import com.example.just.Response.ResponseSearchDto;
 import com.example.just.jwt.JwtProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.management.Query;
 import javax.servlet.http.HttpServletRequest;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -54,9 +58,11 @@ public class SearchService { //검색(ELK) 관련 서비스
     MemberRepository memberRepository;
 
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+    private final ElasticsearchOperations elasticsearchOperations;
 
-    public SearchService(ElasticsearchRestTemplate elasticsearchRestTemplate) {
+    public SearchService(ElasticsearchRestTemplate elasticsearchRestTemplate, ElasticsearchOperations elasticsearchOperations) {
         this.elasticsearchRestTemplate = elasticsearchRestTemplate;
+        this.elasticsearchOperations = elasticsearchOperations;
     }
 
 
@@ -80,17 +86,32 @@ public class SearchService { //검색(ELK) 관련 서비스
                 .map(Blame::getTargetMemberId)
                 .collect(Collectors.toList());
 
-        //검색한 키워드를 내용에 포함하는 게시글 리스트 조회
-//        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
-        NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.wildcardQuery("postContent", "*"+keyword+"*"))
+//        //검색한 키워드를 내용에 포함하는 게시글 리스트 조회
+////        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+//        NativeSearchQuery query = new NativeSearchQueryBuilder()
+////                .withQuery(QueryBuilders.wildcardQuery("postContent", "*"+keyword+"*"))
+////                .withQuery(QueryBuilders.matchPhraseQuery("postContent", keyword))
 //                .withQuery(QueryBuilders.matchQuery("postContent", keyword))
-                .build();
+////                .withQuery(QueryBuilders.termQuery("postContent", keyword))
+//                .build();
 
-        SearchHits<PostDocument> searchHits = elasticsearchRestTemplate.search(query, PostDocument.class);
+//        SearchHits<PostDocument> searchHits = elasticsearchRestTemplate.search(query, PostDocument.class);
+        Set<PostDocument> searchSet = new HashSet<>();
 
-        List<PostDocument> searchList = new ArrayList<>();
-        searchHits.forEach(searchHit -> searchList.add(searchHit.getContent()));
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.should(QueryBuilders.wildcardQuery("postContent" , "*"+keyword+"*"));
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).build();
+        SearchHits<PostDocument> searchHits = elasticsearchOperations.search(nativeSearchQuery , PostDocument.class);
+        searchHits.forEach(searchHit -> searchSet.add(searchHit.getContent()));
+
+        BoolQueryBuilder QueryBuilder = QueryBuilders.boolQuery();
+        QueryBuilder.should(QueryBuilders.matchQuery("postContent" , keyword));
+        nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilder).build();
+        searchHits = elasticsearchOperations.search(nativeSearchQuery , PostDocument.class);
+        searchHits.forEach(searchHit -> searchSet.add(searchHit.getContent()));
+
+
+        List<PostDocument> searchList = new ArrayList<>(searchSet);
         //검색한 키워드를 포함하는 게시글이 없을 경우
         if(searchList.isEmpty()){
             return new ResponseEntity(new ResponseMessage("해당 내용을 포함하는 게시글이 존재하지 않습니다."),
