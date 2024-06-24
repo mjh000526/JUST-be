@@ -162,6 +162,6 @@ public class PostController {
     public void getMessage() throws FirebaseMessagingException {
 
         System.out.println(fcmToken);
-        fcmService.sendMessageByToken("title","body",fcmToken);
+//        fcmService.sendMessageByToken("title","body",fcmToken);
     }
 }
