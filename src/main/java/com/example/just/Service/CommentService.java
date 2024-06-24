@@ -29,11 +29,15 @@ import com.example.just.jwt.JwtProvider;
 import com.example.just.Response.ResponsePostCommentDto;
 import com.example.just.Response.ResponseCommentDto;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -88,7 +92,9 @@ public class CommentService {
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         //댓글 객체 생성
         Comment comment = new Comment();
-        comment.setComment_content(commentDto.getComment_content().strip());
+        //비식별화 진행
+        List<String> content = getConvertString(commentDto.getComment_content().strip());
+        comment.setComment_content(content.get(0));
         comment.setPost(post);
         comment.setMember(member);
         comment.setParent(parentComment);
@@ -318,5 +324,45 @@ public class CommentService {
     //모든 댓글 조회
     public List<Comment> getAllComments() {
         return commentRepository.findAll();
+    }
+
+    public List<String> getConvertString(String str) { // 문자열 변환
+        RestTemplate restTemplate = new RestTemplate();
+
+        String requestBody = "{\"content\": [";
+
+        requestBody += "\"" + str+"\", ";
+        requestBody += "]}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject parameter = new JSONObject();
+        parameter.put("content",str);
+        HttpEntity<String> request = new HttpEntity<>(parameter.toJSONString(), headers);
+        System.out.println(parameter.toJSONString());
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+//                "http://"+server_address+":8081/api/ner/post",
+                "http://localhost:8081/api/ner/post",
+                HttpMethod.POST,
+                request,
+                String.class);
+        String responseBody = responseEntity.getBody();
+        return parsingJson(responseBody);
+    }
+
+    public List<String> parsingJson(String json) { // JSON 파싱
+        JSONArray jsonArray;
+        List<String> denyList = new ArrayList<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject elem = (JSONObject) parser.parse(json);
+            jsonArray = (JSONArray) elem.get("deny_list");
+            for (Object obj : jsonArray) {
+                denyList.add((String) obj);
+            }
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return denyList;
     }
 }
