@@ -92,8 +92,10 @@ public class CommentService {
         Member member = memberRepository.findById(member_id).orElseGet(() -> new Member());
         //댓글 객체 생성
         Comment comment = new Comment();
+        List<String> list = new ArrayList<>();
+        list.add(commentDto.getComment_content().strip());
         //비식별화 진행
-        List<String> content = getConvertString(commentDto.getComment_content().strip());
+        List<String> content = getConvertString(list);
         comment.setComment_content(content.get(0));
         comment.setPost(post);
         comment.setMember(member);
@@ -326,12 +328,17 @@ public class CommentService {
         return commentRepository.findAll();
     }
 
-    public List<String> getConvertString(String str) { // 문자열 변환
+    public List<String> getConvertString(List<String> str) { // 문자열 변환
         RestTemplate restTemplate = new RestTemplate();
 
         String requestBody = "{\"content\": [";
 
-        requestBody += "\"" + str+"\", ";
+        for(int i=0;i<str.size();i++){
+            requestBody += "\"" + str.get(i)+"\"";
+            if(i==str.size()){
+                requestBody += ", ";
+            }
+        }
         requestBody += "]}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
