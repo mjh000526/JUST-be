@@ -12,6 +12,7 @@ import com.example.just.Dao.QPost;
 import com.example.just.Document.HashTagDocument;
 import com.example.just.Document.PostDocument;
 import com.example.just.Dto.GptRequestDto;
+import com.example.just.Dto.PostContentDto;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.example.just.Repository.BlameRepository;
@@ -406,4 +407,5 @@ public class PostService {
         }
         return response;
     }
+
 }

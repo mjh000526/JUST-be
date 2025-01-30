@@ -2,8 +2,10 @@ package com.example.just.Controller;
 
 
 import com.example.just.Dto.*;
+import com.example.just.Service.GptService;
 import com.example.just.Service.PostService;
 import com.example.just.jwt.JwtProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,9 @@ public class PostController {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    GptService gptService;
 
     @Operation(summary = "게시글 랜덤하게 조회 api(비회원용)", description = "<big>게시글을 조회한다</big>" +
             "랜덤하고 중복되지않게 viewed(이미 읽은 글)라는 헤더에 [1, 2, 3] <-set형식 을 프론트에서 넘겨줘야함" +
@@ -68,6 +73,26 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/gpt/ner")
+    public String filterGPT(@RequestBody PostContentDto content){
+        long startTime = System.currentTimeMillis();
+        String str = gptService.gptner(content);
+        long stopTime = System.currentTimeMillis();
+        System.out.println("gpt 코드 실행 시간: " + (stopTime - startTime));
+        return str;
+    }
+
+    @PostMapping("/pororo/ner")
+    public DenyListDto filterPororo(@RequestBody PostContentDto content) throws JsonProcessingException {
+        long startTime = System.currentTimeMillis();
+        DenyListDto str = gptService.getPororo(content);
+        long stopTime = System.currentTimeMillis();
+        System.out.println("pororo 코드 실행 시간: " + (stopTime - startTime));
+        return str;
+    }
+
+
 
     @Operation(summary = "게시글 작성 api", description = "{\n"
             + "  \"hash_tage\": [\n"
