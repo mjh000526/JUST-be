@@ -45,7 +45,7 @@ public class ResponsePutPostDto {
     }
 
     public ResponsePutPostDto(Post post) {
-        this.post_content = post.getPostContent();
+        this.post_content = post.getContents();
         this.post_id = post.getPost_id();
         this.post_picture = post.getPost_picture();
         this.hash_tag = post.getHashTag();

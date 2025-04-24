@@ -1,28 +1,29 @@
 {
   "properties": {
-    "postContent": {
+    "post_content": {
       "type": "text",
-      "analyzer": "korean"
+      "analyzer": "korean",
+      "search_analyzer": "korean_search"
     },
-    "postPicture": {
+    "post_picture": {
       "type": "long"
     },
-    "postCreateTime": {
+    "post_create_time": {
       "type": "long"
     },
     "secret": {
       "type": "boolean"
     },
-    "commentSize": {
+    "comment_size": {
       "type": "long"
     },
-    "postLikeSize": {
+    "post_like_size": {
       "type": "long"
     },
-    "blameCount": {
+    "blame_count": {
       "type": "long"
     },
-    "memberId": {
+    "member_id": {
       "type": "long"
     }
   }

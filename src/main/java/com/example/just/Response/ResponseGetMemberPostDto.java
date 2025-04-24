@@ -34,7 +34,7 @@ public class ResponseGetMemberPostDto {
 
     public ResponseGetMemberPostDto(Post post, Long member_id, Member member) {
         this.post_id = post.getPost_id();
-        this.post_content = post.getPostContent();
+        this.post_content = post.getContents();
         this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
         List<String> names = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ResponseGetMemberPostDto {
     public ResponseGetMemberPostDto(List<Post> results, Long member_id, int i, List<HashTagMap> hashTagMaps) {
 
         this.post_id = results.get(i).getPost_id();
-        this.post_content = results.get(i).getPostContent();
+        this.post_content = results.get(i).getContents();
         this.post_picture = results.get(i).getPost_picture();
         List<String> names = new ArrayList<>();
         for (int j = 0; j < hashTagMaps.size(); j++) {

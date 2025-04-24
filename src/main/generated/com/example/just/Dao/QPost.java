@@ -42,7 +42,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Long> post_picture = createNumber("post_picture", Long.class);
 
-    public final ListPath<String, StringPath> postContent = this.<String, StringPath>createList("postContent", String.class, StringPath.class, PathInits.DIRECT2);
+    public final ListPath<PostContent, QPostContent> postContent = this.<PostContent, QPostContent>createList("postContent", PostContent.class, QPostContent.class, PathInits.DIRECT2);
 
     public final BooleanPath secret = createBoolean("secret");
 

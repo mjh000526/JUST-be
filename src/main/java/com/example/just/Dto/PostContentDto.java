@@ -12,4 +12,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostContentDto {
     private List<String> content;
+
 }

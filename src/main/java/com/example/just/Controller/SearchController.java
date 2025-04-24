@@ -12,8 +12,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +40,14 @@ public class SearchController {
                     + "}")
     })
     public ResponseEntity getPosts(@RequestParam String keyword,@RequestParam int page, HttpServletRequest request) {
-        return searchService.searchPostContent(request,keyword,page-1);
+        long beforeTime = System.currentTimeMillis();
+        ResponseEntity result = searchService.searchPostContent(request,keyword,page-1);
+        long endTime = System.currentTimeMillis();
+        long durationMillis = endTime - beforeTime; // 밀리초(ms)
+
+        double durationSeconds = durationMillis / 1000.0; // 초(s) 변환
+        System.out.println("ES 처리시간 : " + durationSeconds);
+        return result;
     }
 
     @GetMapping("/get/search/tag")
@@ -56,5 +65,16 @@ public class SearchController {
     @Operation(summary = "태그 자동완성", description = "해당 keyword를 포함하는 태그 전체 검색\n 자음만으로는 검색불가무조건 모음까지 합친 글자로만 검색가능\n ex) ㅇ -> 검색불가\n   연-> 연애,연구")
     public ResponseEntity getAutoTag(@RequestParam(required = false, defaultValue = "") String keyword) {
         return searchService.getAutoTag(keyword);
+    }
+
+    // 검색어로 게시글 검색
+    @GetMapping("/search/like")
+    public Page<Post> searchPostLikeQuery(@RequestParam String keyword) {
+        return searchService.searchPostLikeQuery(keyword);
+    }
+    @GetMapping("/posts/full")
+    public List<Post> searchPostFullQuery(HttpServletRequest request, @RequestParam String searchKeyword) {
+        List<Post> list = searchService.searchPostFullQuery(searchKeyword);
+        return list;
     }
 }

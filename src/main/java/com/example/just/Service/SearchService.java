@@ -1,6 +1,7 @@
 package com.example.just.Service;
 
 import com.example.just.Dao.Blame;
+import com.example.just.Dao.Post;
 import com.example.just.Document.HashTagDocument;
 import com.example.just.Document.PostDocument;
 import com.example.just.Repository.BlameRepository;
@@ -21,11 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SearchService {
@@ -64,22 +67,22 @@ public class SearchService {
                 .map(Blame::getTargetMemberId)
                 .collect(Collectors.toList());
 
-        List<PostDocument> searchList = postContentESRespository.findByPostContentContaining(keyword);
+        Page<PostDocument> searchList = postContentESRespository.searchByPostContentMatch(keyword,PageRequest.of(page,10));
 
-        List<PostDocument> filterList = searchList.stream()
-                .filter(postDocument -> !postIds.contains(postDocument.getId()))
-                .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
-                .collect(Collectors.toList());
-
-        List<ResponseSearchDto> result = filterList.stream()
-                .map(postDocument -> new ResponseSearchDto(postDocument,id))
-                .collect(Collectors.toList());
-        PageRequest pageRequest = PageRequest.of(page,10);
-        result.sort(Comparator.comparing(ResponseSearchDto::getPost_create_time).reversed());
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()),result.size());
-        Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
-        return ResponseEntity.ok(postPage);
+//        List<PostDocument> filterList = searchList.stream()
+//                .filter(postDocument -> !postIds.contains(postDocument.getId()))
+//                .filter(postDocument -> !memberIds.contains(postDocument.getMember_id()))
+//                .collect(Collectors.toList());
+//
+//        List<ResponseSearchDto> result = filterList.stream()
+//                .map(postDocument -> new ResponseSearchDto(postDocument,id))
+//                .collect(Collectors.toList());
+//        PageRequest pageRequest = PageRequest.of(page,10);
+//        result.sort(Comparator.comparing(ResponseSearchDto::getPost_create_time).reversed());
+//        int start = (int) pageRequest.getOffset();
+//        int end = Math.min((start + pageRequest.getPageSize()),result.size());
+//        Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
+        return ResponseEntity.ok(searchList);
     }
 
     public ResponseEntity getAutoTag(String str){
@@ -116,7 +119,7 @@ public class SearchService {
 
         List<PostDocument> filterList = searchList.stream()
                 .filter(postDocument -> !postIds.contains(postDocument.getId()))
-                .filter(postDocument -> !memberIds.contains(postDocument.getMemberId()))
+                .filter(postDocument -> !memberIds.contains(postDocument.getMember_id()))
                 .collect(Collectors.toList());
 
         List<ResponseSearchDto> result = filterList.stream()
@@ -130,5 +133,34 @@ public class SearchService {
         Page<ResponseSearchDto> postPage = new PageImpl<>(result.subList(start,end), pageRequest, result.size());
         return ResponseEntity.ok(postPage);
     }
+
+    // 검색어로 게시글 검색
+    public Page<Post> searchPostLikeQuery(String searchKeyword) {
+        long beforeTime = System.currentTimeMillis();
+
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<Post> result = postRepository.searchPostsByContent(searchKeyword,pageable);
+
+        long endTime = System.currentTimeMillis();
+        long durationMillis = endTime - beforeTime;
+
+        double durationSeconds = durationMillis / 1000.0; // 초(s) 변환
+        System.out.println("like 처리시간: " + durationSeconds);
+        return result;
+    }
+
+    @Transactional
+    public List<Post> searchPostFullQuery(String searchKeyword) {
+
+        long beforeTime = System.currentTimeMillis();
+
+        List<Post> list = postRepository.searchPostsByFullTextWithPagination(searchKeyword,10,10000);
+        long endTime = System.currentTimeMillis();
+        long durationMillis = endTime - beforeTime; // 밀리초(ms)
+
+        double durationSeconds = durationMillis / 1000.0; // 초(s) 변환
+        return list;
+    }
+
 
 }

@@ -7,10 +7,12 @@ import com.example.just.Dao.Member;
 import com.example.just.Dao.Post;
 
 
+import com.example.just.Dao.PostContent;
 import com.example.just.Dao.QBlame;
 import com.example.just.Dao.QPost;
 import com.example.just.Document.HashTagDocument;
 import com.example.just.Document.PostDocument;
+import com.example.just.Dto.DenyListDto;
 import com.example.just.Dto.GptRequestDto;
 import com.example.just.Dto.PostContentDto;
 import com.example.just.Dto.PostPostDto;
@@ -29,6 +31,7 @@ import com.example.just.Repository.PostContentESRespository;
 import com.example.just.Repository.PostRepository;
 
 import com.example.just.jwt.JwtProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.Expressions;
@@ -37,6 +40,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -81,6 +85,9 @@ public class PostService {
     @Autowired
     private HashTagMapRepository hashTagMapRepository;
 
+    @Value("${server-add}")
+    private String serverAddress;
+
     public PostService(EntityManager em, JPAQueryFactory query) {
         this.em = em;
         this.query = new JPAQueryFactory(em);
@@ -117,18 +124,20 @@ public class PostService {
             List<String> tag = gptService.getTag(gptRequestDto);
             postDto.setHash_tag(tag);
         }
-        List<String> content = new ArrayList<>();
-        for(int i = 0; i<postDto.getPost_content().size();i++){
-            content.add(getConvertString(postDto.getPost_content().get(i)));
+        List<PostContent> postContents = new ArrayList<>();
+        for (String content : postDto.getPost_content()) {
+            PostContent postContent = new PostContent();
+            postContent.setContent(content);
+            postContent.setPost(post);
+            postContents.add(postContent);
         }
-        postDto.setPost_content(content);
-        post.writePost(postDto, member);
+
+        post.writePost(postDto, postContents, member);
         Post p = postRepository.save(post);
 
         List<String> hashTags = postDto.getHash_tag();
         saveHashTag(hashTags, p);
-
-        PostDocument postDocument = new PostDocument(p);
+        System.out.println(p);
         postContentESRespository.save(new PostDocument(p));
         return postDto;
     }
@@ -178,13 +187,15 @@ public class PostService {
         deleteHashTag(checkPost);
 
 
-        List<String> content = new ArrayList<>();
-        for(int i = 0; i<postDto.getPost_content().size();i++){
-            content.add(getConvertString(postDto.getPost_content().get(i)));
+        List<PostContent> postContents = new ArrayList<>();
+        for (String content : postDto.getPost_content()) {
+            PostContent postContent = new PostContent();
+            postContent.setContent(content);
+            postContent.setPost(checkPost);
+            postContents.add(postContent);
         }
-        postDto.setPost_content(content);
 
-        checkPost.changePost(postDto, member, checkPost);
+        checkPost.changePost(postDto, member, checkPost, postContents);
 
 
         Post p = postRepository.save(checkPost);
@@ -292,11 +303,11 @@ public class PostService {
         PostDocument postDocument = postContentESRespository.findById(post_id).get();
         if (post.getLikedMembers().contains(member)) {
             post.removeLike(member);
-            postDocument.setPostLikeSize(postDocument.getPostLikeSize() - 1);
+            postDocument.setPost_like_size(postDocument.getPost_like_size() - 1);
             responsePost = new ResponsePost(post_id, "좋아요 취소");
         } else {
             post.addLike(member);
-            postDocument.setPostLikeSize(postDocument.getPostLikeSize() + 1);
+            postDocument.setPost_like_size(postDocument.getPost_like_size() + 1);
             responsePost = new ResponsePost(post_id, "좋아요 완료");
         }
         postContentESRespository.save(postDocument);
@@ -396,6 +407,26 @@ public class PostService {
         return convertStr;
     }
 
+    public DenyListDto getPororo(PostContentDto content) throws JsonProcessingException {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBody = mapper.writeValueAsString(content);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> request = new HttpEntity<>(requestBody,headers);
+
+        ResponseEntity<DenyListDto> responseEntity = restTemplate.exchange(
+                "http://" + serverAddress + ":8081/api/ner/post",
+                HttpMethod.POST,
+                request,
+                DenyListDto.class);
+
+        DenyListDto responseBody = responseEntity.getBody();
+        return responseBody;
+    }
+
     public String parsingJson(String json){
         String response;
         try {
@@ -406,6 +437,33 @@ public class PostService {
             throw new RuntimeException(e);
         }
         return response;
+    }
+
+    public ResponseEntity insertDataset(Long memberId){
+        String[] name = {"준호는 ","윌슨은 ","나는 ","그는 "};
+        String[] things = {"라면 사리를 ","자바를 ","재미있는 게임을 ","김해에 있는 학교를 ",
+                "서울에 있는 친적집을 ", "해외에 있는 별장을 ","제일 친한 친구 집을 ","유명한 맛집을 "};
+        String[] active = {"방문했다.", "놀았다", "먹었다","살고 있다","등교했다.",
+                "요리했다.","사용했다.","공부했다","플레이했다.","연구했다."};
+        Member member = memberRepository.findById(memberId).get();
+        for(int i=0;i<3000;i++){
+            for(int j=0;j< things.length;j++){
+                for(int x=0;x<name.length;x++){
+                    for(int y=0;y<active.length;y++){
+                        Post post = new Post();
+                        List<PostContent> postContents = new ArrayList<>();
+                        PostContent postContent = new PostContent();
+                        postContent.setContent(name[x]+things[j]+active[y]);
+                        postContent.setPost(post);
+                        postContents.add(postContent);
+                        post.setPostContent(postContents);
+                        post.setMember(member);
+                        postRepository.save(post);
+                    }
+                }
+            }
+        }
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
 }

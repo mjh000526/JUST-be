@@ -15,6 +15,6 @@ public class SchedulConfig {
 
     @PostConstruct
     public void setMigrationService(){
-        migrationService.migrationDB();
+//        migrationService.migrationDB();
     }
 }

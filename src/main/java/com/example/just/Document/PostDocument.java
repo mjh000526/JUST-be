@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,31 +37,32 @@ public class PostDocument {
     private Long id;
 
     @Field(type = FieldType.Text)
-    private List<String> postContent;
+    private List<String> post_content;
 
     @Field(type = FieldType.Text)
+    @Column(name = "hash_tag")
     private List<String> hashTag;
 
     @Field(type = FieldType.Long)
-    private Long postPicture;
+    private Long post_picture;
 
     @Field(type = FieldType.Long)
-    private Date postCreateTime;
+    private Date post_create_time;
 
     @Field(type = FieldType.Boolean)
     private Boolean secret;
 
     @Field(type = FieldType.Long)
-    private Long commentSize;
+    private Long comment_size;
 
     @Field(type = FieldType.Long)
-    private Long postLikeSize;
+    private Long post_like_size;
 
     @Field(type = FieldType.Long)
-    private Long blamedCount;
+    private Long blamed_count;
 
     @Field(type = FieldType.Long)
-    private Long memberId;
+    private Long member_id;
 
 
 
@@ -81,17 +83,20 @@ public class PostDocument {
 
     public PostDocument(Post post) {
         this.id = post.getPost_id();
-        this.postContent = post.getPostContent();
+        this.post_content = post.getContents();
         this.hashTag = post.getHashTagMaps().stream()
-                .map(hashTagMap -> hashTagMap.getHashTag().getName())
+                .map(hashTagMap -> {
+                    String tagName = hashTagMap.getHashTag().getName();
+                    return tagName != null ? tagName : "empty";  // null이 아닌 경우에는 그대로, null인 경우 "empty"로 대체
+                })
                 .collect(Collectors.toList());
-        this.postPicture = post.getPost_picture();
-        this.postCreateTime = post.getPost_create_time();
+        this.post_picture = post.getPost_picture();
+        this.post_create_time = post.getPost_create_time();
         this.secret = post.getSecret();
-        this.commentSize = (long) post.getComments().size();
-        this.postLikeSize = post.getPost_like();
-        this.blamedCount = post.getBlamedCount();
-        this.memberId = post.getMember().getId();
+        this.comment_size = (long) post.getComments().size();
+        this.post_like_size = post.getPost_like();
+        this.blamed_count = post.getBlamedCount();
+        this.member_id = post.getMember().getId();
 //        this.hash_tag = post.getHash_tag();
 //        this.likedMembers = post.getLikedMembers();
 //        this.member = post.getMember();

@@ -3,7 +3,10 @@ package com.example.just.Dao;
 import com.example.just.Dto.PostPostDto;
 import com.example.just.Dto.PutPostDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
+import java.util.stream.Collectors;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,11 +27,11 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;
 
-    @ElementCollection
-    @CollectionTable(name = "post_content", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "content", length = 300)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
     @JsonIgnore
-    private List<String> postContent;
+    private List<PostContent> postContent;
+
     @Column(name = "post_picture")
     private Long post_picture;
 
@@ -76,9 +79,8 @@ public class Post {
         this.emoticon = this.emoticon == null ? "0" : this.emoticon;
     }
 
-    public void writePost(PostPostDto postDto, Member member) { // 글 쓰기 생성자
-        List<String> contentList = postDto.getPost_content();
-        this.postContent = contentList;
+    public void writePost(PostPostDto postDto, List<PostContent> postContent, Member member) { // 글 쓰기 생성자
+        this.postContent = postContent;
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
         this.emoticon = "";
@@ -104,6 +106,10 @@ public class Post {
         }
     }
 
+    public List<String> getContents(){
+        return this.postContent.stream().map(n -> n.getContent()).collect(Collectors.toList());
+    }
+
     public void removeLike(Member member) {
         if (likedMembers.contains(member)) {
             member.getLikedPosts().remove(this);
@@ -121,14 +127,14 @@ public class Post {
         return this.secret;
     }
 
-    public void changePost(PutPostDto postDto, Member member, Post post) {
+    public void changePost(PutPostDto postDto, Member member, Post post, List<PostContent> postContent) {
         this.post_id = post.getPost_id();
         this.member = member;
         this.setPost_create_time(new Date(System.currentTimeMillis()));
         this.setPost_like(post.getPost_like());
         this.post_picture = postDto.getPost_picture();
         this.secret = postDto.getSecret();
-        this.postContent = postDto.getPost_content();
+        this.postContent = postContent;
         this.hashTagMaps = new ArrayList<>();
         for (int i = 0; i < postDto.getHash_tage().size(); i++) {
             HashTagMap hashTagMap = new HashTagMap();

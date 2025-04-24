@@ -45,7 +45,7 @@
       private String refreshToken;
 
       @Builder.Default //안 써도 되는데 경고떠서 그냥 부침
-      @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,  orphanRemoval=true)
+      @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,  orphanRemoval=true)
       @JsonIgnore
       private List<Post> posts = new ArrayList<>();
 

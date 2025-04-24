@@ -36,9 +36,7 @@ public class ResponseGetPostDto {
 
     public ResponseGetPostDto(Post post) {
         post_id = post.getPost_id();
-        post_content = post.getPostContent().stream()
-                .map(conent -> new String(conent))
-                .collect(Collectors.toList());
+        post_content = post.getContents();
         List<String> names = new ArrayList<>();
         //  List<HashTag> hashTags = post.getHash_tag();
         // for (int j = 0; j < hashTags.size(); j++) {

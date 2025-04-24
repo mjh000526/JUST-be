@@ -19,20 +19,3 @@ import org.springframework.web.client.RestTemplate;
 						HashTagESRepository.class}),
 		}
 )
-@EnableScheduling
-public class JustApplication {
-
-
-	@Bean
-	public BCryptPasswordEncoder encoder(){
-		return new BCryptPasswordEncoder();
-	}
-	static {
-		System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(JustApplication.class, args);
-	}
-
-}

@@ -34,7 +34,7 @@ public class KakaoService {
     @Autowired
     private JwtProvider jwtProvider;
 
-    @Value("${server-add}")
+    @Value("${local-add}")
     private String address;
 
     //카카오 토큰으로 카카오로부터 토큰발급(로그인)
@@ -56,18 +56,22 @@ public class KakaoService {
         //jwt토큰생성
         accessToken = jwtProvider.createaccessToken(userbyEmail);
         refreshToken = jwtProvider.createRefreshToken(userbyEmail);
-        userbyEmail = Member.builder()
-                .id(userbyEmail.getId())
-                .email(userbyEmail.getEmail())
-                .provider(userbyEmail.getProvider())
-                .provider_id(userbyEmail.getProvider_id())
-                .authority(Role.ROLE_USER)
-                .nickname(userbyEmail.getNickname())
-                .blameCount(userbyEmail.getBlameCount())
-                .blamedCount(userbyEmail.getBlamedCount())
-                .refreshToken(refreshToken)
-                .build();
+//        userbyEmail = Member.builder()
+//                .id(userbyEmail.getId())
+//                .email(userbyEmail.getEmail())
+//                .provider(userbyEmail.getProvider())
+//                .provider_id(userbyEmail.getProvider_id())
+//                .authority(Role.ROLE_USER)
+//                .nickname(userbyEmail.getNickname())
+//                .blameCount(userbyEmail.getBlameCount())
+//                .blamedCount(userbyEmail.getBlamedCount())
+//                .refreshToken(refreshToken)
+//                .build();
+        System.out.println("리프레시 업데이트전");
+        userbyEmail.setRefreshToken(refreshToken);
         userRepository.save(userbyEmail);
+//        userbyEmail.setRefreshToken(refreshToken);
+        System.out.println("리프레시 업데이트완료");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
         httpHeaders.add("refresh_token",refreshToken);
@@ -163,7 +167,7 @@ public class KakaoService {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=55ec14b78e17e978a4a3b64971060784");
+            sb.append("&client_id=a70139967800d8bf5a148321b7aa70c0");
             sb.append("&redirect_uri=http://"+address+":9000/api/kakao/access_token");
             sb.append("&code=" + code);
 

@@ -90,7 +90,7 @@ public class CommentService {
 
         } else if (parentComment == null) {
             PostDocument postDocument = postContentESRespository.findById(postId).get();
-            postDocument.setCommentSize(postDocument.getCommentSize() + 1);
+            postDocument.setComment_size(postDocument.getComment_size() + 1);
             postContentESRespository.save(postDocument);
 //            notificationService.send(receiver.get(), "comment", post.getPost_id(), member_id);
         }
@@ -117,7 +117,7 @@ public class CommentService {
                     .collect(Collectors.toList());
         }
 
-        return new ResponsePostCommentDto(post.getPostContent(), comments);
+        return new ResponsePostCommentDto(post.getContents(), comments);
     }
 
     public ResponsePostCommentDtoBefore getCommentListBefore(Long postId, HttpServletRequest req) {
@@ -134,7 +134,7 @@ public class CommentService {
         List<ResponseCommentDtoBefore> comments = post.getComments().stream()
                 .map(comment -> new ResponseCommentDtoBefore(comment, member_id))
                 .collect(Collectors.toList());
-        return new ResponsePostCommentDtoBefore(post.getPostContent(), comments);
+        return new ResponsePostCommentDtoBefore(post.getContents(), comments);
     }
 
     public ResponseEntity<String> deleteComment(Long postId, Long commentId) {
@@ -144,7 +144,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("부모 댓글이 존재하지 않습니다."));
         comment.setChildren(null);
         PostDocument postDocument = postContentESRespository.findById(postId).get();
-        postDocument.setCommentSize(postDocument.getCommentSize() - 1);
+        postDocument.setComment_size(postDocument.getComment_size() - 1);
         postContentESRespository.save(postDocument);
         commentRepository.deleteById(commentId);
         return ResponseEntity.ok("ok");

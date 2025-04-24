@@ -29,15 +29,15 @@ public class ResponseSearchDto {
 
     public ResponseSearchDto(PostDocument postDocument, Long member_id){
         post_id = postDocument.getId();
-        post_content = postDocument.getPostContent();
+        post_content = postDocument.getPost_content();
         hash_tag = postDocument.getHashTag();
-        post_picture = postDocument.getPostPicture();
-        post_create_time = postDocument.getPostCreateTime();
+        post_picture = postDocument.getPost_picture();
+        post_create_time = postDocument.getPost_create_time();
         secret = postDocument.getSecret();
-        comment_size = postDocument.getCommentSize();
-        post_like_size = postDocument.getPostLikeSize();
-        blamed_count = postDocument.getBlamedCount();
+        comment_size = postDocument.getComment_size();
+        post_like_size = postDocument.getPost_like_size();
+        blamed_count = postDocument.getBlamed_count();
         like = false; //윌이 수정하면 따라하기
-        mine = postDocument.getMemberId() == member_id ? true : false;
+        mine = postDocument.getMember_id() == member_id ? true : false;
     }
 }
