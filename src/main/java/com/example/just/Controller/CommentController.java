@@ -7,6 +7,7 @@ import com.example.just.Response.ResponsePostCommentDto;
 import com.example.just.Response.ResponsePostCommentDtoBefore;
 import com.example.just.Service.CommentService;
 import com.example.just.jwt.JwtProvider;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,16 +27,6 @@ public class CommentController {
 
     @Autowired
     private JwtProvider jwtProvider;
-
-    private String errorMassage = "{\n"
-            + "  \"comment_id\": \"\",\n"
-            + "  \"comment_create_time\": 0\n"
-            + "  \"comment_create_time\": \"\",\n"
-            + "  \"comment_like\": 0\n"
-            + "  \"comment_dislike\": 0\n"
-            + "  \"blamed_count\": true\n"
-            + "  \"child\": []\n"
-            + "  \"message\": \"";
 
     @Operation(summary = "댓글 작성 api", description = "parentCommentId는 부모 댓글의 아이디\n"
             + "{\n"
@@ -71,7 +62,7 @@ public class CommentController {
     @PostMapping("/post/{post_id}/comments")
     public ResponseEntity<ResponseCommentDto> createComment(@PathVariable Long post_id,
                                                             @RequestBody CommentDto comment_dto,
-                                                            HttpServletRequest req) {
+                                                            HttpServletRequest req) throws FirebaseMessagingException {
         Comment comment = null;
         Long member_id = null;
         try {
@@ -79,12 +70,12 @@ public class CommentController {
             member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
             comment = commentService.createComment(post_id, member_id, comment_dto);
 
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return ResponseEntity.status(404).body(new ResponseCommentDto("해당 부모 댓글 없음"));
-        } catch (RuntimeException e){
+        } catch (IllegalAccessException e) {
             return ResponseEntity.status(404).body(new ResponseCommentDto("대댓글에는 대댓글 작성 불가"));
         }
-        return ResponseEntity.ok(new ResponseCommentDto(comment,member_id,"입력 완료"));
+        return ResponseEntity.ok(new ResponseCommentDto(comment, member_id, "입력 완료"));
     }
 
     @ApiOperation(value = "댓글 조회 API")
@@ -102,20 +93,24 @@ public class CommentController {
 
     @Operation(summary = "댓글 삭제 api", description = "대댓글까지 다 삭제되니 유의해야 함")
     @DeleteMapping("/delete/comment/{post_id}/{comment_id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
-        return commentService.deleteComment(post_id, comment_id);
+    public ResponseEntity<String> deleteComment(@PathVariable Long post_id, @PathVariable Long comment_id,
+                                                HttpServletRequest request) {
+        Long member_id = getAccessTokenOfMemberId(request);
+        return commentService.deleteComment(post_id, comment_id, member_id);
     }
+
 
     @ApiOperation(value = "댓글 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",description = "댓글 내용"),
-            @ApiResponse(responseCode = "400",description = "댓글이 존재하지 않습니다.\n게시물이 존재하지 않습니다.")
+            @ApiResponse(responseCode = "200", description = "댓글 내용"),
+            @ApiResponse(responseCode = "400", description = "댓글이 존재하지 않습니다.\n게시물이 존재하지 않습니다.")
     })
     @PutMapping("/put/comment/{post_id}/{comment_id}")
     public ResponseEntity<String> putComment(@PathVariable Long post_id, @PathVariable Long comment_id,
                                              @RequestBody PutCommentDto commentDto,
-                                             HttpServletRequest req) {
-        return commentService.putComment(post_id, comment_id, commentDto);
+                                             HttpServletRequest request) {
+        Long member_id = getAccessTokenOfMemberId(request);
+        return commentService.putComment(post_id, comment_id, commentDto, member_id);
     }
 
     @ApiOperation(value = "댓글 신고")
@@ -153,16 +148,9 @@ public class CommentController {
         return commentService.getMyComment(member_id);
     }
 
-    private String errorMassage(String error){
-        return "{\n"
-                + "  \"comment_id\": \"\",\n"
-                + "  \"comment_create_time\": 0\n"
-                + "  \"comment_create_time\": \"\",\n"
-                + "  \"comment_like\": 0\n"
-                + "  \"comment_dislike\": 0\n"
-                + "  \"blamed_count\": true\n"
-                + "  \"child\": []\n"
-                + "  \"message\": \"성공\"\n"
-                + "}";
+    private Long getAccessTokenOfMemberId(HttpServletRequest request) {
+        String token = jwtProvider.getAccessToken(request);
+        Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
+        return member_id;
     }
 }

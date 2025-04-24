@@ -38,6 +38,7 @@ public class JwtProvider implements InitializingBean {
     @Autowired
     private MemberRepository memberRepository;
 
+    //토큰 디코더 등록
     @Override
     public void afterPropertiesSet() throws Exception {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
@@ -58,6 +59,7 @@ public class JwtProvider implements InitializingBean {
                 .compact();
     }
 
+    //재발급토큰 생성
     public String createRefreshToken(Member member){
         return Jwts.builder()
                 .signWith(key,SignatureAlgorithm.HS512)
@@ -65,23 +67,28 @@ public class JwtProvider implements InitializingBean {
                 .setExpiration(new Date(System.currentTimeMillis() + refresh_token_time))
                 .compact();
     }
+    //토큰 유효시간 검사
     public boolean existsRefreshToken(String refreshtoken){
         return memberRepository.existsByRefreshToken(refreshtoken);
     }
 
     //auth객체 반환
     public Authentication getAuthentication(String token){
+        //문자열 기반 토큰객체 claim 생성
         Claims claims = Jwts
                 .parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        //claim으로 인증정보 배열
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
+        //토큰에 포함된 인증 정보를 user 객체로 생성
         User principal = new User(claims.getSubject(), claims.getAudience(), authorities);
+        //user객체로 암호인증토큰 객체생성
         return new UsernamePasswordAuthenticationToken(principal,token,authorities);
     }
     //토큰값 가져오기
@@ -93,6 +100,7 @@ public class JwtProvider implements InitializingBean {
         return null;
     }
 
+    //재발급 토큰값 헤더로부터 추출
     public String getRefreshToken(HttpServletRequest request){
         if(request.getHeader("refresh_token")!=null){
             return request.getHeader("refresh_token");
@@ -100,6 +108,7 @@ public class JwtProvider implements InitializingBean {
         return null;
     }
 
+    //회원 테이블에 있는 재발급토큰값 검사
     public Member getMemberFromRefreshToken(String refreshToken){
         return memberRepository.findByRefreshToken(refreshToken).get();
 

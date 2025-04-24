@@ -1,6 +1,5 @@
 package com.example.just.Config;
 
-
 import com.example.just.Repository.HashTagESRepository;
 
 import com.example.just.Repository.PostContentESRespository;
@@ -16,10 +15,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableReactiveElasticsearchRepositories;
 
 @Configuration
-
-
 @EnableReactiveElasticsearchRepositories(basePackageClasses = {PostContentESRespository.class, HashTagESRepository.class})
-
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
 
     @Value("${spring.data.elasticsearch.url}")
@@ -32,11 +28,13 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
         return RestClients.create(clientConfiguration).rest();
     }
 
+    //ELK에 연결하는 설정 Bean등록
     @Bean
     public ElasticsearchOperations elasticsearchOperations(){
         return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 
+    //ELK연결 템플릿 Bean등록
     @Bean
     public ElasticsearchRestTemplate elasticsearchRestTemplate() {
         return new ElasticsearchRestTemplate(elasticsearchClient());

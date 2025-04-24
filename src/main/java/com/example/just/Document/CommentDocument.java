@@ -49,3 +49,4 @@
 //    @Field(type = FieldType.Nested)
 //    private List<Member> likedMembers = new ArrayList<>();
 //}
+

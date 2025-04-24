@@ -18,7 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseBlameDto {
+public class ResponseBlameDto { //클라이언트에 보여줄 신고 데이터 포맷
     private Long blame_id;
 
     private Long target_index; //신고내용 index

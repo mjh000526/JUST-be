@@ -15,7 +15,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CommentDto {
+public class CommentDto { //댓글 작성에 필요한 댓글 format
 
     private String comment_content; //댓글 내용
 

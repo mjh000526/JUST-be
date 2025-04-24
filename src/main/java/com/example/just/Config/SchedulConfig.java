@@ -13,6 +13,7 @@ public class SchedulConfig {
     @Autowired
     private MigrationService migrationService;
 
+    //DB동기화 작업 프로젝트 실행시에 한번 실행
     @PostConstruct
     public void setMigrationService(){
 //        migrationService.migrationDB();

@@ -40,6 +40,15 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Copy Firebase
+        env:
+          FIREBASE: ${{ secrets.FIREBASE }}
+          FIREBASE_DIR: src/main/resources/key
+          FIREBASE_DIR_FILE_NAME: just-firebase-key.json
+        run: |
+          mkdir -p $FIREBASE_DIR
+          echo $FIREBASE | base64 --decode > $FIREBASE_DIR/$FIREBASE_DIR_FILE_NAME
+
       - name: Copy Secret
         env:
           OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
@@ -47,17 +56,19 @@ jobs:
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
+
+
       # (3) Gradle build (Test 제외)
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           arguments: clean build -x test
 
-     # - name: Docker build
-      #    run: |
-       #     docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        #    docker build -t app .
-         #   docker tag app ${{ secrets.DOCKER_USERNAME }}/sejongmate:latest
+          # - name: Docker build
+          #    run: |
+          #     docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          #    docker build -t app .
+          #   docker tag app ${{ secrets.DOCKER_USERNAME }}/sejongmate:latest
           #  docker push ${{ secrets.DOCKER_USERNAME }}/sejongmate:latest
 
       # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)

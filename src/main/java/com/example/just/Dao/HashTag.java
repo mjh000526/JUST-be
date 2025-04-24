@@ -24,20 +24,21 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class HashTag {
+public class HashTag { //DB 태그 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="hash_tag_id")
-    private Long id;
+    private Long id; //태그id
 
     @Column(name = "name")
-    private String name;
+    private String name; //태그명
 
     @Column(name = "tag_count")
-    private Long tagCount;
+    private Long tagCount;//태그가 사용된 횟수
 
     @OneToMany(mappedBy = "hashTag", cascade = CascadeType.REMOVE)
-    private List<HashTagMap> hashTagMaps = new ArrayList<>();
+    @JsonIgnore
+    private List<HashTagMap> hashTagMaps = new ArrayList<>();//게시글과 N:M
 
 
     public HashTag() {

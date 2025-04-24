@@ -1,20 +1,55 @@
 HELP.md
+<<<<<<< HEAD
 
 
 .DS_Store
 
 .gradle
+=======
+.gradl
+
+
+.gradle
+
+.gradl
+
+.gradle
+
+>>>>>>> develop
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 /src/main/resources/application.yml
+<<<<<<< HEAD
 
 /src/test/resources/application.yml
 /application.yml
 
 /src/main/resources/templates/secret/.p8
 
+=======
+/src/test/resources/application.yml
+/src/main/resources/templates/secret/.p8
+
+/src/test/resources/application.yml
+/src/main/resources/templates/secret/AuthKey_2Y9664DW2T.p8
+/src/main/resources/templates/secret/.p8
+/src/main/resources/key/.json
+
+/application.yml
+
+/src/main/resources/templates/secret/.p8
+
+
+/src/test/resources/application.yml
+/src/main/resources/templates/secret/AuthKey_2Y9664DW2T.p8
+/src/main/resources/templates/secret/.p8
+
+/application.yml
+/src/main/resources/templates/secret/.p8
+/src/main/resources/key/just-firebase-key.json
+>>>>>>> develop
 ### STS ###
 .apt_generated
 .classpath
@@ -23,7 +58,10 @@ build/
 .settings
 .springBeans
 .sts4-cache
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
@@ -47,3 +85,7 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop

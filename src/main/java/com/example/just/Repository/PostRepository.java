@@ -36,4 +36,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     List<Post> findByBlamedCountGreaterThanEqualOrderByBlamedCountDesc(int blamed_count);
+    List<Post> findByPostContentContaining(String keyword);
 }

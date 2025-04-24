@@ -24,3 +24,4 @@
 //    @Field(type = FieldType.Long)
 //    private Long targetMemberId; //신고를 당한 회원
 //}
+

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ResponseCommentDto {
+public class ResponseCommentDto {//클라이언트에 응답할 댓글 포맷
     private Long comment_id;
     private String comment_content;
     private Date comment_create_time;
@@ -19,6 +19,7 @@ public class ResponseCommentDto {
     private Long comment_dislike;
     private Integer blamed_count;
     private Boolean isMine;
+    private Boolean isPoster;
     private List<ResponseCommentDto> child;
     private String message;
 
@@ -30,6 +31,7 @@ public class ResponseCommentDto {
         comment_dislike = comment.getComment_dislike();
         blamed_count = comment.getBlamedCount();
         isMine = comment.getMember().getId() == member_id ? true : false;
+        isPoster = comment.getPost().getMember().getId() == member_id ? true : false;
         child = convertChildComments(comment.getChildren(), member_id);
         this.message = message;
     }
@@ -41,6 +43,7 @@ public class ResponseCommentDto {
         comment_dislike = null;
         blamed_count = null;
         isMine = true;
+        isPoster = true;
         child = null;
         this.message = message;
     }

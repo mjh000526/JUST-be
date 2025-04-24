@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import lombok.AccessLevel;
@@ -32,7 +33,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Mapping(mappingPath = "elastic/post-mapping.json")
 @Setting(settingPath = "elastic/post-setting.json")
-public class PostDocument {
+public class PostDocument { ////ELK에 동기화할 게시글 테이블
     @Id
     private Long id;
 
@@ -64,23 +65,6 @@ public class PostDocument {
     @Field(type = FieldType.Long)
     private Long member_id;
 
-
-
-//    //글 태그
-//    @Field(name = "hash_tag", type = FieldType.Nested)
-//    private List<HashTag> hash_tag;
-//
-//
-//    @Field(type = FieldType.Nested)
-//    private List<Member> likedMembers = new ArrayList<>();
-//
-//    @Field(type = FieldType.Object)
-//    private Member member;
-//
-//    @Field(type = FieldType.Nested)
-//    private List<Comment> comments;
-
-
     public PostDocument(Post post) {
         this.id = post.getPost_id();
         this.post_content = post.getContents();
@@ -101,5 +85,18 @@ public class PostDocument {
 //        this.likedMembers = post.getLikedMembers();
 //        this.member = post.getMember();
 //        this.comments = post.getComments();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostDocument that = (PostDocument) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

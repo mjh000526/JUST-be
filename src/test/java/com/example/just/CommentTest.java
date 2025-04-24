@@ -179,7 +179,11 @@
 //
 //        //when
 //        Throwable exception = Assertions.assertThrows(NoSuchElementException.class, () -> {
+<<<<<<< HEAD
 //            commentService.putComment(1L, 1L, new PutCommentDto("테스트용"));
+=======
+//            commentService.putComment(1L, 1L, new PutCommentDto(""));
+>>>>>>> develop
 //        });
 //
 //        //then

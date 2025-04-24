@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 @Data
 @Setter
-public class Post {
+public class Post { //DB 게시글 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;
@@ -33,17 +33,17 @@ public class Post {
     private List<PostContent> postContent;
 
     @Column(name = "post_picture")
-    private Long post_picture;
+    private Long post_picture;  //게시글 배경 사진 번호
 
     @CreationTimestamp
-    @Column(name = "post_create_time")  //글 생성 시간
-    private Date post_create_time;
+    @Column(name = "post_create_time")
+    private Date post_create_time;  //글 생성 시간
 
     @Column(name = "post_like")
-    private Long post_like;
+    private Long post_like; //좋아요 받은 갯수
 
     @Column(name = "secret")
-    private boolean secret;
+    private boolean secret; //비밀글 여부
 
     @Column(name = "emoticon")
     private String emoticon;
@@ -57,20 +57,21 @@ public class Post {
     )
     @JsonIgnore
     @Builder.Default
-    private List<Member> likedMembers = new ArrayList<>();
+    private List<Member> likedMembers = new ArrayList<>();  //좋아요를 누른 회원 리스트
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<HashTagMap> hashTagMaps = new ArrayList<>();
+    private List<HashTagMap> hashTagMaps = new ArrayList<>();//태그 N:M테이블
 
     @ManyToOne()
-    @JoinColumn(name = "member_id") //글을쓴 Member_id
+    @JoinColumn(name = "member_id")
     @JsonIgnore
-    private Member member;
+    private Member member;  //글을쓴 Member_id
 
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>(); //게시글에 작성된 댓글 리스트
+
     @Column(name = "blamed_count")
-    private Long blamedCount;
+    private Long blamedCount;   //신고받은 횟수
 
 
     @PrePersist
@@ -96,7 +97,6 @@ public class Post {
         this.secret = secret;
         this.emoticon = emoticon;
         this.member = member;
-        this.member.updateMember(this);
     }
 
     public void addLike(Member member) {
@@ -113,6 +113,7 @@ public class Post {
     public void removeLike(Member member) {
         if (likedMembers.contains(member)) {
             member.getLikedPosts().remove(this);
+            this.likedMembers.remove(member);
             post_like--;
         }
     }
@@ -136,10 +137,10 @@ public class Post {
         this.secret = postDto.getSecret();
         this.postContent = postContent;
         this.hashTagMaps = new ArrayList<>();
-        for (int i = 0; i < postDto.getHash_tage().size(); i++) {
+        for (int i = 0; i < postDto.getHash_tag().size(); i++) { //여기 문제
             HashTagMap hashTagMap = new HashTagMap();
             hashTagMap.setPost(this);
-            hashTagMap.setHashTag(new HashTag(postDto.getHash_tage().get(i)));
+            hashTagMap.setHashTag(new HashTag(postDto.getHash_tag().get(i)));
             this.addHashTagMaps(hashTagMap);
         }
     }

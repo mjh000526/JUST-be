@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class ResponseMyCommentDto {
+public class ResponseMyCommentDto {//클라이언트에게 응답할 때 클라이언트가 작성한 댓글인지 여부를 포함하는 데이터 포맷
     private Long comment_id;
     private String comment_content;
     private ResponseGetMemberPostDto post;

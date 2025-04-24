@@ -1,5 +1,6 @@
 package com.example.just.Response;
 
+import com.example.just.Dao.Post;
 import com.example.just.Document.PostDocument;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseSearchDto {
+public class ResponseSearchDto {//검색 내용에 대해 응답하기 위한 데이터포맷
 
     private Long post_id;
     private List<String> post_content;
@@ -39,5 +40,19 @@ public class ResponseSearchDto {
         blamed_count = postDocument.getBlamed_count();
         like = false; //윌이 수정하면 따라하기
         mine = postDocument.getMember_id() == member_id ? true : false;
+    }
+
+    public ResponseSearchDto(Post postDocument, Long member_id){
+        post_id = postDocument.getPost_id();
+        post_content = postDocument.getPostContent();
+//        hash_tag = postDocument.getHashTag();
+        post_picture = postDocument.getPost_picture();
+        post_create_time = postDocument.getPost_create_time();
+        secret = postDocument.getSecret();
+        comment_size = (long) postDocument.getComments().size();
+        post_like_size = postDocument.getPost_like();
+        blamed_count = postDocument.getBlamedCount();
+        like = false; //윌이 수정하면 따라하기
+        mine = postDocument.getMember().getId() == member_id ? true : false;
     }
 }

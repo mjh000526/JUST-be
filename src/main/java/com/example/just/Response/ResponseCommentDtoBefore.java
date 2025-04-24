@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class ResponseCommentDtoBefore {
+public class ResponseCommentDtoBefore {//댓글 api의 v1 댓글 포맷
     private Long comment_id;
     private String comment_content;
     private Date comment_create_time;

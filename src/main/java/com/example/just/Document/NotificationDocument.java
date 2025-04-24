@@ -34,3 +34,4 @@
 //    @Field(type = FieldType.Long)
 //    private Long senderId;
 //}
+

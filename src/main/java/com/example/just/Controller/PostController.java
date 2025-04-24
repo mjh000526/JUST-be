@@ -1,16 +1,21 @@
 package com.example.just.Controller;
 
-
 import com.example.just.Dto.*;
 import com.example.just.Service.GptService;
 import com.example.just.Service.PostService;
 import com.example.just.jwt.JwtProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.just.Service.FcmService;
+import com.example.just.Service.PostService;
+import com.example.just.jwt.JwtProvider;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +36,10 @@ public class PostController {
 
     @Autowired
     GptService gptService;
+    FcmService fcmService;
+
+    @Value("${fcm.token}")
+    String fcmToken;
 
     @Operation(summary = "게시글 랜덤하게 조회 api(비회원용)", description = "<big>게시글을 조회한다</big>" +
             "랜덤하고 중복되지않게 viewed(이미 읽은 글)라는 헤더에 [1, 2, 3] <-set형식 을 프론트에서 넘겨줘야함" +
@@ -50,7 +59,6 @@ public class PostController {
     @Operation(summary = "자기의 게시글을 조회하는 API", description = "<big> 자신의 게시글을 조회한다</big>")
     @GetMapping("/get/mypost")
     public ResponseEntity<Object> getMyPosts(HttpServletRequest request) throws NotFoundException {
-
         Long member_id = getAccessTokenOfMemberId(request);
         try {
             return ResponseEntity.ok(postService.getMyPost(member_id));
@@ -66,11 +74,12 @@ public class PostController {
     public ResponseEntity<Object> getMemberPosts(@RequestParam Long request_page, HttpServletRequest request) {
         String cursor = request.getHeader("viewed");
         Long member_id = getAccessTokenOfMemberId(request);
-
         try {
             return ResponseEntity.ok(postService.searchByCursorMember(cursor, request_page, member_id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,9 +124,11 @@ public class PostController {
     @Operation(summary = "게시글 삭제 api", description = "\n 글이 삭제되면 value : 삭제 완료"
             + "\n 글이 없으면 value : 글이 없습니다.")
     @DeleteMapping("/delete/post")
-    public ResponseEntity<String> deletePost(@RequestParam Long post_id) throws NotFoundException {
+    public ResponseEntity<String> deletePost(@RequestParam Long post_id, HttpServletRequest request)
+            throws NotFoundException {
+        Long member_id = getAccessTokenOfMemberId(request);
         try {
-            postService.deletePost(post_id);
+            postService.deletePost(post_id, member_id);
             return ResponseEntity.ok("삭제 완료");
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -158,9 +169,24 @@ public class PostController {
         return ResponseEntity.ok(postService.getLikeMemberPost(member_id));
     }
 
+    @ApiOperation(value = "자신이 좋아요한 글 , 자신이 쓴 글의 HashTag들을 랜덤하게 뽑아옵니다.")
+    @GetMapping("/get/like/hash/tag")
+    public ResponseEntity<Object> getLikeHashTag(HttpServletRequest request) {
+        Long member_id = getAccessTokenOfMemberId(request);
+        return ResponseEntity.ok(postService.getLikeHashTag(member_id));
+    }
+
     public Long getAccessTokenOfMemberId(HttpServletRequest request) {
         String token = jwtProvider.getAccessToken(request);
         Long member_id = Long.valueOf(jwtProvider.getIdFromToken(token)); //토큰
         return member_id;
+    }
+
+    @ApiOperation(value = "알림 리턴")
+    @GetMapping("/get/notification")
+    public void getMessage() throws FirebaseMessagingException {
+
+        System.out.println(fcmToken);
+//        fcmService.sendMessageByToken("title","body",fcmToken);
     }
 }

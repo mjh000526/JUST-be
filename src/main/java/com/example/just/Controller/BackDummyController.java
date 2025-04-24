@@ -39,6 +39,7 @@ public class BackDummyController {
         return memberService.join(member_dto);
     }
 
+    //회원정보를 조회하기 위한 url
     @GetMapping("/info")
     public ResponseEntity getInfo() throws IOException {
         return kakaoService.info();
