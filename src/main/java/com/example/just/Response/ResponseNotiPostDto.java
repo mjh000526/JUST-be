@@ -1,6 +1,7 @@
 package com.example.just.Response;
 
 import com.example.just.Dao.Post;
+import com.example.just.Dao.PostContent;
 import java.util.Date;
 import java.util.List;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 public class ResponseNotiPostDto {//게시글에 대한 알림 응답에 대한 데이터 포맷
     private Long post_id;
 
-    private List<String> post_content;
+    private List<PostContent> post_content;
 
     private Long post_picture;
 

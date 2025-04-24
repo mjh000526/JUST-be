@@ -31,5 +31,6 @@ public class PostContent {
     @Column(name = "content")
     private String content;
 
+
 }
 

@@ -52,7 +52,7 @@ public class AppleService {//애플 로그인 기능 서비스
         String accesstoken = jwtProvider.createaccessToken(user);
         String refreshtoken = jwtProvider.createRefreshToken(user);
         user.setRefreshToken(refreshtoken);
-        user.setFcmToken(fcmToken);
+//        user.setFcmToken(fcmToken);
         userRepository.save(user); //refresh토큰 재발급 후 update
         HttpHeaders httpHeaders = new HttpHeaders();
         //응답헤더에 토큰 적재
@@ -76,7 +76,7 @@ public class AppleService {//애플 로그인 기능 서비스
                     .provider_id(this.userIdFromApple(id))//apple고유 id
                     .nickname(nickname)
                     .authority(Role.ROLE_USER)
-                    .fcmToken(fcmToken)
+//                    .fcmToken(fcmToken)
                     .blameCount(0)
                     .blamedCount(0)
                     .build();

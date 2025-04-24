@@ -210,12 +210,12 @@ public class PostService { // 게시글 관련 기능 서비스
             List<String> content = getConvertString(postDto.getPost_content());
             postDto.setPost_content(content);
 
-            checkPost.changePost(postDto, member, checkPost);
+
 
             List<PostContent> postContents = new ArrayList<>();
-            for (String content : postDto.getPost_content()) {
+            for (String str : postDto.getPost_content()) {
                 PostContent postContent = new PostContent();
-                postContent.setContent(content);
+                postContent.setContent(str);
                 postContent.setPost(checkPost);
                 postContents.add(postContent);
             }
@@ -223,13 +223,15 @@ public class PostService { // 게시글 관련 기능 서비스
             checkPost.changePost(postDto, member, checkPost, postContents);
 
             Post p = postRepository.save(checkPost);
-            saveHashTag(postDto.getHash_tage(), p);
+//            saveHashTag(postDto.getHash_tage(), p);
 
             postContentESRespository.save(new PostDocument(checkPost));
 
             ResponsePutPostDto responsePutPostDto = new ResponsePutPostDto(p);
             return responsePutPostDto;
         }
+        //todo: return 400
+        return null;
     }
 
         private void deleteHashTag (Post post){ // 해시태그 삭제
@@ -322,7 +324,7 @@ public class PostService { // 게시글 관련 기능 서비스
 
             Post post = checkPost(post_id);
             Member member = checkMember(member_id);
-            PostLike postLike = postLikeRepository.findByPostAndMember(post, member);  // 좋아요 여부 확인
+//            PostLike postLike = postLikeRepository.findByPostAndMember(post, member);  // 좋아요 여부 확인
 
             ResponsePost responsePost;
             PostDocument postDocument = postContentESRespository.findById(post_id).get();
@@ -515,21 +517,22 @@ public class PostService { // 게시글 관련 기능 서비스
             return responseBody;
         }
 
-        public String parsingJson (String json){
-            String response;
-            try {
-                JSONParser parser = new JSONParser();
-                JSONObject elem = (JSONObject) parser.parse(json);
-                jsonArray = (JSONArray) elem.get("deny_list");
-                for (Object obj : jsonArray) {
-                    denyList.add((String) obj);
-                }
-
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+    public List<String> parsingJson(String json) { // JSON 파싱
+        JSONArray jsonArray;
+        List<String> denyList = new ArrayList<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject elem = (JSONObject) parser.parse(json);
+            jsonArray = (JSONArray) elem.get("deny_list");
+            for (Object obj : jsonArray) {
+                denyList.add((String) obj);
             }
-            return denyList;
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
+        return denyList;
+    }
 
         public List<String> getLikeHashTag (Long member_id){ // 좋아요한 해시태그 가져오기
 

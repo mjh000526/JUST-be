@@ -1,18 +1,11 @@
 
 # JUST - 익명 고민 상담
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
-## 프로젝트 목적
+## 프로젝트 목적sd
 
 
 # Just Mobile App
 
->>>>>>> 6205e0b86177c2cbefdab8cb409d76914c2aba7d
->>>>>>> develop
 <p align="center">
 주변 사람에게는 말 못할 고민을 털어 놓을 수 있는 공간, Just  <br>
 
@@ -38,9 +31,7 @@
   ![AWS CodeDeploy](https://img.shields.io/badge/AWS_CodeDeploy-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
   ![AWS S3](https://img.shields.io/badge/AWS_S3-569A31?style=for-the-badge&logo=amazon-s3&logoColor=white)
 
-  
-<<<<<<< HEAD
-=======
+
 ## 🗒️ 구현 기능
 ### 이성현
 - 게시글 기능 부분을 담당 (무한스크롤, 신고자 글 제외, 게시글 랜덤 조회, 삭제, 수정 등등)
@@ -55,7 +46,6 @@
 
 
 
->>>>>>> develop
 ## ⚙️ 아키텍쳐 설계 
 
 
@@ -67,7 +57,6 @@
 
 
 
-<<<<<<< HEAD
 ## 📦 ERD
 ![Copy of Just](https://github.com/inje-megabrain/JUST-be/assets/96710732/653e7f58-802c-465c-af1d-25ffb38f93e4)
 
@@ -95,7 +84,6 @@
 
 
 
-=======
+
 ## 🖥️ 기능 동작 영상 
 [![](https://github.com/inje-megabrain/JUST-FE/raw/main/readme_images/ui.gif)](https://github.com/inje-megabrain/JUST-FE/blob/main/readme_images/ui.gif)
->>>>>>> develop

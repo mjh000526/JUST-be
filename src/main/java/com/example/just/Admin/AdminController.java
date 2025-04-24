@@ -117,13 +117,13 @@ public class AdminController {
 
 
 
-    @ApiOperation(value = "게시물 리스트 불러옴 posts 페이지에서")
-    @Operation(summary = "게시글 리스트", description = "\n admin 페이지-> posts 페이지-> return 하여 post list 출력")
-    @GetMapping("/posts")
-    public ResponseEntity<List<Post>> PostList() {
-        List<Post> posts = postService.getAllPostList();
-        return new ResponseEntity<>(posts, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "게시물 리스트 불러옴 posts 페이지에서")
+//    @Operation(summary = "게시글 리스트", description = "\n admin 페이지-> posts 페이지-> return 하여 post list 출력")
+//    @GetMapping("/posts")
+//    public ResponseEntity<List<Post>> PostList() {
+//        List<Post> posts = postService.getAllPostList();
+//        return new ResponseEntity<>(posts, HttpStatus.OK);
+//    }
 
 
     //게시글 삭제

@@ -98,7 +98,7 @@ public class KakaoService {
                         .provider_id(user.getProvider_id())
                         .authority(Role.ROLE_USER)
                         .nickname(nickname)
-                        .fcmToken(fcmToken)
+//                        .fcmToken(fcmToken)
                         .blameCount(0)
                         .blamedCount(0)
                         .build();
